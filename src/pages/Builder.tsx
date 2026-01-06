@@ -13,13 +13,26 @@ import {
   Briefcase,
   GraduationCap,
   Wrench,
-  Award,
   CheckCircle2,
   AlertCircle,
-  Sparkles
+  Sparkles,
+  Upload,
+  Layout,
+  Target
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
+import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
+import { TemplateSelector } from "@/components/TemplateSelector";
+import { AISuggestionPanel } from "@/components/AISuggestionPanel";
+import { ResumeImport } from "@/components/ResumeImport";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Experience {
   id: string;
@@ -41,21 +54,6 @@ interface Education {
   gpa: string;
 }
 
-interface ResumeData {
-  personalInfo: {
-    fullName: string;
-    email: string;
-    phone: string;
-    location: string;
-    linkedin: string;
-    portfolio: string;
-  };
-  summary: string;
-  experience: Experience[];
-  education: Education[];
-  skills: string[];
-}
-
 const initialResumeData: ResumeData = {
   personalInfo: {
     fullName: "",
@@ -75,33 +73,32 @@ const Builder = () => {
   const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
   const [activeSection, setActiveSection] = useState("personal");
   const [newSkill, setNewSkill] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState("classic");
+  const [jobDescription, setJobDescription] = useState("");
+  const [showImport, setShowImport] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   const calculateATSScore = () => {
     let score = 0;
     const { personalInfo, summary, experience, education, skills } = resumeData;
 
-    // Personal Info (25 points)
     if (personalInfo.fullName) score += 5;
     if (personalInfo.email) score += 5;
     if (personalInfo.phone) score += 5;
     if (personalInfo.location) score += 5;
     if (personalInfo.linkedin) score += 5;
 
-    // Summary (15 points)
     if (summary.length > 50) score += 10;
     if (summary.length > 150) score += 5;
 
-    // Experience (30 points)
     if (experience.length > 0) score += 10;
     if (experience.length > 1) score += 10;
     experience.forEach((exp) => {
       if (exp.description.length > 100) score += 2.5;
     });
 
-    // Education (15 points)
     if (education.length > 0) score += 15;
 
-    // Skills (15 points)
     if (skills.length > 0) score += 5;
     if (skills.length > 3) score += 5;
     if (skills.length > 6) score += 5;
@@ -200,9 +197,33 @@ const Builder = () => {
   };
 
   const handleDownload = () => {
-    toast.success("Resume downloaded successfully!", {
-      description: "Your ATS-optimized resume is ready.",
-    });
+    try {
+      downloadPDF(resumeData, selectedTemplate);
+      toast.success("Resume downloaded successfully!");
+    } catch (error) {
+      toast.error("Failed to generate PDF");
+    }
+  };
+
+  const handleImport = (data: any) => {
+    setResumeData((prev) => ({
+      ...prev,
+      ...data,
+      personalInfo: { ...prev.personalInfo, ...data.personalInfo },
+    }));
+    setShowImport(false);
+  };
+
+  const handleApplySuggestion = (field: string, value: string) => {
+    if (field === "summary") {
+      setResumeData((prev) => ({ ...prev, summary: value }));
+    } else if (field === "skills") {
+      const newSkills = value.split(",").map((s) => s.trim()).filter(Boolean);
+      setResumeData((prev) => ({
+        ...prev,
+        skills: [...new Set([...prev.skills, ...newSkills])],
+      }));
+    }
   };
 
   const sections = [
@@ -210,6 +231,7 @@ const Builder = () => {
     { id: "experience", label: "Experience", icon: Briefcase },
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "skills", label: "Skills", icon: Wrench },
+    { id: "optimize", label: "AI Optimize", icon: Sparkles },
   ];
 
   return (
@@ -232,10 +254,43 @@ const Builder = () => {
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm">
-              <Eye className="w-4 h-4 mr-2" />
-              Preview
-            </Button>
+            <Dialog open={showImport} onOpenChange={setShowImport}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Upload className="w-4 h-4 mr-2" />
+                  Import
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Import Resume</DialogTitle>
+                </DialogHeader>
+                <ResumeImport onImport={handleImport} />
+              </DialogContent>
+            </Dialog>
+            
+            <Dialog open={showTemplates} onOpenChange={setShowTemplates}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Layout className="w-4 h-4 mr-2" />
+                  Templates
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Choose Template</DialogTitle>
+                </DialogHeader>
+                <TemplateSelector
+                  selectedTemplate={selectedTemplate}
+                  onSelect={(id) => {
+                    setSelectedTemplate(id);
+                    setShowTemplates(false);
+                    toast.success(`${id.charAt(0).toUpperCase() + id.slice(1)} template selected`);
+                  }}
+                />
+              </DialogContent>
+            </Dialog>
+
             <Button variant="hero" size="sm" onClick={handleDownload}>
               <Download className="w-4 h-4 mr-2" />
               Download PDF
@@ -339,6 +394,9 @@ const Builder = () => {
                     summary={resumeData.summary}
                     onUpdate={updatePersonalInfo}
                     onSummaryChange={(value) => setResumeData(prev => ({ ...prev, summary: value }))}
+                    onApplySuggestion={handleApplySuggestion}
+                    resumeData={resumeData}
+                    jobDescription={jobDescription}
                   />
                 )}
                 {activeSection === "experience" && (
@@ -347,6 +405,7 @@ const Builder = () => {
                     onAdd={addExperience}
                     onUpdate={updateExperience}
                     onRemove={removeExperience}
+                    jobDescription={jobDescription}
                   />
                 )}
                 {activeSection === "education" && (
@@ -364,6 +423,17 @@ const Builder = () => {
                     onNewSkillChange={setNewSkill}
                     onAdd={addSkill}
                     onRemove={removeSkill}
+                    onApplySuggestion={handleApplySuggestion}
+                    resumeData={resumeData}
+                    jobDescription={jobDescription}
+                  />
+                )}
+                {activeSection === "optimize" && (
+                  <OptimizeSection
+                    jobDescription={jobDescription}
+                    onJobDescriptionChange={setJobDescription}
+                    resumeData={resumeData}
+                    onApplySuggestion={handleApplySuggestion}
                   />
                 )}
               </div>
@@ -373,14 +443,15 @@ const Builder = () => {
             <div className="lg:col-span-4">
               <div className="sticky top-24">
                 <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
-                  <div className="bg-muted px-6 py-4 border-b border-border">
+                  <div className="bg-muted px-6 py-4 border-b border-border flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4 text-muted-foreground" />
                       <span className="font-medium text-foreground">Live Preview</span>
                     </div>
+                    <span className="text-xs text-muted-foreground capitalize">{selectedTemplate} Template</span>
                   </div>
                   <div className="p-6 max-h-[calc(100vh-12rem)] overflow-y-auto">
-                    <ResumePreview data={resumeData} />
+                    <ResumePreview data={resumeData} templateId={selectedTemplate} />
                   </div>
                 </div>
               </div>
@@ -397,9 +468,12 @@ interface PersonalInfoFormProps {
   summary: string;
   onUpdate: (field: string, value: string) => void;
   onSummaryChange: (value: string) => void;
+  onApplySuggestion: (field: string, value: string) => void;
+  resumeData: ResumeData;
+  jobDescription: string;
 }
 
-const PersonalInfoForm = ({ data, summary, onUpdate, onSummaryChange }: PersonalInfoFormProps) => (
+const PersonalInfoForm = ({ data, summary, onUpdate, onSummaryChange, onApplySuggestion, resumeData, jobDescription }: PersonalInfoFormProps) => (
   <div className="space-y-6">
     <div>
       <h2 className="text-2xl font-display font-bold text-foreground mb-2">Personal Information</h2>
@@ -471,6 +545,17 @@ const PersonalInfoForm = ({ data, summary, onUpdate, onSummaryChange }: Personal
         Tip: Include relevant keywords from job descriptions you're targeting.
       </p>
     </div>
+
+    <AISuggestionPanel
+      type="summary"
+      content={{
+        experience: resumeData.experience.map(e => `${e.title} at ${e.company}`).join(", "),
+        skills: resumeData.skills.join(", "),
+        targetRole: "",
+      }}
+      onApply={(suggestion) => onApplySuggestion("summary", suggestion)}
+      jobDescription={jobDescription}
+    />
   </div>
 );
 
@@ -479,9 +564,10 @@ interface ExperienceFormProps {
   onAdd: () => void;
   onUpdate: (id: string, field: string, value: string | boolean) => void;
   onRemove: (id: string) => void;
+  jobDescription: string;
 }
 
-const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove }: ExperienceFormProps) => (
+const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove, jobDescription }: ExperienceFormProps) => (
   <div className="space-y-6">
     <div className="flex items-center justify-between">
       <div>
@@ -557,6 +643,19 @@ const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove }: ExperienceFo
                 value={exp.description}
                 onChange={(e) => onUpdate(exp.id, "description", e.target.value)}
                 className="resize-none"
+              />
+            </div>
+            
+            <div className="mt-4">
+              <AISuggestionPanel
+                type="experience"
+                content={{
+                  title: exp.title,
+                  company: exp.company,
+                  description: exp.description,
+                }}
+                onApply={(suggestion) => onUpdate(exp.id, "description", suggestion)}
+                jobDescription={jobDescription}
               />
             </div>
           </div>
@@ -652,9 +751,12 @@ interface SkillsFormProps {
   onNewSkillChange: (value: string) => void;
   onAdd: () => void;
   onRemove: (skill: string) => void;
+  onApplySuggestion: (field: string, value: string) => void;
+  resumeData: ResumeData;
+  jobDescription: string;
 }
 
-const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove }: SkillsFormProps) => (
+const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove, onApplySuggestion, resumeData, jobDescription }: SkillsFormProps) => (
   <div className="space-y-6">
     <div>
       <h2 className="text-2xl font-display font-bold text-foreground mb-2">Skills</h2>
@@ -697,6 +799,17 @@ const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove }: Ski
       </div>
     )}
 
+    <AISuggestionPanel
+      type="skills"
+      content={{
+        experience: resumeData.experience.map(e => `${e.title} at ${e.company}: ${e.description}`).join("\n"),
+        currentSkills: skills.join(", "),
+        targetRole: "",
+      }}
+      onApply={(suggestion) => onApplySuggestion("skills", suggestion)}
+      jobDescription={jobDescription}
+    />
+
     <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
       <div className="flex items-start gap-3">
         <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
@@ -712,13 +825,99 @@ const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove }: Ski
   </div>
 );
 
-interface ResumePreviewProps {
-  data: ResumeData;
+interface OptimizeSectionProps {
+  jobDescription: string;
+  onJobDescriptionChange: (value: string) => void;
+  resumeData: ResumeData;
+  onApplySuggestion: (field: string, value: string) => void;
 }
 
-const ResumePreview = ({ data }: ResumePreviewProps) => {
+const OptimizeSection = ({ jobDescription, onJobDescriptionChange, resumeData, onApplySuggestion }: OptimizeSectionProps) => (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-2xl font-display font-bold text-foreground mb-2">AI Optimization</h2>
+      <p className="text-muted-foreground">Paste a job description to get tailored suggestions for your resume.</p>
+    </div>
+
+    <div>
+      <label className="block text-sm font-medium text-foreground mb-2">
+        <Target className="w-4 h-4 inline mr-2" />
+        Target Job Description
+      </label>
+      <Textarea
+        placeholder="Paste the job description you're applying for..."
+        rows={8}
+        value={jobDescription}
+        onChange={(e) => onJobDescriptionChange(e.target.value)}
+        className="resize-none"
+      />
+      <p className="text-xs text-muted-foreground mt-2">
+        The AI will analyze this to suggest relevant keywords and improvements.
+      </p>
+    </div>
+
+    {jobDescription && (
+      <div className="space-y-4">
+        <h3 className="font-medium text-foreground">AI Suggestions</h3>
+        
+        <AISuggestionPanel
+          type="keywords"
+          content={jobDescription}
+          onApply={(suggestion) => {
+            const keywords = suggestion.split(",").map(k => k.trim()).filter(Boolean);
+            onApplySuggestion("skills", keywords.join(", "));
+          }}
+          jobDescription={jobDescription}
+        />
+
+        <AISuggestionPanel
+          type="summary"
+          content={{
+            experience: resumeData.experience.map(e => `${e.title} at ${e.company}`).join(", "),
+            skills: resumeData.skills.join(", "),
+            targetRole: "",
+          }}
+          onApply={(suggestion) => onApplySuggestion("summary", suggestion)}
+          jobDescription={jobDescription}
+        />
+      </div>
+    )}
+
+    <div className="p-4 bg-primary/5 rounded-xl border border-primary/20">
+      <div className="flex items-start gap-3">
+        <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+        <div className="text-sm">
+          <p className="font-medium text-foreground mb-1">How AI Optimization Works</p>
+          <p className="text-muted-foreground">
+            Our AI analyzes the job description to identify key requirements and suggests improvements 
+            to your resume content. This helps ensure your resume contains relevant keywords that 
+            ATS systems look for.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+interface ResumePreviewProps {
+  data: ResumeData;
+  templateId: string;
+}
+
+const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
   const { personalInfo, summary, experience, education, skills } = data;
   const hasContent = personalInfo.fullName || summary || experience.length > 0 || education.length > 0 || skills.length > 0;
+
+  const templateColors = {
+    classic: { primary: "text-blue-900", accent: "text-blue-600", bg: "bg-blue-900" },
+    modern: { primary: "text-blue-700", accent: "text-blue-500", bg: "bg-blue-700" },
+    minimal: { primary: "text-gray-900", accent: "text-gray-600", bg: "bg-gray-900" },
+    executive: { primary: "text-slate-900", accent: "text-sky-600", bg: "bg-slate-900" },
+    creative: { primary: "text-violet-700", accent: "text-purple-500", bg: "bg-violet-700" },
+    tech: { primary: "text-emerald-700", accent: "text-teal-500", bg: "bg-emerald-700" },
+  };
+
+  const colors = templateColors[templateId as keyof typeof templateColors] || templateColors.classic;
 
   if (!hasContent) {
     return (
@@ -739,14 +938,14 @@ const ResumePreview = ({ data }: ResumePreviewProps) => {
     <div className="text-sm space-y-4">
       {/* Header */}
       <div className="border-b border-border pb-3">
-        <h1 className="text-xl font-bold text-foreground">{personalInfo.fullName || "Your Name"}</h1>
+        <h1 className={`text-xl font-bold ${colors.primary}`}>{personalInfo.fullName || "Your Name"}</h1>
         <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-x-3 gap-y-1">
           {personalInfo.email && <span>{personalInfo.email}</span>}
           {personalInfo.phone && <span>{personalInfo.phone}</span>}
           {personalInfo.location && <span>{personalInfo.location}</span>}
         </div>
         {(personalInfo.linkedin || personalInfo.portfolio) && (
-          <div className="text-xs text-primary mt-1 flex flex-wrap gap-x-3">
+          <div className={`text-xs mt-1 flex flex-wrap gap-x-3 ${colors.accent}`}>
             {personalInfo.linkedin && <span>{personalInfo.linkedin}</span>}
             {personalInfo.portfolio && <span>{personalInfo.portfolio}</span>}
           </div>
@@ -756,7 +955,7 @@ const ResumePreview = ({ data }: ResumePreviewProps) => {
       {/* Summary */}
       {summary && (
         <div>
-          <h2 className="text-xs font-bold text-primary uppercase tracking-wider mb-1">Professional Summary</h2>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-1 ${colors.primary}`}>Professional Summary</h2>
           <p className="text-xs text-muted-foreground leading-relaxed">{summary}</p>
         </div>
       )}
@@ -764,14 +963,14 @@ const ResumePreview = ({ data }: ResumePreviewProps) => {
       {/* Experience */}
       {experience.length > 0 && (
         <div>
-          <h2 className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Experience</h2>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Experience</h2>
           <div className="space-y-3">
             {experience.map((exp) => (
               <div key={exp.id}>
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="font-semibold text-foreground">{exp.title || "Job Title"}</div>
-                    <div className="text-muted-foreground">{exp.company || "Company"}</div>
+                    <div className={colors.accent}>{exp.company || "Company"}</div>
                   </div>
                   <div className="text-xs text-muted-foreground text-right">
                     {exp.startDate && formatDate(exp.startDate)} - {exp.current ? "Present" : exp.endDate && formatDate(exp.endDate)}
@@ -789,13 +988,13 @@ const ResumePreview = ({ data }: ResumePreviewProps) => {
       {/* Education */}
       {education.length > 0 && (
         <div>
-          <h2 className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Education</h2>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Education</h2>
           <div className="space-y-2">
             {education.map((edu) => (
               <div key={edu.id} className="flex justify-between items-start">
                 <div>
                   <div className="font-semibold text-foreground">{edu.degree || "Degree"}</div>
-                  <div className="text-muted-foreground">{edu.school || "School"}</div>
+                  <div className={colors.accent}>{edu.school || "School"}</div>
                 </div>
                 <div className="text-xs text-muted-foreground text-right">
                   {edu.graduationDate && formatDate(edu.graduationDate)}
@@ -810,7 +1009,7 @@ const ResumePreview = ({ data }: ResumePreviewProps) => {
       {/* Skills */}
       {skills.length > 0 && (
         <div>
-          <h2 className="text-xs font-bold text-primary uppercase tracking-wider mb-2">Skills</h2>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Skills</h2>
           <div className="flex flex-wrap gap-1">
             {skills.map((skill) => (
               <span key={skill} className="px-2 py-0.5 bg-muted text-foreground rounded text-xs">
