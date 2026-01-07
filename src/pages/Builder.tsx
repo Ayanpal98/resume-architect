@@ -27,6 +27,8 @@ import { TemplateSelector } from "@/components/TemplateSelector";
 import { AISuggestionPanel } from "@/components/AISuggestionPanel";
 import { ResumeImport } from "@/components/ResumeImport";
 import { ATSScorePanel } from "@/components/ATSScorePanel";
+import { CoverLetterGenerator } from "@/components/CoverLetterGenerator";
+import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
@@ -213,6 +215,8 @@ const Builder = () => {
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "skills", label: "Skills", icon: Wrench },
     { id: "optimize", label: "AI Optimize", icon: Sparkles },
+    { id: "jobmatch", label: "Job Match", icon: Target },
+    { id: "coverletter", label: "Cover Letter", icon: FileText },
   ];
 
   return (
@@ -420,6 +424,20 @@ const Builder = () => {
                     onJobDescriptionChange={setJobDescription}
                     resumeData={resumeData}
                     onApplySuggestion={handleApplySuggestion}
+                  />
+                )}
+                {activeSection === "jobmatch" && (
+                  <JobMatchPanel
+                    resumeData={resumeData}
+                    jobDescription={jobDescription}
+                    onJobDescriptionChange={setJobDescription}
+                  />
+                )}
+                {activeSection === "coverletter" && (
+                  <CoverLetterGenerator
+                    resumeData={resumeData}
+                    jobDescription={jobDescription}
+                    onJobDescriptionChange={setJobDescription}
                   />
                 )}
               </div>
