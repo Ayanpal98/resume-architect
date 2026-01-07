@@ -1,1 +1,13 @@
 project_id = "nznkbrfslotuabglphpj"
+
+[functions.ai-suggestions]
+verify_jwt = false
+
+[functions.parse-resume]
+verify_jwt = false
+
+[functions.generate-cover-letter]
+verify_jwt = false
+
+[functions.job-match-analysis]
+verify_jwt = false
