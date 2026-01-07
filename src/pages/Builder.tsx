@@ -26,6 +26,8 @@ import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { AISuggestionPanel } from "@/components/AISuggestionPanel";
 import { ResumeImport } from "@/components/ResumeImport";
+import { ATSScorePanel } from "@/components/ATSScorePanel";
+import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
   DialogContent,
@@ -77,36 +79,11 @@ const Builder = () => {
   const [jobDescription, setJobDescription] = useState("");
   const [showImport, setShowImport] = useState(false);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showATSDetails, setShowATSDetails] = useState(false);
 
-  const calculateATSScore = () => {
-    let score = 0;
-    const { personalInfo, summary, experience, education, skills } = resumeData;
-
-    if (personalInfo.fullName) score += 5;
-    if (personalInfo.email) score += 5;
-    if (personalInfo.phone) score += 5;
-    if (personalInfo.location) score += 5;
-    if (personalInfo.linkedin) score += 5;
-
-    if (summary.length > 50) score += 10;
-    if (summary.length > 150) score += 5;
-
-    if (experience.length > 0) score += 10;
-    if (experience.length > 1) score += 10;
-    experience.forEach((exp) => {
-      if (exp.description.length > 100) score += 2.5;
-    });
-
-    if (education.length > 0) score += 15;
-
-    if (skills.length > 0) score += 5;
-    if (skills.length > 3) score += 5;
-    if (skills.length > 6) score += 5;
-
-    return Math.min(Math.round(score), 100);
-  };
-
-  const atsScore = calculateATSScore();
+  // Calculate ATS score using the comprehensive checker
+  const atsResult = checkATSCompatibility(resumeData);
+  const atsScore = atsResult.overallScore;
 
   const updatePersonalInfo = (field: string, value: string) => {
     setResumeData((prev) => ({
@@ -205,13 +182,17 @@ const Builder = () => {
     }
   };
 
-  const handleImport = (data: any) => {
+  const handleImport = (data: any, importAtsResult?: ATSCheckResult) => {
     setResumeData((prev) => ({
       ...prev,
       ...data,
       personalInfo: { ...prev.personalInfo, ...data.personalInfo },
     }));
     setShowImport(false);
+    
+    if (importAtsResult) {
+      setShowATSDetails(true);
+    }
   };
 
   const handleApplySuggestion = (field: string, value: string) => {
@@ -307,35 +288,40 @@ const Builder = () => {
             <div className="lg:col-span-3">
               <div className="sticky top-24 space-y-6">
                 {/* ATS Score */}
-                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div 
-                      className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold ${
-                        atsScore >= 80 ? 'bg-accent text-accent-foreground' : 
-                        atsScore >= 50 ? 'bg-yellow-500 text-white' : 
-                        'bg-destructive text-destructive-foreground'
-                      }`}
-                    >
-                      {atsScore}
-                    </div>
-                    <div>
-                      <div className="font-medium text-foreground">ATS Score</div>
-                      <div className="text-sm text-muted-foreground">
-                        {atsScore >= 80 ? "Excellent" : atsScore >= 50 ? "Good" : "Needs work"}
+                <Dialog open={showATSDetails} onOpenChange={setShowATSDetails}>
+                  <DialogTrigger asChild>
+                    <button className="w-full bg-card rounded-2xl border border-border p-6 shadow-sm hover:border-primary/50 transition-colors text-left">
+                      <div className="flex items-center gap-3 mb-4">
+                        <div 
+                          className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white ${getScoreBgColor(atsScore)}`}
+                        >
+                          {atsScore}
+                        </div>
+                        <div>
+                          <div className="font-medium text-foreground">ATS Score</div>
+                          <div className="text-sm text-muted-foreground">
+                            {atsResult.passStatus === "excellent" ? "Excellent" : 
+                             atsResult.passStatus === "good" ? "Good" : 
+                             atsResult.passStatus === "fair" ? "Fair" : "Needs work"}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                    <div 
-                      className={`h-full transition-all duration-500 ${
-                        atsScore >= 80 ? 'bg-accent' : 
-                        atsScore >= 50 ? 'bg-yellow-500' : 
-                        'bg-destructive'
-                      }`}
-                      style={{ width: `${atsScore}%` }}
-                    />
-                  </div>
-                </div>
+                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full transition-all duration-500 ${getScoreBgColor(atsScore)}`}
+                          style={{ width: `${atsScore}%` }}
+                        />
+                      </div>
+                      <p className="text-xs text-primary mt-3 flex items-center gap-1">
+                        <Target className="w-3 h-3" />
+                        Click for detailed analysis
+                      </p>
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto p-0">
+                    <ATSScorePanel result={atsResult} onDismiss={() => setShowATSDetails(false)} />
+                  </DialogContent>
+                </Dialog>
 
                 {/* Navigation */}
                 <div className="bg-card rounded-2xl border border-border p-4 shadow-sm">

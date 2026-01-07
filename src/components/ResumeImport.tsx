@@ -1,17 +1,21 @@
 import { useState, useRef } from "react";
-import { Upload, FileText, Loader2, X, AlertCircle } from "lucide-react";
+import { Upload, FileText, Loader2, X, AlertCircle, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { parseResumeFile } from "@/lib/aiService";
+import { checkATSCompatibility, ATSCheckResult } from "@/lib/atsChecker";
+import { ATSScorePanel } from "@/components/ATSScorePanel";
 import { toast } from "sonner";
 
 interface ResumeImportProps {
-  onImport: (data: any) => void;
+  onImport: (data: any, atsResult?: ATSCheckResult) => void;
 }
 
 export const ResumeImport = ({ onImport }: ResumeImportProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [fileName, setFileName] = useState("");
+  const [atsResult, setAtsResult] = useState<ATSCheckResult | null>(null);
+  const [parsedData, setParsedData] = useState<any>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const extractTextFromFile = async (file: File): Promise<string> => {
@@ -82,25 +86,34 @@ export const ResumeImport = ({ onImport }: ResumeImportProps) => {
         throw new Error("Could not extract enough text from the file");
       }
 
-      const parsedData = await parseResumeFile(text);
+      const importedData = await parseResumeFile(text);
       
       // Add IDs to experience and education items
-      if (parsedData.experience) {
-        parsedData.experience = parsedData.experience.map((exp: any) => ({
+      if (importedData.experience) {
+        importedData.experience = importedData.experience.map((exp: any) => ({
           ...exp,
           id: crypto.randomUUID(),
         }));
       }
-      if (parsedData.education) {
-        parsedData.education = parsedData.education.map((edu: any) => ({
+      if (importedData.education) {
+        importedData.education = importedData.education.map((edu: any) => ({
           ...edu,
           id: crypto.randomUUID(),
         }));
       }
 
-      onImport(parsedData);
-      toast.success("Resume imported successfully!");
-      setFileName("");
+      // Run ATS check on the parsed data
+      const atsCheckResult = checkATSCompatibility({
+        personalInfo: importedData.personalInfo || {},
+        summary: importedData.summary || "",
+        experience: importedData.experience || [],
+        education: importedData.education || [],
+        skills: importedData.skills || [],
+      });
+
+      setParsedData(importedData);
+      setAtsResult(atsCheckResult);
+      toast.success(`Resume imported! ATS Score: ${atsCheckResult.overallScore}/100`);
     } catch (error) {
       console.error("Import error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to import resume");
@@ -135,6 +148,51 @@ export const ResumeImport = ({ onImport }: ResumeImportProps) => {
     }
   };
 
+  const handleApplyImport = () => {
+    if (parsedData && atsResult) {
+      onImport(parsedData, atsResult);
+      setParsedData(null);
+      setAtsResult(null);
+      setFileName("");
+    }
+  };
+
+  const handleReset = () => {
+    setParsedData(null);
+    setAtsResult(null);
+    setFileName("");
+  };
+
+  // Show ATS results after parsing
+  if (atsResult && parsedData) {
+    return (
+      <div className="space-y-4">
+        <ATSScorePanel result={atsResult} />
+        
+        <div className="flex gap-3">
+          <Button 
+            onClick={handleApplyImport} 
+            className="flex-1"
+            variant="hero"
+          >
+            <Target className="w-4 h-4 mr-2" />
+            Apply & Continue Editing
+          </Button>
+          <Button 
+            onClick={handleReset} 
+            variant="outline"
+          >
+            Upload Different File
+          </Button>
+        </div>
+        
+        <p className="text-xs text-center text-muted-foreground">
+          Your resume will be imported and you can improve your ATS score in the editor
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all ${
@@ -159,7 +217,7 @@ export const ResumeImport = ({ onImport }: ResumeImportProps) => {
         <div className="space-y-3">
           <Loader2 className="w-12 h-12 text-primary mx-auto animate-spin" />
           <p className="text-foreground font-medium">Processing {fileName}...</p>
-          <p className="text-sm text-muted-foreground">Extracting and parsing your resume</p>
+          <p className="text-sm text-muted-foreground">Extracting, parsing, and analyzing ATS compatibility...</p>
         </div>
       ) : (
         <>
@@ -179,6 +237,12 @@ export const ResumeImport = ({ onImport }: ResumeImportProps) => {
           <p className="text-xs text-muted-foreground mt-4">
             Supports PDF, DOCX, and TXT files (max 5MB)
           </p>
+          <div className="mt-4 pt-4 border-t border-border">
+            <div className="flex items-center justify-center gap-2 text-sm text-primary">
+              <Target className="w-4 h-4" />
+              <span>Automatic ATS score analysis on upload</span>
+            </div>
+          </div>
         </>
       )}
     </div>
