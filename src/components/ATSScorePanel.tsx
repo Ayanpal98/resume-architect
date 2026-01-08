@@ -7,14 +7,20 @@ import {
   ChevronUp,
   Target,
   Lightbulb,
-  TrendingUp
+  TrendingUp,
+  BarChart3,
+  FileText,
+  Zap
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { 
   ATSCheckResult, 
   ATSCategory,
   getScoreColor,
-  getScoreBgColor 
+  getScoreBgColor,
+  getScoreLabel
 } from "@/lib/atsChecker";
 import {
   Collapsible,
@@ -51,9 +57,16 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
       case "excellent": return "Excellent - ATS Ready!";
       case "good": return "Good - Minor improvements needed";
       case "fair": return "Fair - Some work required";
-      case "poor": return "Poor - Significant improvements needed";
+      case "poor": return "Needs significant improvements";
     }
   };
+
+  const getCategoryPercentage = (category: ATSCategory) => {
+    return Math.round((category.score / category.maxScore) * 100);
+  };
+
+  // Sort categories by weight for display priority
+  const sortedCategories = [...result.categories].sort((a, b) => b.weight - a.weight);
 
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
@@ -90,15 +103,47 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
             </div>
           </div>
         </div>
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-3 gap-4 mt-6 pt-4 border-t border-white/20">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <BarChart3 className="w-4 h-4 text-white/70" />
+            </div>
+            <div className="text-xl font-bold">{result.keywordDensity}%</div>
+            <div className="text-xs text-white/70">Keyword Density</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <FileText className="w-4 h-4 text-white/70" />
+            </div>
+            <div className="text-xl font-bold">{result.readabilityScore}</div>
+            <div className="text-xs text-white/70">Readability</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Zap className="w-4 h-4 text-white/70" />
+            </div>
+            <div className="text-xl font-bold">
+              {result.categories.filter(c => c.passed).length}/{result.categories.length}
+            </div>
+            <div className="text-xs text-white/70">Checks Passed</div>
+          </div>
+        </div>
       </div>
 
       {/* Category breakdown */}
       <div className="p-4 space-y-2">
-        <h4 className="text-sm font-medium text-muted-foreground px-2 mb-3">
-          Score Breakdown
-        </h4>
+        <div className="flex items-center justify-between px-2 mb-3">
+          <h4 className="text-sm font-medium text-muted-foreground">
+            Score Breakdown (by importance)
+          </h4>
+          <Badge variant="outline" className="text-xs">
+            Weighted scoring
+          </Badge>
+        </div>
         
-        {result.categories.map((category) => (
+        {sortedCategories.map((category) => (
           <Collapsible 
             key={category.name}
             open={expandedCategories.includes(category.name)}
@@ -107,16 +152,31 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
               onClick={() => toggleCategory(category.name)}
               className="w-full"
             >
-              <div className="flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer">
+              <div className={`flex items-center justify-between p-3 rounded-xl hover:bg-muted/50 transition-colors cursor-pointer ${
+                !category.passed ? 'bg-destructive/5' : ''
+              }`}>
                 <div className="flex items-center gap-3">
                   {getStatusIcon(category)}
-                  <span className="font-medium text-foreground">{category.name}</span>
+                  <div className="text-left">
+                    <span className="font-medium text-foreground">{category.name}</span>
+                    {category.weight > 1.2 && (
+                      <Badge variant="secondary" className="ml-2 text-[10px] py-0 px-1">
+                        High Priority
+                      </Badge>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className={`text-sm font-medium ${getScoreColor(
-                    (category.score / category.maxScore) * 100
+                  <div className="w-20 hidden sm:block">
+                    <Progress 
+                      value={getCategoryPercentage(category)} 
+                      className="h-1.5"
+                    />
+                  </div>
+                  <span className={`text-sm font-medium min-w-[3rem] text-right ${getScoreColor(
+                    getCategoryPercentage(category)
                   )}`}>
-                    {category.score}/{category.maxScore}
+                    {getCategoryPercentage(category)}%
                   </span>
                   {expandedCategories.includes(category.name) ? (
                     <ChevronUp className="w-4 h-4 text-muted-foreground" />
@@ -130,6 +190,10 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
             <CollapsibleContent>
               <div className="px-3 pb-3 pt-1">
                 <div className="bg-muted/50 rounded-lg p-3 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 pb-2 border-b border-border">
+                    <span>Score: {category.score}/{category.maxScore} points</span>
+                    <span>Weight: {category.weight}x</span>
+                  </div>
                   {category.issues.length > 0 ? (
                     category.issues.map((issue, idx) => (
                       <div key={idx} className="flex items-start gap-2 text-sm">
@@ -155,36 +219,49 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         <div className="border-t border-border p-4">
           <div className="flex items-center gap-2 mb-3">
             <Lightbulb className="w-5 h-5 text-primary" />
-            <h4 className="font-medium text-foreground">Top Recommendations</h4>
+            <h4 className="font-medium text-foreground">Priority Recommendations</h4>
+            <Badge variant="secondary" className="text-xs">
+              By impact
+            </Badge>
           </div>
           
           <div className="space-y-2">
             {(showAllRecommendations 
               ? result.recommendations 
-              : result.recommendations.slice(0, 3)
+              : result.recommendations.slice(0, 4)
             ).map((rec, idx) => (
               <div 
                 key={idx} 
-                className="flex items-start gap-2 p-2 bg-primary/5 rounded-lg"
+                className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg"
               >
-                <TrendingUp className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <span className="text-xs font-medium text-primary">{idx + 1}</span>
+                </div>
                 <span className="text-sm text-foreground">{rec}</span>
               </div>
             ))}
           </div>
           
-          {result.recommendations.length > 3 && (
+          {result.recommendations.length > 4 && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setShowAllRecommendations(!showAllRecommendations)}
               className="w-full mt-2 text-primary"
             >
-              {showAllRecommendations ? "Show Less" : `Show ${result.recommendations.length - 3} More`}
+              {showAllRecommendations ? "Show Less" : `Show ${result.recommendations.length - 4} More`}
             </Button>
           )}
         </div>
       )}
+
+      {/* Industry Standards Note */}
+      <div className="border-t border-border p-4 bg-muted/30">
+        <p className="text-xs text-muted-foreground text-center">
+          Scoring based on industry-standard ATS criteria including keyword optimization, 
+          action verbs, quantifiable achievements, and formatting best practices.
+        </p>
+      </div>
     </div>
   );
 };
