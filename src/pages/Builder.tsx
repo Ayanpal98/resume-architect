@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,7 +21,6 @@ import {
   Layout,
   Target
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
 import { TemplateSelector } from "@/components/TemplateSelector";
@@ -74,14 +74,28 @@ const initialResumeData: ResumeData = {
 };
 
 const Builder = () => {
-  const [resumeData, setResumeData] = useState<ResumeData>(initialResumeData);
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const incomingState = location.state as { resumeData?: ResumeData; atsResult?: ATSCheckResult } | null;
+
+  const [resumeData, setResumeData] = useState<ResumeData>(incomingState?.resumeData || initialResumeData);
   const [activeSection, setActiveSection] = useState("personal");
   const [newSkill, setNewSkill] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [jobDescription, setJobDescription] = useState("");
-  const [showImport, setShowImport] = useState(false);
+  const [showImport, setShowImport] = useState(searchParams.get("upload") === "true");
   const [showTemplates, setShowTemplates] = useState(false);
   const [showATSDetails, setShowATSDetails] = useState(false);
+
+  // Handle incoming state from ATS analysis page
+  useEffect(() => {
+    if (incomingState?.resumeData) {
+      setResumeData(incomingState.resumeData);
+    }
+    if (incomingState?.atsResult) {
+      setShowATSDetails(true);
+    }
+  }, []);
 
   // Calculate ATS score using the comprehensive checker
   const atsResult = checkATSCompatibility(resumeData);
