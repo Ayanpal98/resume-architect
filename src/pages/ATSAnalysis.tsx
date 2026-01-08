@@ -21,7 +21,7 @@ import {
   TrendingUp,
   AlertCircle,
 } from "lucide-react";
-import { ATSCheckResult, checkATSCompatibility, getScoreColor, getScoreBgColor } from "@/lib/atsChecker";
+import { ATSCheckResult, checkATSCompatibility, getScoreColor, getScoreBgColor, getScoreLabel } from "@/lib/atsChecker";
 import { ResumeData } from "@/lib/pdfGenerator";
 import {
   Collapsible,
