@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { resumeText, jobDescription } = await req.json();
+    const { resumeText, jobDescription, jobTitle, requiredExperience, requiredEducation } = await req.json();
 
     if (!resumeText || !jobDescription) {
       return new Response(
@@ -26,54 +26,122 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert HR recruiter and ATS (Applicant Tracking System) analyst with deep expertise in candidate evaluation. Your task is to analyze a candidate's resume against a job description using industry-standard hiring practices.
+    const systemPrompt = `You are an expert HR recruiter and ATS (Applicant Tracking System) analyst with 15+ years of experience in talent acquisition. Your task is to analyze a candidate's resume against a job description using industry-standard hiring practices aligned with SHRM (Society for Human Resource Management) and EEOC guidelines.
 
-Evaluate the candidate across these weighted dimensions:
-1. Skills Match (40%): Technical and soft skills alignment
-2. Experience Match (30%): Years and relevance of experience
-3. Education Match (15%): Degree requirements and certifications
-4. Keywords & ATS Compatibility (15%): Keyword density and formatting
+## Evaluation Framework (Industry Standard Weighted Scoring)
 
-Provide a comprehensive analysis including:
-- Exact skill matches and gaps
-- Experience level assessment
-- Key strengths that make the candidate stand out
-- Potential concerns or red flags
-- Overall recommendation
+Evaluate candidates across these weighted dimensions:
+
+### 1. Technical Skills Match (30%)
+- Hard skills alignment with job requirements
+- Technical proficiency levels (beginner/intermediate/expert)
+- Tool and technology stack compatibility
+- Industry-specific certifications
+
+### 2. Experience Relevance (25%)
+- Years of relevant experience vs. requirements
+- Role progression and career trajectory
+- Industry experience alignment
+- Project complexity and scope
+
+### 3. Education & Certifications (15%)
+- Degree level vs. requirements
+- Field of study relevance
+- Professional certifications
+- Continuing education
+
+### 4. Soft Skills & Culture Fit (15%)
+- Communication indicators in resume
+- Leadership and teamwork evidence
+- Problem-solving examples
+- Adaptability signals
+
+### 5. ATS Optimization (10%)
+- Keyword density and placement
+- Resume formatting quality
+- Action verb usage
+- Quantifiable achievements
+
+### 6. Red Flags Analysis (5% penalty factor)
+- Employment gaps (unexplained)
+- Job hopping patterns
+- Overqualification concerns
+- Inconsistencies
+
+## Output Requirements
 
 Return your analysis as a JSON object with this exact structure:
 {
-  "name": "Candidate's full name from resume",
-  "email": "Email address from resume",
-  "phone": "Phone number from resume",
+  "name": "Candidate's full name",
+  "email": "Email address",
+  "phone": "Phone number",
+  "location": "City, State/Country",
+  "currentRole": "Current or most recent job title",
+  "totalExperience": "X years",
   "overallScore": 0-100,
-  "skillsMatch": 0-100,
-  "experienceMatch": 0-100,
-  "educationMatch": 0-100,
+  "technicalSkillsScore": 0-100,
+  "experienceScore": 0-100,
+  "educationScore": 0-100,
+  "softSkillsScore": 0-100,
+  "atsScore": 0-100,
   "matchedSkills": ["skill1", "skill2"],
   "missingSkills": ["skill1", "skill2"],
-  "experience": "Brief summary of relevant experience",
-  "education": "Highest relevant education",
-  "strengths": ["strength1", "strength2", "strength3"],
-  "concerns": ["concern1", "concern2"],
-  "recommendation": "highly_recommended" | "recommended" | "consider" | "not_recommended"
+  "partialSkills": ["skill with partial match"],
+  "experienceSummary": "Brief summary of relevant experience",
+  "educationDetails": {
+    "degree": "Highest degree",
+    "field": "Field of study",
+    "institution": "University/College",
+    "certifications": ["cert1", "cert2"]
+  },
+  "strengths": [
+    {"point": "Strength description", "evidence": "Supporting evidence from resume"}
+  ],
+  "concerns": [
+    {"point": "Concern description", "severity": "low|medium|high", "mitigation": "Possible mitigation"}
+  ],
+  "keyAchievements": ["Quantified achievement 1", "Achievement 2"],
+  "interviewQuestions": ["Suggested question 1", "Question 2", "Question 3"],
+  "salaryRange": "Estimated market range based on experience",
+  "recommendation": "highly_recommended|recommended|consider|not_recommended",
+  "recommendationReason": "Brief explanation of the recommendation",
+  "fitScore": {
+    "technical": 0-100,
+    "cultural": 0-100,
+    "growth": 0-100
+  },
+  "competitiveAnalysis": {
+    "percentile": "Top X% of candidates typically seen for this role",
+    "standoutFactors": ["Factor 1", "Factor 2"],
+    "improvementAreas": ["Area 1", "Area 2"]
+  }
 }
 
-Scoring Guidelines:
-- 85-100: Highly Recommended - Exceptional match, exceeds requirements
-- 70-84: Recommended - Strong match, meets most requirements
-- 50-69: Consider - Partial match, may need training
-- 0-49: Not Recommended - Significant gaps in requirements`;
+## Scoring Guidelines
+- 90-100: Exceptional - Exceeds all requirements, immediate hire potential
+- 80-89: Highly Recommended - Strong match, proceed to final rounds
+- 70-79: Recommended - Good match, worth interviewing
+- 60-69: Consider - Partial match, may need development
+- 50-59: Weak - Significant gaps, consider only if talent pool is limited
+- 0-49: Not Recommended - Does not meet minimum requirements
 
-    const userPrompt = `Analyze this candidate's resume against the job description:
+Be objective, fair, and thorough. Focus on job-relevant qualifications only.`;
+
+    const userPrompt = `Analyze this candidate's resume against the job requirements:
+
+${jobTitle ? `JOB TITLE: ${jobTitle}` : ''}
+${requiredExperience ? `REQUIRED EXPERIENCE: ${requiredExperience}` : ''}
+${requiredEducation ? `REQUIRED EDUCATION: ${requiredEducation}` : ''}
 
 JOB DESCRIPTION:
 ${jobDescription}
 
-RESUME:
+CANDIDATE RESUME:
 ${resumeText}
 
-Provide your analysis as a JSON object following the specified structure.`;
+Provide a comprehensive analysis following the JSON structure specified. Be thorough but fair in your evaluation.`;
+
+    console.log("Sending request to AI service for candidate analysis...");
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -101,6 +169,13 @@ Provide your analysis as a JSON object following the specified structure.`;
         );
       }
       
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI credits exhausted. Please add credits to continue." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      
       throw new Error(`AI service error: ${response.status}`);
     }
 
@@ -111,6 +186,8 @@ Provide your analysis as a JSON object following the specified structure.`;
       throw new Error("No response from AI service");
     }
 
+    console.log("Successfully received AI response");
+
     // Parse the JSON response
     let analysis;
     try {
@@ -118,24 +195,69 @@ Provide your analysis as a JSON object following the specified structure.`;
       const jsonMatch = content.match(/```(?:json)?\s*([\s\S]*?)\s*```/) || [null, content];
       const jsonString = jsonMatch[1] || content;
       analysis = JSON.parse(jsonString.trim());
+      
+      // Ensure all required fields exist with defaults
+      analysis = {
+        name: analysis.name || "Unknown",
+        email: analysis.email || "",
+        phone: analysis.phone || "",
+        location: analysis.location || "",
+        currentRole: analysis.currentRole || "",
+        totalExperience: analysis.totalExperience || "N/A",
+        overallScore: analysis.overallScore ?? 50,
+        technicalSkillsScore: analysis.technicalSkillsScore ?? analysis.skillsMatch ?? 50,
+        experienceScore: analysis.experienceScore ?? analysis.experienceMatch ?? 50,
+        educationScore: analysis.educationScore ?? analysis.educationMatch ?? 50,
+        softSkillsScore: analysis.softSkillsScore ?? 50,
+        atsScore: analysis.atsScore ?? 50,
+        matchedSkills: analysis.matchedSkills || [],
+        missingSkills: analysis.missingSkills || [],
+        partialSkills: analysis.partialSkills || [],
+        experienceSummary: analysis.experienceSummary || analysis.experience || "",
+        educationDetails: analysis.educationDetails || { degree: "", field: "", institution: "", certifications: [] },
+        strengths: Array.isArray(analysis.strengths) 
+          ? analysis.strengths.map((s: any) => typeof s === 'string' ? { point: s, evidence: "" } : s)
+          : [],
+        concerns: Array.isArray(analysis.concerns)
+          ? analysis.concerns.map((c: any) => typeof c === 'string' ? { point: c, severity: "medium", mitigation: "" } : c)
+          : [],
+        keyAchievements: analysis.keyAchievements || [],
+        interviewQuestions: analysis.interviewQuestions || [],
+        salaryRange: analysis.salaryRange || "Not estimated",
+        recommendation: analysis.recommendation || "consider",
+        recommendationReason: analysis.recommendationReason || "",
+        fitScore: analysis.fitScore || { technical: 50, cultural: 50, growth: 50 },
+        competitiveAnalysis: analysis.competitiveAnalysis || { percentile: "N/A", standoutFactors: [], improvementAreas: [] },
+      };
     } catch (parseError) {
       console.error("Failed to parse AI response:", content);
-      // Return a default structure if parsing fails
       analysis = {
         name: "Unknown",
         email: "",
         phone: "",
+        location: "",
+        currentRole: "",
+        totalExperience: "N/A",
         overallScore: 50,
-        skillsMatch: 50,
-        experienceMatch: 50,
-        educationMatch: 50,
+        technicalSkillsScore: 50,
+        experienceScore: 50,
+        educationScore: 50,
+        softSkillsScore: 50,
+        atsScore: 50,
         matchedSkills: [],
         missingSkills: [],
-        experience: "Unable to parse experience",
-        education: "Unable to parse education",
-        strengths: ["Resume provided for review"],
-        concerns: ["Unable to fully analyze - please review manually"],
+        partialSkills: [],
+        experienceSummary: "Unable to parse experience",
+        educationDetails: { degree: "", field: "", institution: "", certifications: [] },
+        strengths: [{ point: "Resume provided for review", evidence: "" }],
+        concerns: [{ point: "Unable to fully analyze - please review manually", severity: "medium", mitigation: "" }],
+        keyAchievements: [],
+        interviewQuestions: [],
+        salaryRange: "Not estimated",
         recommendation: "consider",
+        recommendationReason: "Manual review recommended due to parsing issues",
+        fitScore: { technical: 50, cultural: 50, growth: 50 },
+        competitiveAnalysis: { percentile: "N/A", standoutFactors: [], improvementAreas: [] },
       };
     }
 
