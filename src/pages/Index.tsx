@@ -20,8 +20,10 @@ const Index = () => {
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
           </div>
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="sm">Sign In</Button>
-            <Link to="/builder">
+            <Link to="/welcome">
+              <Button variant="ghost" size="sm">Sign In</Button>
+            </Link>
+            <Link to="/welcome">
               <Button variant="hero" size="sm">Get Started</Button>
             </Link>
           </div>
@@ -44,13 +46,13 @@ const Index = () => {
                 Create ATS-friendly resumes that get past automated screening systems and land you more interviews. Start from scratch or upload your existing resume.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Link to="/builder">
+                <Link to="/welcome">
                   <Button variant="hero" size="xl" className="w-full sm:w-auto">
                     Create Your Resume
                     <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
-                <Link to="/builder?upload=true">
+                <Link to="/welcome">
                   <Button variant="outline-hero" size="xl" className="w-full sm:w-auto">
                     <Upload className="w-5 h-5" />
                     Upload Existing Resume
@@ -198,7 +200,7 @@ const Index = () => {
             ))}
           </div>
           <div className="text-center mt-12">
-            <Link to="/builder">
+            <Link to="/welcome">
               <Button variant="hero" size="lg">
                 Start Building Now
                 <ArrowRight className="w-5 h-5" />
@@ -220,7 +222,7 @@ const Index = () => {
               <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
                 Join thousands of job seekers who have successfully passed ATS screening with our resume builder.
               </p>
-              <Link to="/builder">
+              <Link to="/welcome">
                 <Button 
                   size="xl" 
                   className="bg-background text-primary hover:bg-background/90 shadow-xl"
