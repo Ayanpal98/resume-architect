@@ -100,6 +100,15 @@ const Builder = () => {
   // Calculate ATS score using the comprehensive checker
   const atsResult = checkATSCompatibility(resumeData);
   const atsScore = atsResult.overallScore;
+  
+  // Check if resume has meaningful content to evaluate
+  const hasContent = resumeData.personalInfo.fullName.trim() || 
+                     resumeData.personalInfo.email.trim() || 
+                     resumeData.experience.length > 0 || 
+                     resumeData.education.length > 0 || 
+                     resumeData.skills.length > 0 ||
+                     resumeData.summary.trim();
+  const isEvaluated = Boolean(hasContent);
 
   const updatePersonalInfo = (field: string, value: string) => {
     setResumeData((prev) => ({
@@ -305,35 +314,62 @@ const Builder = () => {
             {/* Sidebar */}
             <div className="lg:col-span-3">
               <div className="sticky top-24 space-y-6">
-                {/* ATS Score */}
+                {/* ATS Readiness */}
                 <Dialog open={showATSDetails} onOpenChange={setShowATSDetails}>
                   <DialogTrigger asChild>
-                    <button className="w-full bg-card rounded-2xl border border-border p-6 shadow-sm hover:border-primary/50 transition-colors text-left">
+                    <button 
+                      className="w-full bg-card rounded-2xl border border-border p-6 shadow-sm hover:border-primary/50 transition-colors text-left"
+                      disabled={!isEvaluated}
+                    >
                       <div className="flex items-center gap-3 mb-4">
-                        <div 
-                          className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white ${getScoreBgColor(atsScore)}`}
-                        >
-                          {atsScore}
-                        </div>
+                        {isEvaluated ? (
+                          <div 
+                            className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white ${getScoreBgColor(atsScore)}`}
+                          >
+                            {atsScore}%
+                          </div>
+                        ) : (
+                          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-muted border-2 border-dashed border-muted-foreground/30">
+                            <Target className="w-6 h-6 text-muted-foreground/50" />
+                          </div>
+                        )}
                         <div>
-                          <div className="font-medium text-foreground">ATS Score</div>
+                          <div className="font-medium text-foreground">ATS Readiness</div>
                           <div className="text-sm text-muted-foreground">
-                            {atsResult.passStatus === "excellent" ? "Excellent" : 
-                             atsResult.passStatus === "good" ? "Good" : 
-                             atsResult.passStatus === "fair" ? "Fair" : "Needs work"}
+                            {isEvaluated ? (
+                              atsResult.passStatus === "excellent" ? "Excellent" : 
+                              atsResult.passStatus === "good" ? "Good" : 
+                              atsResult.passStatus === "fair" ? "Fair" : "Needs work"
+                            ) : (
+                              "Not Evaluated"
+                            )}
                           </div>
                         </div>
                       </div>
-                      <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
-                        <div 
-                          className={`h-full transition-all duration-500 ${getScoreBgColor(atsScore)}`}
-                          style={{ width: `${atsScore}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-primary mt-3 flex items-center gap-1">
-                        <Target className="w-3 h-3" />
-                        Click for detailed analysis
-                      </p>
+                      {isEvaluated ? (
+                        <>
+                          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full transition-all duration-500 ${getScoreBgColor(atsScore)}`}
+                              style={{ width: `${atsScore}%` }}
+                            />
+                          </div>
+                          <p className="text-xs text-primary mt-3 flex items-center gap-1">
+                            <Target className="w-3 h-3" />
+                            Click for detailed analysis
+                          </p>
+                        </>
+                      ) : (
+                        <>
+                          <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                            <div className="h-full bg-muted-foreground/20" style={{ width: '0%' }} />
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
+                            <AlertCircle className="w-3 h-3" />
+                            Add content to evaluate ATS readiness
+                          </p>
+                        </>
+                      )}
                     </button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto p-0">
