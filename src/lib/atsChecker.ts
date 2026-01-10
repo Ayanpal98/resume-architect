@@ -1005,23 +1005,32 @@ function prioritizeRecommendations(recommendations: string[], categories: ATSCat
   });
 }
 
+// Updated scales: Low 35-49, Moderate 50-69, High 70-85, Excellent 85+
+// Use amber/blue for low scores, red only for critical blockers
 export const getScoreColor = (score: number): string => {
-  if (score >= 80) return "text-accent";
-  if (score >= 65) return "text-yellow-500";
-  if (score >= 50) return "text-orange-500";
-  return "text-destructive";
+  if (score >= 85) return "text-accent";
+  if (score >= 70) return "text-emerald-500";
+  if (score >= 50) return "text-amber-500";
+  return "text-blue-500";
 };
 
 export const getScoreBgColor = (score: number): string => {
-  if (score >= 80) return "bg-accent";
-  if (score >= 65) return "bg-yellow-500";
-  if (score >= 50) return "bg-orange-500";
-  return "bg-destructive";
+  if (score >= 85) return "bg-accent";
+  if (score >= 70) return "bg-emerald-500";
+  if (score >= 50) return "bg-amber-500";
+  return "bg-blue-500";
 };
 
 export const getScoreLabel = (score: number): string => {
-  if (score >= 80) return "Excellent";
-  if (score >= 65) return "Good";
-  if (score >= 50) return "Fair";
-  return "Needs Work";
+  if (score >= 85) return "Excellent";
+  if (score >= 70) return "High";
+  if (score >= 50) return "Moderate";
+  return "Low";
+};
+
+export const getPassProbabilityLabel = (score: number): string => {
+  if (score >= 85) return "Excellent - Very likely to pass ATS";
+  if (score >= 70) return "High - Likely to pass ATS";
+  if (score >= 50) return "Moderate - May pass with improvements";
+  return "Low - Needs optimization";
 };
