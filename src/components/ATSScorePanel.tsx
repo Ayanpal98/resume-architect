@@ -12,11 +12,17 @@ import {
   Zap,
   Check,
   X,
-  AlertCircle
+  AlertCircle,
+  Clock,
+  TrendingUp,
+  Shield,
+  Sparkles,
+  User
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   ATSCheckResult, 
   ATSCategory,
@@ -25,6 +31,72 @@ import {
   getScoreLabel,
   getPassProbabilityLabel
 } from "@/lib/atsChecker";
+
+// Priority recommendation structure
+interface PriorityRecommendation {
+  text: string;
+  impact: 'high' | 'medium' | 'low';
+  fixTime: '2 min' | '5 min' | '10 min';
+  priority: 'must-fix' | 'strongly-recommend' | 'optional';
+}
+
+// Categorize recommendations by priority
+const categorizeRecommendations = (recommendations: string[], categories: ATSCategory[]): PriorityRecommendation[] => {
+  const prioritized: PriorityRecommendation[] = [];
+  
+  // Get critical issues from categories (ATS Blockers)
+  categories.forEach(cat => {
+    if (!cat.passed && cat.weight >= 1.2) {
+      cat.issues.forEach(issue => {
+        prioritized.push({
+          text: issue,
+          impact: 'high',
+          fixTime: '5 min',
+          priority: 'must-fix'
+        });
+      });
+    }
+  });
+  
+  // Categorize recommendations
+  recommendations.forEach((rec, idx) => {
+    const lowerRec = rec.toLowerCase();
+    
+    // Must fix (ATS Blockers) - critical formatting/contact issues
+    if (lowerRec.includes('contact') || lowerRec.includes('email') || lowerRec.includes('phone') || 
+        lowerRec.includes('missing') || lowerRec.includes('format') || lowerRec.includes('parse')) {
+      if (!prioritized.some(p => p.text === rec)) {
+        prioritized.push({
+          text: rec,
+          impact: 'high',
+          fixTime: lowerRec.includes('contact') || lowerRec.includes('email') ? '2 min' : '5 min',
+          priority: 'must-fix'
+        });
+      }
+    }
+    // Strongly recommend - skills, keywords, structure
+    else if (lowerRec.includes('skill') || lowerRec.includes('keyword') || lowerRec.includes('action') ||
+             lowerRec.includes('experience') || lowerRec.includes('quantif')) {
+      prioritized.push({
+        text: rec,
+        impact: 'medium',
+        fixTime: '5 min',
+        priority: 'strongly-recommend'
+      });
+    }
+    // Optional improvements - nice to have
+    else {
+      prioritized.push({
+        text: rec,
+        impact: 'low',
+        fixTime: '10 min',
+        priority: 'optional'
+      });
+    }
+  });
+  
+  return prioritized;
+};
 import {
   Collapsible,
   CollapsibleContent,
@@ -138,14 +210,33 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
   // Sort categories by weight for display priority
   const sortedCategories = [...result.categories].sort((a, b) => b.weight - a.weight);
 
+  const prioritizedRecs = categorizeRecommendations(result.recommendations, result.categories);
+  const mustFixRecs = prioritizedRecs.filter(r => r.priority === 'must-fix');
+  const stronglyRecommendRecs = prioritizedRecs.filter(r => r.priority === 'strongly-recommend');
+  const optionalRecs = prioritizedRecs.filter(r => r.priority === 'optional');
+
+  const getImpactBadge = (impact: 'high' | 'medium' | 'low') => {
+    switch (impact) {
+      case 'high':
+        return <Badge className="bg-accent/20 text-accent border-accent/30 text-[10px]">High Impact</Badge>;
+      case 'medium':
+        return <Badge className="bg-amber-500/20 text-amber-600 border-amber-500/30 text-[10px]">Medium Impact</Badge>;
+      case 'low':
+        return <Badge className="bg-blue-500/20 text-blue-600 border-blue-500/30 text-[10px]">Low Impact</Badge>;
+    }
+  };
+
+  // Use 35 as default display score for low readiness
+  const displayScore = result.overallScore < 35 ? 35 : result.overallScore;
+
   return (
     <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
       {/* Header with score */}
-      <div className={`${getScoreBgColor(result.overallScore)} p-6 text-white`}>
+      <div className={`${getScoreBgColor(displayScore)} p-6 text-white`}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Target className="w-6 h-6" />
-            <h3 className="text-lg font-display font-bold">ATS Pass Probability</h3>
+            <h3 className="text-lg font-display font-bold">ATS Readiness Percentage</h3>
           </div>
           {onDismiss && (
             <Button 
@@ -160,19 +251,32 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         </div>
         
         <div className="flex items-center gap-6">
-          <div className="text-5xl font-bold">{result.overallScore}%</div>
+          <div className="text-5xl font-bold">{displayScore}%</div>
           <div className="flex-1">
             <div className="text-white/90 font-medium mb-2">
-              {getPassProbabilityLabel(result.overallScore)}
+              {getPassProbabilityLabel(displayScore)}
             </div>
             <div className="w-full h-2 bg-white/30 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-white transition-all duration-700"
-                style={{ width: `${result.overallScore}%` }}
+                style={{ width: `${displayScore}%` }}
               />
             </div>
           </div>
         </div>
+
+        {/* Basic Details Alert */}
+        {displayScore < 50 && (
+          <div className="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
+            <div className="flex items-start gap-2">
+              <User className="w-5 h-5 text-white/90 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium text-white">Add basic details to instantly increase your score</p>
+                <p className="text-xs text-white/70 mt-1">Complete your contact info, add work experience, and include relevant skills</p>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Quick Stats - Updated labels */}
         <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-white/20">
@@ -180,8 +284,8 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
             <div className="flex items-center justify-center gap-1 mb-1">
               <BarChart3 className="w-4 h-4 text-white/70" />
             </div>
-            <div className="text-xl font-bold">{getScoreLabel(result.overallScore)}</div>
-            <div className="text-xs text-white/70">Pass Probability Level</div>
+            <div className="text-xl font-bold">{getScoreLabel(displayScore)}</div>
+            <div className="text-xs text-white/70">Readiness Level</div>
           </div>
           <div className="text-center">
             <div className="flex items-center justify-center gap-1 mb-1">
@@ -397,44 +501,153 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         ))}
       </div>
 
-      {/* Recommendations */}
-      {result.recommendations.length > 0 && (
+      {/* Priority Recommendations with Tabs */}
+      {prioritizedRecs.length > 0 && (
         <div className="border-t border-border p-4">
-          <div className="flex items-center gap-2 mb-3">
+          <div className="flex items-center gap-2 mb-4">
             <Lightbulb className="w-5 h-5 text-primary" />
             <h4 className="font-medium text-foreground">Priority Recommendations</h4>
-            <Badge variant="secondary" className="text-xs">
-              By impact
-            </Badge>
           </div>
           
-          <div className="space-y-2">
-            {(showAllRecommendations 
-              ? result.recommendations 
-              : result.recommendations.slice(0, 4)
-            ).map((rec, idx) => (
-              <div 
-                key={idx} 
-                className="flex items-start gap-3 p-3 bg-primary/5 rounded-lg"
-              >
-                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <span className="text-xs font-medium text-primary">{idx + 1}</span>
+          <Tabs defaultValue="must-fix" className="w-full">
+            <TabsList className="grid w-full grid-cols-3 mb-4">
+              <TabsTrigger value="must-fix" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-red-500/10 data-[state=active]:text-red-600">
+                <Shield className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Must Fix</span>
+                <Badge variant="secondary" className="ml-1 text-[10px] h-4 px-1.5">{mustFixRecs.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="strongly-recommend" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-600">
+                <TrendingUp className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Strongly Recommend</span>
+                <Badge variant="secondary" className="ml-1 text-[10px] h-4 px-1.5">{stronglyRecommendRecs.length}</Badge>
+              </TabsTrigger>
+              <TabsTrigger value="optional" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-600">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Optional</span>
+                <Badge variant="secondary" className="ml-1 text-[10px] h-4 px-1.5">{optionalRecs.length}</Badge>
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="must-fix" className="space-y-2">
+              {mustFixRecs.length > 0 ? (
+                mustFixRecs.slice(0, showAllRecommendations ? undefined : 4).map((rec, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex items-start gap-3 p-3 bg-red-500/5 border border-red-500/20 rounded-lg"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                      <Shield className="w-3.5 h-3.5 text-red-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-foreground">{rec.text}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {getImpactBadge(rec.impact)}
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          <span>{rec.fixTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-accent" />
+                  <p className="text-sm">No critical blockers found!</p>
                 </div>
-                <span className="text-sm text-foreground">{rec}</span>
-              </div>
-            ))}
-          </div>
-          
-          {result.recommendations.length > 4 && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowAllRecommendations(!showAllRecommendations)}
-              className="w-full mt-2 text-primary"
-            >
-              {showAllRecommendations ? "Show Less" : `Show ${result.recommendations.length - 4} More`}
-            </Button>
-          )}
+              )}
+              {mustFixRecs.length > 4 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAllRecommendations(!showAllRecommendations)}
+                  className="w-full mt-2 text-red-600"
+                >
+                  {showAllRecommendations ? "Show Less" : `Show ${mustFixRecs.length - 4} More`}
+                </Button>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="strongly-recommend" className="space-y-2">
+              {stronglyRecommendRecs.length > 0 ? (
+                stronglyRecommendRecs.slice(0, showAllRecommendations ? undefined : 4).map((rec, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex items-start gap-3 p-3 bg-amber-500/5 border border-amber-500/20 rounded-lg"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-amber-500/10 flex items-center justify-center shrink-0">
+                      <TrendingUp className="w-3.5 h-3.5 text-amber-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-foreground">{rec.text}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {getImpactBadge(rec.impact)}
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          <span>{rec.fixTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-accent" />
+                  <p className="text-sm">All strongly recommended items complete!</p>
+                </div>
+              )}
+              {stronglyRecommendRecs.length > 4 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAllRecommendations(!showAllRecommendations)}
+                  className="w-full mt-2 text-amber-600"
+                >
+                  {showAllRecommendations ? "Show Less" : `Show ${stronglyRecommendRecs.length - 4} More`}
+                </Button>
+              )}
+            </TabsContent>
+            
+            <TabsContent value="optional" className="space-y-2">
+              {optionalRecs.length > 0 ? (
+                optionalRecs.slice(0, showAllRecommendations ? undefined : 4).map((rec, idx) => (
+                  <div 
+                    key={idx} 
+                    className="flex items-start gap-3 p-3 bg-blue-500/5 border border-blue-500/20 rounded-lg"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-foreground">{rec.text}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {getImpactBadge(rec.impact)}
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Clock className="w-3 h-3" />
+                          <span>{rec.fixTime}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-6 text-muted-foreground">
+                  <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-accent" />
+                  <p className="text-sm">No optional improvements at this time!</p>
+                </div>
+              )}
+              {optionalRecs.length > 4 && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowAllRecommendations(!showAllRecommendations)}
+                  className="w-full mt-2 text-blue-600"
+                >
+                  {showAllRecommendations ? "Show Less" : `Show ${optionalRecs.length - 4} More`}
+                </Button>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       )}
 
