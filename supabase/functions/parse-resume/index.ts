@@ -18,7 +18,31 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert resume parser. Extract structured information from the provided resume text. Return a valid JSON object with the following structure:
+    const systemPrompt = `You are an expert ATS (Applicant Tracking System) resume parser following industry standards. Your goal is to extract and structure resume data for maximum ATS compatibility.
+
+EXTRACTION RULES:
+1. CONTACT INFORMATION: Extract full name, email, phone (with country code if present), city/state/country, LinkedIn URL, portfolio/website, GitHub profile
+2. PROFESSIONAL SUMMARY: Capture the entire summary/objective section verbatim, preserving action verbs and quantifiable achievements
+3. WORK EXPERIENCE: For each role extract:
+   - Exact job title (standardize common variations)
+   - Company name (full legal name if possible)
+   - Location (City, State/Country)
+   - Start and end dates in YYYY-MM format
+   - Whether currently employed there
+   - Full description with all bullet points combined
+   - Extract quantifiable achievements (numbers, percentages, dollar amounts)
+   - Identify action verbs used
+4. EDUCATION: Extract degree type, field of study, institution name, location, graduation date, GPA if mentioned, honors/awards
+5. SKILLS: Categorize into:
+   - Technical/Hard skills (programming languages, tools, frameworks, certifications)
+   - Soft skills (leadership, communication, teamwork)
+   - Industry-specific keywords
+6. CERTIFICATIONS: Name, issuing organization, date obtained, expiration if applicable
+7. PROJECTS: Title, description, technologies used, outcomes
+8. LANGUAGES: Language and proficiency level
+9. ATS METADATA: Extract any keywords that match common ATS filters
+
+Return a valid JSON object with this EXACT structure:
 {
   "personalInfo": {
     "fullName": "",
@@ -26,7 +50,8 @@ serve(async (req) => {
     "phone": "",
     "location": "",
     "linkedin": "",
-    "portfolio": ""
+    "portfolio": "",
+    "github": ""
   },
   "summary": "",
   "experience": [
@@ -37,27 +62,71 @@ serve(async (req) => {
       "startDate": "YYYY-MM",
       "endDate": "YYYY-MM or empty if current",
       "current": false,
-      "description": ""
+      "description": "",
+      "achievements": ["quantifiable achievement 1", "achievement 2"],
+      "actionVerbs": ["led", "managed", "developed"]
     }
   ],
   "education": [
     {
       "degree": "",
+      "field": "",
       "school": "",
       "location": "",
       "graduationDate": "YYYY-MM",
-      "gpa": ""
+      "gpa": "",
+      "honors": ""
     }
   ],
-  "skills": ["skill1", "skill2"]
+  "skills": {
+    "technical": ["skill1", "skill2"],
+    "soft": ["skill1", "skill2"],
+    "industryKeywords": ["keyword1", "keyword2"]
+  },
+  "certifications": [
+    {
+      "name": "",
+      "issuer": "",
+      "date": "YYYY-MM",
+      "expiration": ""
+    }
+  ],
+  "projects": [
+    {
+      "title": "",
+      "description": "",
+      "technologies": ["tech1", "tech2"],
+      "outcomes": ""
+    }
+  ],
+  "languages": [
+    {
+      "language": "",
+      "proficiency": ""
+    }
+  ],
+  "atsKeywords": ["keyword1", "keyword2"],
+  "parsingConfidence": {
+    "overall": 0.0,
+    "sections": {
+      "contact": 0.0,
+      "experience": 0.0,
+      "education": 0.0,
+      "skills": 0.0
+    }
+  }
 }
 
-Important:
-- Extract ALL information you can find
-- For dates, convert to YYYY-MM format
-- If a field is not found, use an empty string or empty array
-- Parse bullet points in experience descriptions into a single paragraph
-- Return ONLY the JSON object, no markdown or explanation`;
+CRITICAL PARSING GUIDELINES:
+- Standardize date formats to YYYY-MM (e.g., "January 2020" → "2020-01", "2020" → "2020-01")
+- For "Present" or "Current", set endDate to empty string and current to true
+- Merge all skill variations (e.g., "JS", "JavaScript", "Javascript" → "JavaScript")
+- Extract ALL quantifiable metrics (%, $, numbers) as achievements
+- Identify common ATS action verbs: achieved, built, created, delivered, enhanced, facilitated, generated, helped, implemented, joined, kept, led, managed, negotiated, organized, produced, qualified, reduced, streamlined, trained, unified, validated, worked, executed, yielded, zeroed
+- Confidence scores should be 0.0-1.0 based on how complete each section is
+- If a section is not found, return empty string/array but never null
+- Parse bullet points into separate achievement entries
+- Return ONLY the JSON object, no markdown, no explanation, no code blocks`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -66,10 +135,10 @@ Important:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Parse this resume:\n\n${text}` },
+          { role: "user", content: `Parse this resume for ATS optimization:\n\n${text}` },
         ],
       }),
     });
@@ -98,9 +167,20 @@ Important:
     // Clean up the response - remove markdown code blocks if present
     content = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
     
-    const parsedResume = JSON.parse(content);
+    let parsedResume;
+    try {
+      parsedResume = JSON.parse(content);
+    } catch (parseError) {
+      console.error("JSON parse error:", parseError, "Content:", content);
+      throw new Error("Failed to parse AI response as JSON");
+    }
 
-    return new Response(JSON.stringify({ data: parsedResume }), {
+    // Normalize the parsed data for backward compatibility
+    const normalizedResume = normalizeResumeData(parsedResume);
+
+    console.log("Successfully parsed resume with confidence:", normalizedResume.parsingConfidence?.overall);
+
+    return new Response(JSON.stringify({ data: normalizedResume }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
@@ -114,3 +194,68 @@ Important:
     );
   }
 });
+
+// Normalize resume data for backward compatibility with existing components
+function normalizeResumeData(parsed: any): any {
+  // Handle skills - convert new format to array for backward compatibility
+  let skills: string[] = [];
+  if (parsed.skills) {
+    if (Array.isArray(parsed.skills)) {
+      skills = parsed.skills;
+    } else if (typeof parsed.skills === 'object') {
+      skills = [
+        ...(parsed.skills.technical || []),
+        ...(parsed.skills.soft || []),
+        ...(parsed.skills.industryKeywords || [])
+      ];
+    }
+  }
+
+  // Normalize education - ensure field compatibility
+  const education = (parsed.education || []).map((edu: any) => ({
+    degree: edu.degree || edu.field ? `${edu.degree || ''}${edu.field ? ' in ' + edu.field : ''}`.trim() : '',
+    school: edu.school || '',
+    location: edu.location || '',
+    graduationDate: edu.graduationDate || '',
+    gpa: edu.gpa || '',
+    honors: edu.honors || ''
+  }));
+
+  // Normalize experience - ensure all fields exist
+  const experience = (parsed.experience || []).map((exp: any) => ({
+    title: exp.title || '',
+    company: exp.company || '',
+    location: exp.location || '',
+    startDate: exp.startDate || '',
+    endDate: exp.endDate || '',
+    current: exp.current || false,
+    description: exp.description || '',
+    achievements: exp.achievements || [],
+    actionVerbs: exp.actionVerbs || []
+  }));
+
+  return {
+    personalInfo: {
+      fullName: parsed.personalInfo?.fullName || '',
+      email: parsed.personalInfo?.email || '',
+      phone: parsed.personalInfo?.phone || '',
+      location: parsed.personalInfo?.location || '',
+      linkedin: parsed.personalInfo?.linkedin || '',
+      portfolio: parsed.personalInfo?.portfolio || '',
+      github: parsed.personalInfo?.github || ''
+    },
+    summary: parsed.summary || '',
+    experience,
+    education,
+    skills,
+    skillsDetailed: parsed.skills || { technical: [], soft: [], industryKeywords: [] },
+    certifications: parsed.certifications || [],
+    projects: parsed.projects || [],
+    languages: parsed.languages || [],
+    atsKeywords: parsed.atsKeywords || [],
+    parsingConfidence: parsed.parsingConfidence || {
+      overall: 0.5,
+      sections: { contact: 0.5, experience: 0.5, education: 0.5, skills: 0.5 }
+    }
+  };
+}
