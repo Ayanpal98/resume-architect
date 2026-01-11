@@ -1029,8 +1029,8 @@ export const getScoreLabel = (score: number): string => {
 };
 
 export const getPassProbabilityLabel = (score: number): string => {
-  if (score >= 85) return "Excellent - Very likely to pass ATS";
-  if (score >= 70) return "High - Likely to pass ATS";
-  if (score >= 50) return "Moderate - May pass with improvements";
-  return "Low - Needs optimization";
+  if (score >= 85) return "Outstanding! You're interview-ready 🎯";
+  if (score >= 70) return "Great progress! Almost there ✨";
+  if (score >= 50) return "Good start! A few tweaks will help";
+  return "Let's build your success together 💪";
 };
