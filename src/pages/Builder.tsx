@@ -366,7 +366,7 @@ const Builder = () => {
                           </div>
                           <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1">
                             <AlertCircle className="w-3 h-3" />
-                            Add content to evaluate ATS readiness
+                            Start adding your details to see your score
                           </p>
                         </>
                       )}

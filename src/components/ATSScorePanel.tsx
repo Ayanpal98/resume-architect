@@ -236,7 +236,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Target className="w-6 h-6" />
-            <h3 className="text-lg font-display font-bold">ATS Readiness Percentage</h3>
+            <h3 className="text-lg font-display font-bold">Your ATS Readiness</h3>
           </div>
           {onDismiss && (
             <Button 
@@ -265,14 +265,14 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
           </div>
         </div>
 
-        {/* Basic Details Alert */}
+        {/* Encouraging Quick Win Alert */}
         {displayScore < 50 && (
           <div className="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
             <div className="flex items-start gap-2">
               <User className="w-5 h-5 text-white/90 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-white">Add basic details to instantly increase your score</p>
-                <p className="text-xs text-white/70 mt-1">Complete your contact info, add work experience, and include relevant skills</p>
+                <p className="text-sm font-medium text-white">Quick wins ahead! Let's boost your score 🚀</p>
+                <p className="text-xs text-white/70 mt-1">Adding your contact info, experience, and skills will make a big difference</p>
               </div>
             </div>
           </div>
@@ -303,7 +303,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-2 mb-3">
           <BarChart3 className="w-5 h-5 text-primary" />
-          <h4 className="font-medium text-foreground">Keyword Coverage Analysis</h4>
+          <h4 className="font-medium text-foreground">Skills & Keywords Overview</h4>
         </div>
         
         <div className="space-y-3">
@@ -325,7 +325,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Add more technical skills to improve matching</p>
+              <p className="text-xs text-muted-foreground">Add your technical skills to shine brighter ✨</p>
             )}
           </div>
 
@@ -347,15 +347,15 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-muted-foreground">Use more action verbs and industry keywords</p>
+              <p className="text-xs text-muted-foreground">Try adding action verbs like "led", "built", "achieved"</p>
             )}
           </div>
 
-          {/* Missing Critical Keywords */}
+          {/* Keywords to Consider */}
           <div className="bg-amber-500/10 rounded-lg p-3">
             <div className="flex items-center gap-2 mb-2">
               <AlertTriangle className="w-4 h-4 text-amber-500" />
-              <span className="text-sm font-medium text-foreground">Missing Critical Keywords</span>
+              <span className="text-sm font-medium text-foreground">Consider Adding</span>
               <Badge variant="secondary" className="text-xs ml-auto">
                 {keywordCoverage.missingCriticalKeywords.length}
               </Badge>
@@ -370,17 +370,17 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
                 ))}
               </div>
             ) : (
-              <p className="text-xs text-accent">Great! No critical keywords missing</p>
+              <p className="text-xs text-accent">Fantastic! Your keywords look complete 🎉</p>
             )}
           </div>
         </div>
       </div>
 
-      {/* Parsing & Structure Clarity - New Checklist Section */}
+      {/* Format & Structure Check */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-2 mb-3">
           <FileCheck className="w-5 h-5 text-primary" />
-          <h4 className="font-medium text-foreground">Parsing & Structure Clarity</h4>
+          <h4 className="font-medium text-foreground">Format & Structure Check</h4>
         </div>
         
         <div className="space-y-2">
@@ -392,7 +392,9 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
             ) : (
               <X className="w-4 h-4 text-amber-500" />
             )}
-            <span className="text-sm text-foreground">Bullet points detected</span>
+            <span className="text-sm text-foreground">
+              {parsingClarity.bulletPointsDetected ? 'Great use of bullet points!' : 'Try adding bullet points for clarity'}
+            </span>
           </div>
           
           <div className={`flex items-center gap-3 p-2 rounded-lg ${
@@ -403,7 +405,9 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
             ) : (
               <X className="w-4 h-4 text-amber-500" />
             )}
-            <span className="text-sm text-foreground">Standard section headings</span>
+            <span className="text-sm text-foreground">
+              {parsingClarity.standardSectionHeadings ? 'Clear section headings' : 'Consider standard section headings'}
+            </span>
           </div>
           
           <div className={`flex items-center gap-3 p-2 rounded-lg ${
@@ -414,7 +418,9 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
             ) : (
               <X className="w-4 h-4 text-amber-500" />
             )}
-            <span className="text-sm text-foreground">Consistent formatting</span>
+            <span className="text-sm text-foreground">
+              {parsingClarity.consistentFormatting ? "Nice, consistent formatting!" : "Let's make formatting more consistent"}
+            </span>
           </div>
         </div>
       </div>
@@ -423,10 +429,10 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
       <div className="p-4 space-y-2">
         <div className="flex items-center justify-between px-2 mb-3">
           <h4 className="text-sm font-medium text-muted-foreground">
-            Score Breakdown (by importance)
+            How you're doing in each area
           </h4>
           <Badge variant="outline" className="text-xs">
-            Weighted scoring
+            Detailed breakdown
           </Badge>
         </div>
         
@@ -491,7 +497,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
                   ) : (
                     <div className="flex items-center gap-2 text-sm">
                       <CheckCircle2 className="w-4 h-4 text-accent" />
-                      <span className="text-accent">All checks passed!</span>
+                      <span className="text-accent">Perfect! Nothing to improve here 🌟</span>
                     </div>
                   )}
                 </div>
@@ -501,29 +507,29 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         ))}
       </div>
 
-      {/* Priority Recommendations with Tabs */}
+      {/* Improvement Suggestions with Tabs */}
       {prioritizedRecs.length > 0 && (
         <div className="border-t border-border p-4">
           <div className="flex items-center gap-2 mb-4">
             <Lightbulb className="w-5 h-5 text-primary" />
-            <h4 className="font-medium text-foreground">Priority Recommendations</h4>
+            <h4 className="font-medium text-foreground">Your Personalized Action Plan</h4>
           </div>
           
           <Tabs defaultValue="must-fix" className="w-full">
             <TabsList className="grid w-full grid-cols-3 mb-4">
               <TabsTrigger value="must-fix" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-red-500/10 data-[state=active]:text-red-600">
                 <Shield className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Must Fix</span>
+                <span className="hidden sm:inline">Fix First</span>
                 <Badge variant="secondary" className="ml-1 text-[10px] h-4 px-1.5">{mustFixRecs.length}</Badge>
               </TabsTrigger>
               <TabsTrigger value="strongly-recommend" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-amber-500/10 data-[state=active]:text-amber-600">
                 <TrendingUp className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Strongly Recommend</span>
+                <span className="hidden sm:inline">High Impact</span>
                 <Badge variant="secondary" className="ml-1 text-[10px] h-4 px-1.5">{stronglyRecommendRecs.length}</Badge>
               </TabsTrigger>
               <TabsTrigger value="optional" className="text-xs flex items-center gap-1.5 data-[state=active]:bg-blue-500/10 data-[state=active]:text-blue-600">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Optional</span>
+                <span className="hidden sm:inline">Nice to Have</span>
                 <Badge variant="secondary" className="ml-1 text-[10px] h-4 px-1.5">{optionalRecs.length}</Badge>
               </TabsTrigger>
             </TabsList>
@@ -553,7 +559,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
               ) : (
                 <div className="text-center py-6 text-muted-foreground">
                   <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-accent" />
-                  <p className="text-sm">No critical blockers found!</p>
+                  <p className="text-sm">Awesome! No blockers to worry about 🎉</p>
                 </div>
               )}
               {mustFixRecs.length > 4 && (
@@ -593,7 +599,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
               ) : (
                 <div className="text-center py-6 text-muted-foreground">
                   <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-accent" />
-                  <p className="text-sm">All strongly recommended items complete!</p>
+                  <p className="text-sm">You've nailed the high-impact items! 💪</p>
                 </div>
               )}
               {stronglyRecommendRecs.length > 4 && (
@@ -633,7 +639,7 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
               ) : (
                 <div className="text-center py-6 text-muted-foreground">
                   <CheckCircle2 className="w-8 h-8 mx-auto mb-2 text-accent" />
-                  <p className="text-sm">No optional improvements at this time!</p>
+                  <p className="text-sm">Looking polished! No extras needed ✨</p>
                 </div>
               )}
               {optionalRecs.length > 4 && (
@@ -651,24 +657,24 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         </div>
       )}
 
-      {/* Probability Scale Legend */}
+      {/* Readiness Scale Legend */}
       <div className="border-t border-border p-4 bg-muted/30">
         <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mb-2">
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-blue-500"></span> Low (35-49)
+            <span className="w-2 h-2 rounded-full bg-blue-500"></span> Getting Started
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span> Moderate (50-69)
+            <span className="w-2 h-2 rounded-full bg-amber-500"></span> Making Progress
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-emerald-500"></span> High (70-85)
+            <span className="w-2 h-2 rounded-full bg-emerald-500"></span> Almost There
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2 h-2 rounded-full bg-accent"></span> Excellent (85+)
+            <span className="w-2 h-2 rounded-full bg-accent"></span> Interview Ready
           </span>
         </div>
         <p className="text-xs text-muted-foreground text-center">
-          ATS Pass Probability based on industry-standard criteria including keyword coverage, structure, and formatting best practices.
+          Your readiness score is based on how well recruiters and ATS systems can understand your resume. Keep improving! 🚀
         </p>
       </div>
     </div>
