@@ -247,7 +247,7 @@ const Index = () => {
               <span className="text-lg font-display font-bold text-foreground">ResumeATS</span>
             </div>
             <div className="text-sm text-muted-foreground">
-              © 2024 ResumeATS. All rights reserved.
+              © 2026 ResumeATS. All rights reserved.
             </div>
           </div>
         </div>
