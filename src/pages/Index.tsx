@@ -1,10 +1,8 @@
 import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
@@ -70,7 +68,9 @@ const Index = () => {
                 </div>
               </div>
             </div>
-            <div className="animate-fade-up" style={{ animationDelay: "0.2s" }}>
+            <div className="animate-fade-up" style={{
+            animationDelay: "0.2s"
+          }}>
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-hero opacity-10 rounded-3xl blur-2xl"></div>
                 <div className="relative bg-card rounded-2xl shadow-xl border border-border p-6">
@@ -83,23 +83,7 @@ const Index = () => {
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-card border-y border-border">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { value: "98%", label: "ATS Pass Rate" },
-              { value: "50K+", label: "Resumes Created" },
-              { value: "3x", label: "More Interviews" },
-              { value: "2 min", label: "Average Build Time" },
-            ].map((stat, index) => (
-              <div key={index} className="text-center">
-                <div className="text-3xl md:text-4xl font-display font-bold text-gradient mb-2">{stat.value}</div>
-                <div className="text-muted-foreground text-sm">{stat.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* Features Section */}
       <section id="features" className="py-24 px-6">
@@ -113,49 +97,37 @@ const Index = () => {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Target,
-                title: "ATS Optimization",
-                description: "Our AI analyzes your resume against real ATS systems to ensure maximum compatibility.",
-              },
-              {
-                icon: Zap,
-                title: "Instant Analysis",
-                description: "Get real-time feedback and suggestions as you build your resume.",
-              },
-              {
-                icon: FileText,
-                title: "Clean Formatting",
-                description: "Professional templates designed specifically for ATS compatibility.",
-              },
-              {
-                icon: Sparkles,
-                title: "AI Content Suggestions",
-                description: "Smart recommendations for keywords, skills, and accomplishments.",
-              },
-              {
-                icon: Upload,
-                title: "Resume Import",
-                description: "Upload your existing resume and we'll optimize it for ATS systems.",
-              },
-              {
-                icon: Users,
-                title: "Industry-Specific Tips",
-                description: "Tailored advice based on your target industry and role.",
-              },
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="group p-6 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300"
-              >
+            {[{
+            icon: Target,
+            title: "ATS Optimization",
+            description: "Our AI analyzes your resume against real ATS systems to ensure maximum compatibility."
+          }, {
+            icon: Zap,
+            title: "Instant Analysis",
+            description: "Get real-time feedback and suggestions as you build your resume."
+          }, {
+            icon: FileText,
+            title: "Clean Formatting",
+            description: "Professional templates designed specifically for ATS compatibility."
+          }, {
+            icon: Sparkles,
+            title: "AI Content Suggestions",
+            description: "Smart recommendations for keywords, skills, and accomplishments."
+          }, {
+            icon: Upload,
+            title: "Resume Import",
+            description: "Upload your existing resume and we'll optimize it for ATS systems."
+          }, {
+            icon: Users,
+            title: "Industry-Specific Tips",
+            description: "Tailored advice based on your target industry and role."
+          }].map((feature, index) => <div key={index} className="group p-6 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
                 <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <feature.icon className="w-6 h-6 text-primary" />
                 </div>
                 <h3 className="text-lg font-display font-semibold text-foreground mb-2">{feature.title}</h3>
                 <p className="text-muted-foreground text-sm">{feature.description}</p>
-              </div>
-            ))}
+              </div>)}
           </div>
         </div>
       </section>
@@ -172,32 +144,24 @@ const Index = () => {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Enter Your Information",
-                description: "Fill in your details or upload an existing resume to get started quickly.",
-              },
-              {
-                step: "02",
-                title: "Get ATS Optimization",
-                description: "Our AI analyzes and suggests improvements for maximum ATS compatibility.",
-              },
-              {
-                step: "03",
-                title: "Download & Apply",
-                description: "Export your polished, ATS-friendly resume and start landing interviews.",
-              },
-            ].map((step, index) => (
-              <div key={index} className="relative">
+            {[{
+            step: "01",
+            title: "Enter Your Information",
+            description: "Fill in your details or upload an existing resume to get started quickly."
+          }, {
+            step: "02",
+            title: "Get ATS Optimization",
+            description: "Our AI analyzes and suggests improvements for maximum ATS compatibility."
+          }, {
+            step: "03",
+            title: "Download & Apply",
+            description: "Export your polished, ATS-friendly resume and start landing interviews."
+          }].map((step, index) => <div key={index} className="relative">
                 <div className="text-6xl font-display font-bold text-primary/10 mb-4">{step.step}</div>
                 <h3 className="text-xl font-display font-semibold text-foreground mb-2">{step.title}</h3>
                 <p className="text-muted-foreground">{step.description}</p>
-                {index < 2 && (
-                  <div className="hidden md:block absolute top-8 right-0 w-1/2 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>
-                )}
-              </div>
-            ))}
+                {index < 2 && <div className="hidden md:block absolute top-8 right-0 w-1/2 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>}
+              </div>)}
           </div>
           <div className="text-center mt-12">
             <Link to="/welcome">
@@ -223,10 +187,7 @@ const Index = () => {
                 Join thousands of job seekers who have successfully passed ATS screening with our resume builder.
               </p>
               <Link to="/welcome">
-                <Button 
-                  size="xl" 
-                  className="bg-background text-primary hover:bg-background/90 shadow-xl"
-                >
+                <Button size="xl" className="bg-background text-primary hover:bg-background/90 shadow-xl">
                   Create Your Free Resume
                   <ArrowRight className="w-5 h-5" />
                 </Button>
@@ -252,13 +213,10 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 const ResumePreviewCard = () => {
-  return (
-    <div className="space-y-4">
+  return <div className="space-y-4">
       {/* Header */}
       <div className="border-b border-border pb-4">
         <div className="h-6 bg-foreground/10 rounded w-48 mb-2"></div>
@@ -292,16 +250,12 @@ const ResumePreviewCard = () => {
         <div>
           <div className="h-4 bg-primary/20 rounded w-20 mb-2"></div>
           <div className="flex gap-2 flex-wrap">
-            {["React", "TypeScript", "Node.js", "Python"].map((skill) => (
-              <span key={skill} className="px-2 py-1 bg-primary/10 rounded text-xs text-primary">
+            {["React", "TypeScript", "Node.js", "Python"].map(skill => <span key={skill} className="px-2 py-1 bg-primary/10 rounded text-xs text-primary">
                 {skill}
-              </span>
-            ))}
+              </span>)}
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
