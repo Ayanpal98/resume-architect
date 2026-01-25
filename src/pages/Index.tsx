@@ -94,7 +94,7 @@ EXPLAINABLE ATS ASSISTANT</span>
               Everything You Need to Land Your Dream Job
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-              Our smart resume builder ensures your resume passes ATS screening and impresses recruiters.
+              Built using real recruiter logic - not guesswork or black-box scores          
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
