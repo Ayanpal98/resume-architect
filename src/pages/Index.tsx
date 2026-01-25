@@ -219,7 +219,7 @@ const ResumePreviewCard = () => {
             <span className="text-accent-foreground font-bold">95</span>
           </div>
           <div>
-            <div className="text-sm font-medium text-foreground">Hiring Readiness</div>
+            <div className="text-sm font-medium text-foreground">ATS Readibility</div>
             <div className="text-xs text-muted-foreground">Strong interview potential</div>
           </div>
         </div>
