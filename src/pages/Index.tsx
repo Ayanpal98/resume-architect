@@ -220,7 +220,7 @@ const ResumePreviewCard = () => {
           </div>
           <div>
             <div className="text-sm font-medium text-foreground">ATS Readibility</div>
-            <div className="text-xs text-muted-foreground">Strong interview potential</div>
+            <div className="text-xs text-muted-foreground">How clearly applicant tracking system parse your resume</div>
           </div>
         </div>
         {/* Score Benchmarks */}
