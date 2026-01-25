@@ -235,22 +235,26 @@ const ResumePreviewCard = () => {
         </div>
         {/* Score Benchmarks */}
         <div className="pt-2 border-t border-accent/20">
-          <div className="text-[10px] text-muted-foreground mb-1.5">Typical Scores</div>
-          <div className="flex items-center gap-2 text-[9px]">
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-destructive/60"></div>
+          <div className="text-[10px] text-muted-foreground mb-1.5">Score Guide</div>
+          <div className="grid grid-cols-4 gap-1 text-[9px]">
+            <div className="flex flex-col items-center gap-0.5 p-1 rounded bg-destructive/10">
+              <div className="w-2.5 h-2.5 rounded-full bg-destructive"></div>
+              <span className="font-medium text-destructive">Fair</span>
               <span className="text-muted-foreground">0-49</span>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-warning/60"></div>
+            <div className="flex flex-col items-center gap-0.5 p-1 rounded bg-warning/10">
+              <div className="w-2.5 h-2.5 rounded-full bg-warning"></div>
+              <span className="font-medium text-warning">Good</span>
               <span className="text-muted-foreground">50-69</span>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+            <div className="flex flex-col items-center gap-0.5 p-1 rounded bg-primary/10">
+              <div className="w-2.5 h-2.5 rounded-full bg-primary"></div>
+              <span className="font-medium text-primary">Better</span>
               <span className="text-muted-foreground">70-84</span>
             </div>
-            <div className="flex items-center gap-1">
-              <div className="w-2 h-2 rounded-full bg-accent"></div>
+            <div className="flex flex-col items-center gap-0.5 p-1 rounded bg-accent/20">
+              <div className="w-2.5 h-2.5 rounded-full bg-accent"></div>
+              <span className="font-medium text-accent">Best</span>
               <span className="text-muted-foreground">85+</span>
             </div>
           </div>
