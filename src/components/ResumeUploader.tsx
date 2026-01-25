@@ -56,20 +56,55 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     }
 
     if (fileType === "application/pdf") {
-      const pdfjsLib = await import("pdfjs-dist");
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+      try {
+        const pdfjsLib = await import("pdfjs-dist");
+        // Use versioned CDN URL for the worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ 
+          data: arrayBuffer,
+          useSystemFonts: true,
+        }).promise;
 
-      let text = "";
-      for (let i = 1; i <= pdf.numPages; i++) {
-        const page = await pdf.getPage(i);
-        const content = await page.getTextContent();
-        const pageText = content.items.map((item: any) => item.str).join(" ");
-        text += pageText + "\n";
+        let text = "";
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const content = await page.getTextContent();
+          
+          // Improved text extraction - preserve spacing between items
+          let lastY: number | null = null;
+          const pageLines: string[] = [];
+          let currentLine = "";
+          
+          for (const item of content.items as any[]) {
+            if (item.str) {
+              // Check if this is a new line based on Y position
+              if (lastY !== null && Math.abs(item.transform[5] - lastY) > 5) {
+                if (currentLine.trim()) {
+                  pageLines.push(currentLine.trim());
+                }
+                currentLine = item.str;
+              } else {
+                // Add space between items on the same line
+                currentLine += (currentLine && !currentLine.endsWith(" ") ? " " : "") + item.str;
+              }
+              lastY = item.transform[5];
+            }
+          }
+          
+          if (currentLine.trim()) {
+            pageLines.push(currentLine.trim());
+          }
+          
+          text += pageLines.join("\n") + "\n\n";
+        }
+        
+        return text;
+      } catch (pdfError) {
+        console.error("PDF extraction error:", pdfError);
+        throw new Error("Failed to read PDF. The file may be corrupted, password-protected, or image-based (scanned). Please try a different file or convert it to text first.");
       }
-      return text;
     }
 
     throw new Error("Unsupported file type. Please upload PDF, DOCX, or TXT files.");
@@ -110,7 +145,7 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
       const text = await extractTextFromFile(file);
 
       if (!text || text.trim().length < 50) {
-        throw new Error("Could not extract enough text from the file");
+        throw new Error("Could not extract enough text from the file. This may be a scanned/image-based PDF. Please use a text-based PDF or DOCX file.");
       }
 
       // Step 3: Parse with AI
