@@ -101,7 +101,7 @@ EXPLAINABLE ATS ASSISTANT</span>
             {[{
             icon: Target,
             title: "ATS Optimization",
-            description: "Our AI analyzes your resume against real ATS systems to ensure maximum compatibility."
+            description: "Analyzes your resume against real ATS parsing behavior — not just keywords."
           }, {
             icon: Zap,
             title: "Instant Analysis",
