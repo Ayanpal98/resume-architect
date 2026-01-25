@@ -223,13 +223,37 @@ const ResumePreviewCard = () => {
       </div>
       
       {/* Hiring Readiness */}
-      <div className="flex items-center gap-3 p-3 bg-accent/10 rounded-lg">
-        <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
-          <span className="text-accent-foreground font-bold">95</span>
+      <div className="p-3 bg-accent/10 rounded-lg space-y-3">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
+            <span className="text-accent-foreground font-bold">95</span>
+          </div>
+          <div>
+            <div className="text-sm font-medium text-foreground">Hiring Readiness</div>
+            <div className="text-xs text-muted-foreground">Strong interview potential</div>
+          </div>
         </div>
-        <div>
-          <div className="text-sm font-medium text-foreground">Hiring Readiness</div>
-          <div className="text-xs text-muted-foreground">Strong interview potential</div>
+        {/* Score Benchmarks */}
+        <div className="pt-2 border-t border-accent/20">
+          <div className="text-[10px] text-muted-foreground mb-1.5">Typical Scores</div>
+          <div className="flex items-center gap-2 text-[9px]">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-destructive/60"></div>
+              <span className="text-muted-foreground">0-49</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-warning/60"></div>
+              <span className="text-muted-foreground">50-69</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-primary/60"></div>
+              <span className="text-muted-foreground">70-84</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-2 rounded-full bg-accent"></div>
+              <span className="text-muted-foreground">85+</span>
+            </div>
+          </div>
         </div>
       </div>
 
