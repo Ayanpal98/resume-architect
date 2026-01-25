@@ -105,23 +105,23 @@ EXPLAINABLE ATS ASSISTANT</span>
           }, {
             icon: Zap,
             title: "Instant Analysis",
-            description: "Get real-time feedback and suggestions as you build your resume."
+            description: "See exactly how parsers read each section — headers, dates, and formatting issues flagged in real time."
           }, {
             icon: FileText,
             title: "Clean Formatting",
-            description: "Professional templates designed specifically for ATS compatibility."
+            description: "Uses parser-safe layouts that preserve structure when converted to plain text by ATS software."
           }, {
             icon: Sparkles,
             title: "AI Content Suggestions",
-            description: "Smart recommendations for keywords, skills, and accomplishments."
+            description: "Recommends action verbs and quantified achievements that match how recruiters actually search."
           }, {
             icon: Upload,
             title: "Resume Import",
-            description: "Upload your existing resume and we'll optimize it for ATS systems."
+            description: "Extracts and restructures your existing content to fix common parsing failures automatically."
           }, {
             icon: Users,
             title: "Industry-Specific Tips",
-            description: "Tailored advice based on your target industry and role."
+            description: "Adapts language and section order based on what top-performing resumes in your field include."
           }].map((feature, index) => <div key={index} className="group p-6 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
                 <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                   <feature.icon className="w-6 h-6 text-primary" />
