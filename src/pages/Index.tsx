@@ -223,14 +223,14 @@ const ResumePreviewCard = () => {
         <div className="h-4 bg-muted rounded w-32"></div>
       </div>
       
-      {/* ATS Score */}
+      {/* Hiring Readiness */}
       <div className="flex items-center gap-3 p-3 bg-accent/10 rounded-lg">
         <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center">
           <span className="text-accent-foreground font-bold">95</span>
         </div>
         <div>
-          <div className="text-sm font-medium text-foreground">ATS Score</div>
-          <div className="text-xs text-muted-foreground">Excellent compatibility</div>
+          <div className="text-sm font-medium text-foreground">Hiring Readiness</div>
+          <div className="text-xs text-muted-foreground">Strong interview potential</div>
         </div>
       </div>
 
