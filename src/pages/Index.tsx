@@ -10,8 +10,7 @@ const Index = () => {
             <div className="w-10 h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-display font-bold text-accent">ATSFY
-EXPLAINABLE ATS ASSISTANT</span>
+            <span className="text-xl font-display font-bold text-accent">ATSFY Assistant</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
