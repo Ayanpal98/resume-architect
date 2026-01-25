@@ -183,9 +183,8 @@ const Index = () => {
               <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
                 Ready to Land More Interviews?
               </h2>
-              <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">
-                Join thousands of job seekers who have successfully passed ATS screening with our resume builder.
-              </p>
+              <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">ATSfy explains how ATS system read resumes. 
+We dont promise jobs - we help you become visible</p>
               <Link to="/welcome">
                 <Button size="xl" className="bg-background text-primary hover:bg-background/90 shadow-xl">
                   Create Your Free Resume
