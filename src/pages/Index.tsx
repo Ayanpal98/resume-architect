@@ -34,12 +34,11 @@ EXPLAINABLE ATS ASSISTANT</span>
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent text-sm font-medium mb-6">Built for Humans. Ready For Machines<Sparkles className="w-4 h-4" />
                 AI-Powered Resume Builder
               </div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground leading-tight mb-6">
-                Build Resumes That <span className="text-gradient">Beat the Bots</span>
+              <h1 className="text-4xl md:text-5xl font-display font-bold text-foreground leading-tight mb-6 lg:text-2xl">Build Resumes Machines can read 
+Understand why your resume passes ATS- not just a score.<span className="text-gradient">Beat the Bots</span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg">
                 Create ATS-friendly resumes that get past automated screening systems and land you more interviews. Start from scratch or upload your existing resume.
@@ -58,16 +57,7 @@ EXPLAINABLE ATS ASSISTANT</span>
                   </Button>
                 </Link>
               </div>
-              <div className="flex items-center gap-6 mt-8 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-accent" />
-                  Free to start
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-accent" />
-                  No credit card required
-                </div>
-              </div>
+              
             </div>
             <div className="animate-fade-up" style={{
             animationDelay: "0.2s"
