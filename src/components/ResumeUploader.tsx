@@ -10,6 +10,9 @@ import {
   X,
   AlertCircle,
   ScanLine,
+  Eye,
+  ArrowRight,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -23,7 +26,7 @@ interface ResumeUploaderProps {
   navigateToAnalysis?: boolean;
 }
 
-type UploadStep = "idle" | "uploading" | "extracting" | "ocr" | "parsing" | "analyzing" | "complete" | "error";
+type UploadStep = "idle" | "uploading" | "extracting" | "ocr" | "preview" | "parsing" | "analyzing" | "complete" | "error";
 
 // Convert PDF page to image using canvas
 const convertPdfPageToImage = async (pdf: any, pageNum: number): Promise<string> => {
@@ -71,6 +74,9 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
   const [error, setError] = useState<string | null>(null);
   const [parsedData, setParsedData] = useState<any>(null);
   const [atsResult, setAtsResult] = useState<ATSCheckResult | null>(null);
+  const [extractedText, setExtractedText] = useState<string>("");
+  const [usedOCR, setUsedOCR] = useState(false);
+  const [currentFile, setCurrentFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const formatFileSize = (bytes: number): string => {
@@ -194,6 +200,7 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     setFileName(file.name);
     setFileSize(formatFileSize(file.size));
     setError(null);
+    setCurrentFile(file);
 
     try {
       // Step 1: Upload/Read file
@@ -204,20 +211,32 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
       // Step 2: Extract text (may trigger OCR automatically)
       setStep("extracting");
       setProgress(30);
-      const { text, usedOCR } = await extractTextFromFile(file);
+      const { text, usedOCR: didUseOCR } = await extractTextFromFile(file);
 
       if (!text || text.trim().length < 50) {
         throw new Error("Could not extract enough text from the file. Please try a different file format.");
       }
 
-      if (usedOCR) {
-        toast.info("Used OCR to extract text from scanned document");
-      }
+      // Store extracted text and show preview
+      setExtractedText(text);
+      setUsedOCR(didUseOCR);
+      setStep("preview");
+      setProgress(45);
 
+    } catch (err) {
+      console.error("Upload error:", err);
+      setError(err instanceof Error ? err.message : "Failed to process resume");
+      setStep("error");
+    }
+  };
+
+  // Continue from preview to parsing
+  const continueFromPreview = async () => {
+    try {
       // Step 3: Parse with AI
       setStep("parsing");
       setProgress(50);
-      const importedData = await parseResumeFile(text);
+      const importedData = await parseResumeFile(extractedText);
 
       // Add IDs to experience and education items
       if (importedData.experience) {
@@ -259,7 +278,7 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
             state: {
               resumeData: importedData,
               atsResult: atsCheckResult,
-              fileName: file.name,
+              fileName: fileName,
             },
           });
         }, 1000);
@@ -267,8 +286,8 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
         onComplete(importedData, atsCheckResult);
       }
     } catch (err) {
-      console.error("Upload error:", err);
-      setError(err instanceof Error ? err.message : "Failed to process resume");
+      console.error("Parsing error:", err);
+      setError(err instanceof Error ? err.message : "Failed to parse resume");
       setStep("error");
     }
   };
@@ -307,6 +326,9 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     setError(null);
     setParsedData(null);
     setAtsResult(null);
+    setExtractedText("");
+    setUsedOCR(false);
+    setCurrentFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -320,6 +342,8 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
         return "Extracting text content...";
       case "ocr":
         return "Running OCR on scanned pages...";
+      case "preview":
+        return "Review extracted text";
       case "parsing":
         return "AI is parsing your resume...";
       case "analyzing":
@@ -330,6 +354,72 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
         return "";
     }
   };
+
+  // Preview state - show extracted text for verification
+  if (step === "preview") {
+    const wordCount = extractedText.split(/\s+/).filter(Boolean).length;
+    const charCount = extractedText.length;
+    
+    return (
+      <div className="relative border-2 border-primary/50 rounded-2xl p-6 bg-primary/5">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
+              <Eye className="w-6 h-6 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-lg font-display font-semibold text-foreground">
+                Review Extracted Text
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {fileName} • {fileSize}
+              </p>
+            </div>
+          </div>
+          {usedOCR && (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-warning/10 text-warning-foreground rounded-full text-xs font-medium">
+              <ScanLine className="w-3 h-3" />
+              OCR Used
+            </span>
+          )}
+        </div>
+
+        <div className="bg-background border border-border rounded-lg p-4 mb-4">
+          <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+            <span>Extracted content preview</span>
+            <span>{wordCount.toLocaleString()} words • {charCount.toLocaleString()} characters</span>
+          </div>
+          <div className="max-h-64 overflow-y-auto">
+            <pre className="text-sm text-foreground whitespace-pre-wrap font-mono leading-relaxed">
+              {extractedText.slice(0, 3000)}
+              {extractedText.length > 3000 && (
+                <span className="text-muted-foreground">
+                  {"\n\n"}... ({(extractedText.length - 3000).toLocaleString()} more characters)
+                </span>
+              )}
+            </pre>
+          </div>
+        </div>
+
+        <p className="text-xs text-muted-foreground text-center mb-4">
+          {usedOCR 
+            ? "Text was extracted using AI vision (OCR). Please verify the content looks correct before proceeding."
+            : "Please verify the extracted text looks correct before AI parsing."}
+        </p>
+
+        <div className="flex gap-3 justify-center">
+          <Button variant="outline" onClick={handleReset} className="gap-2">
+            <RotateCcw className="w-4 h-4" />
+            Try Different File
+          </Button>
+          <Button variant="hero" onClick={continueFromPreview} className="gap-2">
+            Continue to Analysis
+            <ArrowRight className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   // Error state
   if (step === "error") {
@@ -402,7 +492,7 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
   // Processing state
   if (step !== "idle") {
     const isOCRStep = step === "ocr";
-    const processingSteps = ["uploading", "extracting", "ocr", "parsing", "analyzing"];
+    const processingSteps = ["uploading", "extracting", "ocr", "preview", "parsing", "analyzing"];
     const currentStepIndex = processingSteps.indexOf(step);
     
     return (
