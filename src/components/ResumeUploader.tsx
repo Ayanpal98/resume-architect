@@ -9,11 +9,13 @@ import {
   File,
   X,
   AlertCircle,
+  ScanLine,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { parseResumeFile } from "@/lib/aiService";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 interface ResumeUploaderProps {
@@ -21,7 +23,43 @@ interface ResumeUploaderProps {
   navigateToAnalysis?: boolean;
 }
 
-type UploadStep = "idle" | "uploading" | "extracting" | "parsing" | "analyzing" | "complete" | "error";
+type UploadStep = "idle" | "uploading" | "extracting" | "ocr" | "parsing" | "analyzing" | "complete" | "error";
+
+// Convert PDF page to image using canvas
+const convertPdfPageToImage = async (pdf: any, pageNum: number): Promise<string> => {
+  const page = await pdf.getPage(pageNum);
+  const scale = 2; // Higher scale for better OCR quality
+  const viewport = page.getViewport({ scale });
+  
+  const canvas = document.createElement("canvas");
+  const context = canvas.getContext("2d");
+  canvas.height = viewport.height;
+  canvas.width = viewport.width;
+  
+  await page.render({
+    canvasContext: context!,
+    viewport: viewport,
+  }).promise;
+  
+  return canvas.toDataURL("image/png");
+};
+
+// Perform OCR on PDF images using edge function
+const performOCR = async (images: string[]): Promise<string> => {
+  const { data, error } = await supabase.functions.invoke("ocr-pdf", {
+    body: { images },
+  });
+
+  if (error) {
+    throw new Error(error.message || "OCR failed");
+  }
+
+  if (data.error) {
+    throw new Error(data.error);
+  }
+
+  return data.text;
+};
 
 export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: ResumeUploaderProps) => {
   const navigate = useNavigate();
@@ -41,18 +79,18 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const extractTextFromFile = async (file: File): Promise<string> => {
+  const extractTextFromFile = async (file: File): Promise<{ text: string; usedOCR: boolean }> => {
     const fileType = file.type;
 
     if (fileType === "text/plain") {
-      return await file.text();
+      return { text: await file.text(), usedOCR: false };
     }
 
     if (fileType === "application/vnd.openxmlformats-officedocument.wordprocessingml.document") {
       const mammoth = await import("mammoth");
       const arrayBuffer = await file.arrayBuffer();
       const result = await mammoth.extractRawText({ arrayBuffer });
-      return result.value;
+      return { text: result.value, usedOCR: false };
     }
 
     if (fileType === "application/pdf") {
@@ -67,6 +105,7 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
           useSystemFonts: true,
         }).promise;
 
+        // First try text extraction
         let text = "";
         for (let i = 1; i <= pdf.numPages; i++) {
           const page = await pdf.getPage(i);
@@ -100,10 +139,33 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
           text += pageLines.join("\n") + "\n\n";
         }
         
-        return text;
+        // If we got enough text, return it
+        if (text.trim().length >= 50) {
+          return { text, usedOCR: false };
+        }
+
+        // Text extraction failed - likely a scanned PDF, try OCR
+        console.log("Minimal text extracted, attempting OCR...");
+        setStep("ocr");
+        setProgress(40);
+        
+        // Convert PDF pages to images
+        const images: string[] = [];
+        const maxPages = Math.min(pdf.numPages, 10); // Limit to 10 pages for OCR
+        
+        for (let i = 1; i <= maxPages; i++) {
+          const imageData = await convertPdfPageToImage(pdf, i);
+          images.push(imageData);
+          setProgress(40 + (i / maxPages) * 15);
+        }
+
+        // Perform OCR
+        const ocrText = await performOCR(images);
+        return { text: ocrText, usedOCR: true };
+        
       } catch (pdfError) {
         console.error("PDF extraction error:", pdfError);
-        throw new Error("Failed to read PDF. The file may be corrupted, password-protected, or image-based (scanned). Please try a different file or convert it to text first.");
+        throw new Error("Failed to read PDF. The file may be corrupted or password-protected. Please try a different file.");
       }
     }
 
@@ -139,13 +201,17 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
       setProgress(10);
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      // Step 2: Extract text
+      // Step 2: Extract text (may trigger OCR automatically)
       setStep("extracting");
       setProgress(30);
-      const text = await extractTextFromFile(file);
+      const { text, usedOCR } = await extractTextFromFile(file);
 
       if (!text || text.trim().length < 50) {
-        throw new Error("Could not extract enough text from the file. This may be a scanned/image-based PDF. Please use a text-based PDF or DOCX file.");
+        throw new Error("Could not extract enough text from the file. Please try a different file format.");
+      }
+
+      if (usedOCR) {
+        toast.info("Used OCR to extract text from scanned document");
       }
 
       // Step 3: Parse with AI
@@ -252,6 +318,8 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
         return "Reading file...";
       case "extracting":
         return "Extracting text content...";
+      case "ocr":
+        return "Running OCR on scanned pages...";
       case "parsing":
         return "AI is parsing your resume...";
       case "analyzing":
@@ -333,14 +401,27 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
 
   // Processing state
   if (step !== "idle") {
+    const isOCRStep = step === "ocr";
+    const processingSteps = ["uploading", "extracting", "ocr", "parsing", "analyzing"];
+    const currentStepIndex = processingSteps.indexOf(step);
+    
     return (
       <div className="relative border-2 border-primary/50 rounded-2xl p-8 text-center bg-primary/5">
         <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-          <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          {isOCRStep ? (
+            <ScanLine className="w-8 h-8 text-primary animate-pulse" />
+          ) : (
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
+          )}
         </div>
         <h3 className="text-lg font-display font-semibold text-foreground mb-2">
           {getStepLabel()}
         </h3>
+        {isOCRStep && (
+          <p className="text-xs text-muted-foreground mb-2">
+            Detected scanned document - using AI vision to extract text
+          </p>
+        )}
         <div className="flex items-center gap-3 justify-center mb-4">
           <File className="w-4 h-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">{fileName}</span>
@@ -352,13 +433,13 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
 
         {/* Processing steps indicator */}
         <div className="flex items-center justify-center gap-2 mt-6">
-          {["uploading", "extracting", "parsing", "analyzing"].map((s, idx) => (
+          {processingSteps.map((s, idx) => (
             <div
               key={s}
               className={`w-2 h-2 rounded-full transition-all ${
                 step === s
                   ? "bg-primary w-4"
-                  : ["uploading", "extracting", "parsing", "analyzing"].indexOf(step) > idx
+                  : currentStepIndex > idx
                   ? "bg-accent"
                   : "bg-muted"
               }`}
