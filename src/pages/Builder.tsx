@@ -18,6 +18,7 @@ import {
   AlertCircle,
   Sparkles,
   Upload,
+  GitCompare,
   Layout,
   Target
 } from "lucide-react";
@@ -29,6 +30,7 @@ import { ResumeImport } from "@/components/ResumeImport";
 import { ATSScorePanel } from "@/components/ATSScorePanel";
 import { CoverLetterGenerator } from "@/components/CoverLetterGenerator";
 import { JobMatchPanel } from "@/components/JobMatchPanel";
+import { ResumeComparison } from "@/components/ResumeComparison";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
@@ -86,6 +88,8 @@ const Builder = () => {
   const [showImport, setShowImport] = useState(searchParams.get("upload") === "true");
   const [showTemplates, setShowTemplates] = useState(false);
   const [showATSDetails, setShowATSDetails] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+  const [originalResumeData, setOriginalResumeData] = useState<ResumeData | null>(null);
 
   // Handle incoming state from ATS analysis page
   useEffect(() => {
@@ -208,6 +212,16 @@ const Builder = () => {
   };
 
   const handleImport = (data: any, importAtsResult?: ATSCheckResult) => {
+    // Store original data for comparison (deep clone)
+    const importedData = {
+      ...data,
+      personalInfo: { ...data.personalInfo },
+      experience: data.experience?.map((exp: any) => ({ ...exp })) || [],
+      education: data.education?.map((edu: any) => ({ ...edu })) || [],
+      skills: [...(data.skills || [])],
+    };
+    setOriginalResumeData(importedData);
+    
     setResumeData((prev) => ({
       ...prev,
       ...data,
@@ -298,6 +312,25 @@ const Builder = () => {
                 />
               </DialogContent>
             </Dialog>
+
+            {/* Comparison Dialog - only show if we have original data to compare */}
+            {originalResumeData && (
+              <Dialog open={showComparison} onOpenChange={setShowComparison}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <GitCompare className="w-4 h-4 mr-2" />
+                    Compare
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+                  <ResumeComparison
+                    originalData={originalResumeData}
+                    currentData={resumeData}
+                    onClose={() => setShowComparison(false)}
+                  />
+                </DialogContent>
+              </Dialog>
+            )}
 
             <Button variant="hero" size="sm" onClick={handleDownload}>
               <Download className="w-4 h-4 mr-2" />
