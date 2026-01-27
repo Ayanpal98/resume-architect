@@ -260,30 +260,30 @@ const Builder = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
+        <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 sm:gap-4">
             <Link to="/">
-              <Button variant="ghost" size="sm">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Back
+              <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+                <ArrowLeft className="w-4 h-4 sm:mr-2" />
+                <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
-                <FileText className="w-4 h-4 text-primary-foreground" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
+                <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
               </div>
-              <span className="text-lg font-display font-bold text-foreground">Resume Builder</span>
+              <span className="text-sm sm:text-lg font-display font-bold text-foreground hidden xs:inline">Resume Builder</span>
             </div>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3">
             <Dialog open={showImport} onOpenChange={setShowImport}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Upload className="w-4 h-4 mr-2" />
-                  Import
+                <Button variant="outline" size="sm" className="px-2 sm:px-3">
+                  <Upload className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Import</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-lg">
+              <DialogContent className="w-[95vw] max-w-lg mx-auto">
                 <DialogHeader>
                   <DialogTitle>Import Resume</DialogTitle>
                 </DialogHeader>
@@ -293,12 +293,12 @@ const Builder = () => {
             
             <Dialog open={showTemplates} onOpenChange={setShowTemplates}>
               <DialogTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <Layout className="w-4 h-4 mr-2" />
-                  Templates
+                <Button variant="outline" size="sm" className="px-2 sm:px-3 hidden sm:flex">
+                  <Layout className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden md:inline">Templates</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
+              <DialogContent className="w-[95vw] max-w-2xl max-h-[80vh] overflow-y-auto mx-auto">
                 <DialogHeader>
                   <DialogTitle>Choose Template</DialogTitle>
                 </DialogHeader>
@@ -317,12 +317,12 @@ const Builder = () => {
             {originalResumeData && (
               <Dialog open={showComparison} onOpenChange={setShowComparison}>
                 <DialogTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <GitCompare className="w-4 h-4 mr-2" />
-                    Compare
+                  <Button variant="outline" size="sm" className="px-2 sm:px-3 hidden md:flex">
+                    <GitCompare className="w-4 h-4 sm:mr-2" />
+                    <span className="hidden lg:inline">Compare</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
+                <DialogContent className="w-[95vw] max-w-lg max-h-[85vh] overflow-y-auto mx-auto">
                   <ResumeComparison
                     originalData={originalResumeData}
                     currentData={resumeData}
@@ -332,38 +332,38 @@ const Builder = () => {
               </Dialog>
             )}
 
-            <Button variant="hero" size="sm" onClick={handleDownload}>
-              <Download className="w-4 h-4 mr-2" />
-              Download PDF
+            <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
+              <Download className="w-4 h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Download PDF</span>
             </Button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="pt-24 pb-12 px-6">
+      <main className="pt-16 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-6">
         <div className="container mx-auto max-w-7xl">
-          <div className="grid lg:grid-cols-12 gap-8">
-            {/* Sidebar */}
-            <div className="lg:col-span-3">
-              <div className="sticky top-24 space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
+            {/* Sidebar - horizontal scroll on mobile */}
+            <div className="lg:col-span-3 order-1">
+              <div className="lg:sticky lg:top-24 space-y-4 sm:space-y-6">
                 {/* ATS Readiness */}
                 <Dialog open={showATSDetails} onOpenChange={setShowATSDetails}>
                   <DialogTrigger asChild>
                     <button 
-                      className="w-full bg-card rounded-2xl border border-border p-6 shadow-sm hover:border-primary/50 transition-colors text-left"
+                      className="w-full bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-6 shadow-sm hover:border-primary/50 transition-colors text-left"
                       disabled={!isEvaluated}
                     >
-                      <div className="flex items-center gap-3 mb-4">
+                      <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                         {isEvaluated ? (
                           <div 
-                            className={`w-14 h-14 rounded-full flex items-center justify-center text-lg font-bold text-white ${getScoreBgColor(atsScore)}`}
+                            className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-sm sm:text-lg font-bold text-white ${getScoreBgColor(atsScore)}`}
                           >
                             {atsScore}%
                           </div>
                         ) : (
-                          <div className="w-14 h-14 rounded-full flex items-center justify-center bg-muted border-2 border-dashed border-muted-foreground/30">
-                            <Target className="w-6 h-6 text-muted-foreground/50" />
+                          <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center bg-muted border-2 border-dashed border-muted-foreground/30">
+                            <Target className="w-4 h-4 sm:w-6 sm:h-6 text-muted-foreground/50" />
                           </div>
                         )}
                         <div>
@@ -410,47 +410,47 @@ const Builder = () => {
                   </DialogContent>
                 </Dialog>
 
-                {/* Navigation */}
-                <div className="bg-card rounded-2xl border border-border p-4 shadow-sm">
-                  <nav className="space-y-1">
+                {/* Navigation - horizontal scrollable on mobile */}
+                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-2 sm:p-4 shadow-sm">
+                  <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 -mx-1 px-1">
                     {sections.map((section) => (
                       <button
                         key={section.id}
                         onClick={() => setActiveSection(section.id)}
-                        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left transition-all ${
+                        className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-left transition-all whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${
                           activeSection === section.id
                             ? "bg-primary text-primary-foreground"
                             : "hover:bg-muted text-muted-foreground hover:text-foreground"
                         }`}
                       >
-                        <section.icon className="w-5 h-5" />
-                        <span className="font-medium">{section.label}</span>
+                        <section.icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span className="font-medium text-sm sm:text-base">{section.label}</span>
                       </button>
                     ))}
                   </nav>
                 </div>
 
-                {/* Tips */}
-                <div className="bg-primary/5 rounded-2xl border border-primary/20 p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="w-5 h-5 text-primary" />
-                    <span className="font-medium text-foreground">ATS Tips</span>
+                {/* Tips - hidden on mobile */}
+                <div className="bg-primary/5 rounded-xl sm:rounded-2xl border border-primary/20 p-4 sm:p-6 hidden sm:block">
+                  <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                    <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                    <span className="font-medium text-foreground text-sm sm:text-base">ATS Tips</span>
                   </div>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
+                  <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm text-muted-foreground">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent shrink-0 mt-0.5" />
                       Use standard section headers
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent shrink-0 mt-0.5" />
                       Include relevant keywords
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent shrink-0 mt-0.5" />
                       Avoid tables and graphics
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" />
+                      <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent shrink-0 mt-0.5" />
                       Use simple, clean formatting
                     </li>
                   </ul>
@@ -459,8 +459,8 @@ const Builder = () => {
             </div>
 
             {/* Form Section */}
-            <div className="lg:col-span-5">
-              <div className="bg-card rounded-2xl border border-border p-8 shadow-sm">
+            <div className="lg:col-span-5 order-3 lg:order-2">
+              <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-6 md:p-8 shadow-sm">
                 {activeSection === "personal" && (
                   <PersonalInfoForm 
                     data={resumeData.personalInfo} 
@@ -526,18 +526,18 @@ const Builder = () => {
               </div>
             </div>
 
-            {/* Preview Section */}
-            <div className="lg:col-span-4">
+            {/* Preview Section - hidden on mobile, shown on larger screens */}
+            <div className="hidden lg:block lg:col-span-4 order-2 lg:order-3">
               <div className="sticky top-24">
                 <div className="bg-card rounded-2xl border border-border shadow-lg overflow-hidden">
-                  <div className="bg-muted px-6 py-4 border-b border-border flex items-center justify-between">
+                  <div className="bg-muted px-4 sm:px-6 py-3 sm:py-4 border-b border-border flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4 text-muted-foreground" />
-                      <span className="font-medium text-foreground">Live Preview</span>
+                      <span className="font-medium text-foreground text-sm sm:text-base">Live Preview</span>
                     </div>
                     <span className="text-xs text-muted-foreground capitalize">{selectedTemplate} Template</span>
                   </div>
-                  <div className="p-6 max-h-[calc(100vh-12rem)] overflow-y-auto">
+                  <div className="p-4 sm:p-6 max-h-[calc(100vh-12rem)] overflow-y-auto">
                     <ResumePreview data={resumeData} templateId={selectedTemplate} />
                   </div>
                 </div>
