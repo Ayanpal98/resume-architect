@@ -99,39 +99,39 @@ export const ResumeComparison = ({
   const summaryChanged = originalData.summary !== currentData.summary;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="text-center pb-4 border-b border-border">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-primary/10 rounded-full text-sm text-primary mb-3">
-          <Sparkles className="w-4 h-4" />
+      <div className="text-center pb-3 sm:pb-4 border-b border-border">
+        <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-primary/10 rounded-full text-xs sm:text-sm text-primary mb-2 sm:mb-3">
+          <Sparkles className="w-3 h-3 sm:w-4 sm:h-4" />
           Resume Comparison
         </div>
-        <h2 className="text-xl font-display font-bold text-foreground">
+        <h2 className="text-lg sm:text-xl font-display font-bold text-foreground">
           Before & After Analysis
         </h2>
-        <p className="text-sm text-muted-foreground mt-1">
+        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
           See how your resume has improved
         </p>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-muted/50 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-foreground">{improvementCount}</div>
-          <div className="text-xs text-muted-foreground">Areas Improved</div>
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
+        <div className="bg-muted/50 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
+          <div className="text-xl sm:text-2xl font-bold text-foreground">{improvementCount}</div>
+          <div className="text-[10px] sm:text-xs text-muted-foreground">Areas Improved</div>
         </div>
-        <div className="bg-accent/10 rounded-xl p-4 text-center">
-          <div className="text-2xl font-bold text-accent">{newSkills.length}</div>
-          <div className="text-xs text-muted-foreground">New Skills Added</div>
+        <div className="bg-accent/10 rounded-lg sm:rounded-xl p-3 sm:p-4 text-center">
+          <div className="text-xl sm:text-2xl font-bold text-accent">{newSkills.length}</div>
+          <div className="text-[10px] sm:text-xs text-muted-foreground">New Skills Added</div>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 p-1 bg-muted rounded-lg">
+      <div className="flex gap-1.5 sm:gap-2 p-1 bg-muted rounded-lg">
         <button
           onClick={() => setActiveTab("overview")}
           className={cn(
-            "flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all",
+            "flex-1 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all",
             activeTab === "overview"
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -142,7 +142,7 @@ export const ResumeComparison = ({
         <button
           onClick={() => setActiveTab("details")}
           className={cn(
-            "flex-1 px-4 py-2 rounded-md text-sm font-medium transition-all",
+            "flex-1 px-3 sm:px-4 py-2 rounded-md text-xs sm:text-sm font-medium transition-all",
             activeTab === "details"
               ? "bg-background text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -153,40 +153,40 @@ export const ResumeComparison = ({
       </div>
 
       {/* Content */}
-      <ScrollArea className="h-[400px] pr-4">
+      <ScrollArea className="h-[300px] sm:h-[400px] pr-2 sm:pr-4">
         {activeTab === "overview" && (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {/* Stats Comparison */}
             {stats.map((stat, idx) => (
               <div
                 key={idx}
                 className={cn(
-                  "rounded-xl border p-4 transition-all",
+                  "rounded-lg sm:rounded-xl border p-3 sm:p-4 transition-all",
                   stat.improved
                     ? "border-accent/30 bg-accent/5"
                     : "border-border bg-muted/30"
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 sm:gap-3">
                     <div
                       className={cn(
-                        "w-10 h-10 rounded-lg flex items-center justify-center",
+                        "w-8 h-8 sm:w-10 sm:h-10 rounded-md sm:rounded-lg flex items-center justify-center",
                         stat.improved ? "bg-accent/20" : "bg-muted"
                       )}
                     >
                       <stat.icon
                         className={cn(
-                          "w-5 h-5",
+                          "w-4 h-4 sm:w-5 sm:h-5",
                           stat.improved ? "text-accent" : "text-muted-foreground"
                         )}
                       />
                     </div>
                     <div>
-                      <div className="font-medium text-foreground">{stat.label}</div>
-                      <div className="flex items-center gap-2 text-sm">
+                      <div className="font-medium text-foreground text-sm sm:text-base">{stat.label}</div>
+                      <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm">
                         <span className="text-muted-foreground">{stat.original}</span>
-                        <ArrowRight className="w-3 h-3 text-muted-foreground" />
+                        <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-muted-foreground" />
                         <span
                           className={cn(
                             "font-medium",
@@ -199,10 +199,10 @@ export const ResumeComparison = ({
                     </div>
                   </div>
                   {stat.improved ? (
-                    <CheckCircle2 className="w-5 h-5 text-accent" />
+                    <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-accent shrink-0" />
                   ) : (
-                    <div className="w-5 h-5 rounded-full bg-muted flex items-center justify-center">
-                      <span className="text-xs text-muted-foreground">—</span>
+                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-muted flex items-center justify-center shrink-0">
+                      <span className="text-[10px] sm:text-xs text-muted-foreground">—</span>
                     </div>
                   )}
                 </div>

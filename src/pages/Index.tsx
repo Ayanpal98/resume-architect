@@ -5,21 +5,21 @@ const Index = () => {
   return <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
-              <FileText className="w-5 h-5 text-primary-foreground" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
+              <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-display font-bold text-accent">ATSFY Assistant</span>
+            <span className="text-lg sm:text-xl font-display font-bold text-accent">ATSFY</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How it Works</a>
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/welcome">
-              <Button variant="ghost" size="sm">Sign In</Button>
+              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Sign In</Button>
             </Link>
             <Link to="/welcome">
               <Button variant="hero" size="sm">Get Started</Button>
@@ -75,17 +75,17 @@ const Index = () => {
       
 
       {/* Features Section */}
-      <section id="features" className="py-24 px-6">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-3 sm:mb-4">
               Everything You Need to Land Your Dream Job
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
               Built using real recruiter logic - not guesswork or black-box scores          
             </p>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {[{
             icon: Target,
             title: "ATS Optimization",
@@ -110,29 +110,29 @@ const Index = () => {
             icon: Users,
             title: "Industry-Specific Tips",
             description: "Adapts language and section order based on what top-performing resumes in your field include."
-          }].map((feature, index) => <div key={index} className="group p-6 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-6 h-6 text-primary" />
+          }].map((feature, index) => <div key={index} className="group p-4 sm:p-6 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-primary/20 transition-colors">
+                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
-                <h3 className="text-lg font-display font-semibold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm">{feature.description}</p>
+                <h3 className="text-base sm:text-lg font-display font-semibold text-foreground mb-2">{feature.title}</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">{feature.description}</p>
               </div>)}
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-24 px-6 bg-card">
+      <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-6 bg-card">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+          <div className="text-center mb-10 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-3 sm:mb-4">
               Build Your Perfect Resume in 3 Steps
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-sm sm:text-lg max-w-2xl mx-auto">
               Our streamlined process makes creating an ATS-friendly resume quick and easy.
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
             {[{
             step: "01",
             title: "Enter Your Information",
@@ -145,14 +145,14 @@ const Index = () => {
             step: "03",
             title: "Download & Apply",
             description: "Export your polished, ATS-friendly resume and start landing interviews."
-          }].map((step, index) => <div key={index} className="relative">
-                <div className="text-6xl font-display font-bold text-primary/10 mb-4">{step.step}</div>
-                <h3 className="text-xl font-display font-semibold text-foreground mb-2">{step.title}</h3>
-                <p className="text-muted-foreground">{step.description}</p>
+          }].map((step, index) => <div key={index} className="relative text-center sm:text-left">
+                <div className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-primary/10 mb-3 sm:mb-4">{step.step}</div>
+                <h3 className="text-lg sm:text-xl font-display font-semibold text-foreground mb-2">{step.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground">{step.description}</p>
                 {index < 2 && <div className="hidden md:block absolute top-8 right-0 w-1/2 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>}
               </div>)}
           </div>
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 sm:mt-12">
             <Link to="/welcome">
               <Button variant="hero" size="lg">
                 Start Building Now
@@ -164,18 +164,19 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-24 px-6">
+      <section className="py-16 sm:py-24 px-4 sm:px-6">
         <div className="container mx-auto max-w-4xl">
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-hero opacity-10 rounded-3xl blur-2xl"></div>
-            <div className="relative bg-gradient-hero rounded-3xl p-12 text-center">
-              <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
+            <div className="relative bg-gradient-hero rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-3 sm:mb-4">
                 Ready to Land More Interviews?
               </h2>
-              <p className="text-primary-foreground/80 text-lg mb-8 max-w-2xl mx-auto">ATSfy explains how ATS system read resumes. 
-We dont promise jobs - we help you become visible</p>
+              <p className="text-primary-foreground/80 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
+                ATSfy explains how ATS systems read resumes. We don't promise jobs - we help you become visible
+              </p>
               <Link to="/welcome">
-                <Button size="xl" className="bg-background text-primary hover:bg-background/90 shadow-xl">
+                <Button size="lg" className="bg-background text-primary hover:bg-background/90 shadow-xl">
                   Create Your Free Resume
                   <ArrowRight className="w-5 h-5" />
                 </Button>
@@ -186,16 +187,16 @@ We dont promise jobs - we help you become visible</p>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-border">
+      <footer className="py-8 sm:py-12 px-4 sm:px-6 border-t border-border">
         <div className="container mx-auto max-w-6xl">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
                 <FileText className="w-4 h-4 text-primary-foreground" />
               </div>
               <span className="text-lg font-display font-bold text-foreground">ResumeATS</span>
             </div>
-            <div className="text-sm text-muted-foreground">
+            <div className="text-xs sm:text-sm text-muted-foreground">
               © 2026 ResumeATS. All rights reserved.
             </div>
           </div>
