@@ -5,13 +5,53 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Input validation constants
+const MAX_TEXT_LENGTH = 100000; // 100KB max for resume text
+const MIN_TEXT_LENGTH = 50; // Minimum meaningful resume content
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { text } = await req.json();
+    const body = await req.json();
+    
+    // Input validation
+    if (!body || typeof body !== 'object') {
+      return new Response(
+        JSON.stringify({ error: "Invalid request body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { text } = body;
+
+    // Validate text parameter
+    if (!text || typeof text !== 'string') {
+      return new Response(
+        JSON.stringify({ error: "Resume text is required and must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Trim and validate length
+    const trimmedText = text.trim();
+    
+    if (trimmedText.length < MIN_TEXT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Resume text is too short. Minimum ${MIN_TEXT_LENGTH} characters required.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (trimmedText.length > MAX_TEXT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Resume text exceeds maximum length of ${MAX_TEXT_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
@@ -138,7 +178,7 @@ CRITICAL PARSING GUIDELINES:
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          { role: "user", content: `Parse this resume for ATS optimization:\n\n${text}` },
+          { role: "user", content: `Parse this resume for ATS optimization:\n\n${trimmedText}` },
         ],
       }),
     });

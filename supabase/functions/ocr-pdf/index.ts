@@ -5,21 +5,88 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Input validation constants
+const MAX_IMAGES = 20; // Maximum number of pages to process
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB per image (base64)
+const MIN_IMAGE_SIZE = 100; // Minimum valid base64 image
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { images } = await req.json();
+    const body = await req.json();
+
+    // Validate request body
+    if (!body || typeof body !== 'object') {
+      return new Response(
+        JSON.stringify({ error: "Invalid request body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { images } = body;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    if (!images || !Array.isArray(images) || images.length === 0) {
-      throw new Error("No images provided for OCR");
+    // Validate images array
+    if (!images || !Array.isArray(images)) {
+      return new Response(
+        JSON.stringify({ error: "Images array is required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (images.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "No images provided for OCR" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (images.length > MAX_IMAGES) {
+      return new Response(
+        JSON.stringify({ error: `Too many images. Maximum ${MAX_IMAGES} pages allowed.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate each image
+    for (let i = 0; i < images.length; i++) {
+      const img = images[i];
+      
+      if (!img || typeof img !== 'string') {
+        return new Response(
+          JSON.stringify({ error: `Invalid image data at index ${i}. Must be a base64 string.` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (img.length < MIN_IMAGE_SIZE) {
+        return new Response(
+          JSON.stringify({ error: `Image at index ${i} is too small to be valid.` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      if (img.length > MAX_IMAGE_SIZE) {
+        return new Response(
+          JSON.stringify({ error: `Image at index ${i} exceeds maximum size of 10MB.` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Basic validation that it looks like a data URL or base64
+      if (!img.startsWith('data:image/') && !img.match(/^[A-Za-z0-9+/=]+$/)) {
+        return new Response(
+          JSON.stringify({ error: `Image at index ${i} is not a valid base64 image.` }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
     }
 
     console.log(`Processing ${images.length} page(s) for OCR`);

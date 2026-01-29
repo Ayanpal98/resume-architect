@@ -6,20 +6,88 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Input validation constants
+const MAX_RESUME_LENGTH = 100000; // 100KB max
+const MAX_JOB_DESC_LENGTH = 50000; // 50KB max
+const MAX_FIELD_LENGTH = 500; // For smaller fields
+const MIN_CONTENT_LENGTH = 50;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { resumeText, jobDescription, jobTitle, requiredExperience, requiredEducation } = await req.json();
+    const body = await req.json();
 
-    if (!resumeText || !jobDescription) {
+    // Validate request body
+    if (!body || typeof body !== 'object') {
       return new Response(
-        JSON.stringify({ error: "Resume text and job description are required" }),
+        JSON.stringify({ error: "Invalid request body" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
+
+    const { resumeText, jobDescription, jobTitle, requiredExperience, requiredEducation } = body;
+
+    // Validate required fields
+    if (!resumeText || typeof resumeText !== 'string') {
+      return new Response(
+        JSON.stringify({ error: "Resume text is required and must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!jobDescription || typeof jobDescription !== 'string') {
+      return new Response(
+        JSON.stringify({ error: "Job description is required and must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Trim inputs
+    const trimmedResume = resumeText.trim();
+    const trimmedJobDesc = jobDescription.trim();
+
+    // Validate lengths
+    if (trimmedResume.length < MIN_CONTENT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Resume text is too short. Minimum ${MIN_CONTENT_LENGTH} characters required.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (trimmedResume.length > MAX_RESUME_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Resume text exceeds maximum length of ${MAX_RESUME_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (trimmedJobDesc.length < MIN_CONTENT_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Job description is too short. Minimum ${MIN_CONTENT_LENGTH} characters required.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (trimmedJobDesc.length > MAX_JOB_DESC_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Job description exceeds maximum length of ${MAX_JOB_DESC_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate optional fields
+    const sanitizedJobTitle = jobTitle && typeof jobTitle === 'string' 
+      ? jobTitle.trim().slice(0, MAX_FIELD_LENGTH) 
+      : '';
+    const sanitizedExperience = requiredExperience && typeof requiredExperience === 'string'
+      ? requiredExperience.trim().slice(0, MAX_FIELD_LENGTH)
+      : '';
+    const sanitizedEducation = requiredEducation && typeof requiredEducation === 'string'
+      ? requiredEducation.trim().slice(0, MAX_FIELD_LENGTH)
+      : '';
 
     const apiKey = Deno.env.get("LOVABLE_API_KEY");
     if (!apiKey) {
@@ -129,15 +197,15 @@ Be objective, fair, and thorough. Focus on job-relevant qualifications only.`;
 
     const userPrompt = `Analyze this candidate's resume against the job requirements:
 
-${jobTitle ? `JOB TITLE: ${jobTitle}` : ''}
-${requiredExperience ? `REQUIRED EXPERIENCE: ${requiredExperience}` : ''}
-${requiredEducation ? `REQUIRED EDUCATION: ${requiredEducation}` : ''}
+${sanitizedJobTitle ? `JOB TITLE: ${sanitizedJobTitle}` : ''}
+${sanitizedExperience ? `REQUIRED EXPERIENCE: ${sanitizedExperience}` : ''}
+${sanitizedEducation ? `REQUIRED EDUCATION: ${sanitizedEducation}` : ''}
 
 JOB DESCRIPTION:
-${jobDescription}
+${trimmedJobDesc}
 
 CANDIDATE RESUME:
-${resumeText}
+${trimmedResume}
 
 Provide a comprehensive analysis following the JSON structure specified. Be thorough but fair in your evaluation.`;
 
