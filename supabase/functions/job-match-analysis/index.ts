@@ -5,21 +5,120 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Input validation constants
+const MAX_JOB_DESC_LENGTH = 50000; // 50KB max
+const MAX_RESUME_DATA_SIZE = 100000; // 100KB max
+const MAX_FIELD_LENGTH = 1000;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { resumeData, jobDescription } = await req.json();
+    const body = await req.json();
+
+    // Validate request body
+    if (!body || typeof body !== 'object') {
+      return new Response(
+        JSON.stringify({ error: "Invalid request body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { resumeData, jobDescription } = body;
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    if (!jobDescription) {
-      throw new Error("Job description is required");
+    // Validate jobDescription
+    if (!jobDescription || typeof jobDescription !== 'string') {
+      return new Response(
+        JSON.stringify({ error: "Job description is required and must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const trimmedJobDesc = jobDescription.trim();
+    if (trimmedJobDesc.length < 50) {
+      return new Response(
+        JSON.stringify({ error: "Job description is too short. Minimum 50 characters required." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (trimmedJobDesc.length > MAX_JOB_DESC_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Job description exceeds maximum length of ${MAX_JOB_DESC_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate resumeData
+    if (!resumeData || typeof resumeData !== 'object') {
+      return new Response(
+        JSON.stringify({ error: "Resume data is required and must be an object" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check resumeData size
+    const resumeDataStr = JSON.stringify(resumeData);
+    if (resumeDataStr.length > MAX_RESUME_DATA_SIZE) {
+      return new Response(
+        JSON.stringify({ error: `Resume data exceeds maximum size of ${MAX_RESUME_DATA_SIZE} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Safely extract and sanitize resume fields
+    const sanitizeField = (field: any, maxLen = MAX_FIELD_LENGTH): string => {
+      if (!field) return "Not provided";
+      if (typeof field !== 'string') return "Not provided";
+      return field.trim().slice(0, maxLen) || "Not provided";
+    };
+
+    const personalInfo = resumeData.personalInfo || {};
+    const fullName = sanitizeField(personalInfo.fullName);
+    const summary = sanitizeField(resumeData.summary, 2000);
+
+    // Process experience array safely
+    let experienceText = "No experience listed";
+    if (Array.isArray(resumeData.experience) && resumeData.experience.length > 0) {
+      experienceText = resumeData.experience
+        .slice(0, 10)
+        .map((exp: any) => {
+          const title = sanitizeField(exp?.title) || "Position";
+          const company = sanitizeField(exp?.company) || "Company";
+          const description = sanitizeField(exp?.description, 1000) || "";
+          return `- ${title} at ${company}: ${description}`;
+        })
+        .join("\n");
+    }
+
+    // Process skills array safely
+    let skillsText = "No skills listed";
+    if (Array.isArray(resumeData.skills) && resumeData.skills.length > 0) {
+      skillsText = resumeData.skills
+        .slice(0, 50)
+        .filter((s: any) => typeof s === 'string')
+        .map((s: string) => s.trim().slice(0, 100))
+        .join(", ");
+    }
+
+    // Process education array safely
+    let educationText = "No education listed";
+    if (Array.isArray(resumeData.education) && resumeData.education.length > 0) {
+      educationText = resumeData.education
+        .slice(0, 5)
+        .map((edu: any) => {
+          const degree = sanitizeField(edu?.degree) || "Degree";
+          const school = sanitizeField(edu?.school) || "Institution";
+          return `- ${degree} from ${school}`;
+        })
+        .join("\n");
     }
 
     const systemPrompt = `You are an expert ATS and job matching analyst. Analyze how well a resume matches a job description.
@@ -51,23 +150,19 @@ You MUST respond with ONLY a valid JSON object in this exact format, no other te
     const userPrompt = `Analyze how well this resume matches the job description.
 
 RESUME DATA:
-Name: ${resumeData.personalInfo?.fullName || "Not provided"}
-Summary: ${resumeData.summary || "Not provided"}
+Name: ${fullName}
+Summary: ${summary}
 
 Experience:
-${resumeData.experience?.map((exp: any) => 
-  `- ${exp.title} at ${exp.company}: ${exp.description}`
-).join("\n") || "No experience listed"}
+${experienceText}
 
-Skills: ${resumeData.skills?.join(", ") || "No skills listed"}
+Skills: ${skillsText}
 
 Education:
-${resumeData.education?.map((edu: any) => 
-  `- ${edu.degree} from ${edu.school}`
-).join("\n") || "No education listed"}
+${educationText}
 
 JOB DESCRIPTION:
-${jobDescription}
+${trimmedJobDesc}
 
 Provide a detailed match analysis as JSON.`;
 
