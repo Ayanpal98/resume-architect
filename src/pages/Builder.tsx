@@ -31,6 +31,7 @@ import { ATSScorePanel } from "@/components/ATSScorePanel";
 import { CoverLetterGenerator } from "@/components/CoverLetterGenerator";
 import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
+import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
@@ -460,69 +461,78 @@ const Builder = () => {
 
             {/* Form Section */}
             <div className="lg:col-span-5 order-3 lg:order-2">
-              <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-6 md:p-8 shadow-sm">
-                {activeSection === "personal" && (
-                  <PersonalInfoForm 
-                    data={resumeData.personalInfo} 
-                    summary={resumeData.summary}
-                    onUpdate={updatePersonalInfo}
-                    onSummaryChange={(value) => setResumeData(prev => ({ ...prev, summary: value }))}
-                    onApplySuggestion={handleApplySuggestion}
-                    resumeData={resumeData}
-                    jobDescription={jobDescription}
-                  />
-                )}
-                {activeSection === "experience" && (
-                  <ExperienceForm
-                    experiences={resumeData.experience}
-                    onAdd={addExperience}
-                    onUpdate={updateExperience}
-                    onRemove={removeExperience}
-                    jobDescription={jobDescription}
-                  />
-                )}
-                {activeSection === "education" && (
-                  <EducationForm
-                    education={resumeData.education}
-                    onAdd={addEducation}
-                    onUpdate={updateEducation}
-                    onRemove={removeEducation}
-                  />
-                )}
-                {activeSection === "skills" && (
-                  <SkillsForm
-                    skills={resumeData.skills}
-                    newSkill={newSkill}
-                    onNewSkillChange={setNewSkill}
-                    onAdd={addSkill}
-                    onRemove={removeSkill}
-                    onApplySuggestion={handleApplySuggestion}
-                    resumeData={resumeData}
-                    jobDescription={jobDescription}
-                  />
-                )}
-                {activeSection === "optimize" && (
-                  <OptimizeSection
-                    jobDescription={jobDescription}
-                    onJobDescriptionChange={setJobDescription}
-                    resumeData={resumeData}
-                    onApplySuggestion={handleApplySuggestion}
-                  />
-                )}
-                {activeSection === "jobmatch" && (
-                  <JobMatchPanel
-                    resumeData={resumeData}
-                    jobDescription={jobDescription}
-                    onJobDescriptionChange={setJobDescription}
-                  />
-                )}
-                {activeSection === "coverletter" && (
-                  <CoverLetterGenerator
-                    resumeData={resumeData}
-                    jobDescription={jobDescription}
-                    onJobDescriptionChange={setJobDescription}
-                  />
-                )}
+              <div className="space-y-4">
+                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-6 md:p-8 shadow-sm">
+                  {activeSection === "personal" && (
+                    <PersonalInfoForm 
+                      data={resumeData.personalInfo} 
+                      summary={resumeData.summary}
+                      onUpdate={updatePersonalInfo}
+                      onSummaryChange={(value) => setResumeData(prev => ({ ...prev, summary: value }))}
+                      onApplySuggestion={handleApplySuggestion}
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                    />
+                  )}
+                  {activeSection === "experience" && (
+                    <ExperienceForm
+                      experiences={resumeData.experience}
+                      onAdd={addExperience}
+                      onUpdate={updateExperience}
+                      onRemove={removeExperience}
+                      jobDescription={jobDescription}
+                    />
+                  )}
+                  {activeSection === "education" && (
+                    <EducationForm
+                      education={resumeData.education}
+                      onAdd={addEducation}
+                      onUpdate={updateEducation}
+                      onRemove={removeEducation}
+                    />
+                  )}
+                  {activeSection === "skills" && (
+                    <SkillsForm
+                      skills={resumeData.skills}
+                      newSkill={newSkill}
+                      onNewSkillChange={setNewSkill}
+                      onAdd={addSkill}
+                      onRemove={removeSkill}
+                      onApplySuggestion={handleApplySuggestion}
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                    />
+                  )}
+                  {activeSection === "optimize" && (
+                    <OptimizeSection
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
+                      resumeData={resumeData}
+                      onApplySuggestion={handleApplySuggestion}
+                    />
+                  )}
+                  {activeSection === "jobmatch" && (
+                    <JobMatchPanel
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
+                    />
+                  )}
+                  {activeSection === "coverletter" && (
+                    <CoverLetterGenerator
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
+                    />
+                  )}
+                </div>
+
+                {/* ATS Score Preview with Download */}
+                <ATSScorePreview 
+                  result={atsResult}
+                  onDownload={handleDownload}
+                  hasContent={isEvaluated}
+                />
               </div>
             </div>
 
