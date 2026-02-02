@@ -47,7 +47,7 @@ const ATS_SECTIONS = {
   projects: "PROJECTS",
 };
 
-// Template configurations optimized for ATS
+// Template configurations optimized for ATS - 3 widely accepted formats
 const templateConfigs = {
   classic: {
     colors: { primary: "#1a365d", secondary: "#2d3748", accent: "#2d3748" },
@@ -64,19 +64,10 @@ const templateConfigs = {
     sectionSize: 11,
     bodySize: 10,
     lineSpacing: 1.35,
-    useDividers: false,
-    bulletStyle: "▪",
-  },
-  minimal: {
-    colors: { primary: "#111827", secondary: "#4b5563", accent: "#111827" },
-    headerSize: 20,
-    sectionSize: 10,
-    bodySize: 9.5,
-    lineSpacing: 1.3,
     useDividers: true,
-    bulletStyle: "-",
+    bulletStyle: "•",
   },
-  executive: {
+  professional: {
     colors: { primary: "#0f172a", secondary: "#334155", accent: "#0f172a" },
     headerSize: 24,
     sectionSize: 12,
@@ -84,24 +75,6 @@ const templateConfigs = {
     lineSpacing: 1.4,
     useDividers: true,
     bulletStyle: "•",
-  },
-  creative: {
-    colors: { primary: "#7c3aed", secondary: "#4b5563", accent: "#7c3aed" },
-    headerSize: 24,
-    sectionSize: 11,
-    bodySize: 10,
-    lineSpacing: 1.35,
-    useDividers: false,
-    bulletStyle: "◦",
-  },
-  tech: {
-    colors: { primary: "#059669", secondary: "#374151", accent: "#059669" },
-    headerSize: 22,
-    sectionSize: 11,
-    bodySize: 10,
-    lineSpacing: 1.35,
-    useDividers: true,
-    bulletStyle: ">",
   },
 };
 

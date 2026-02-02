@@ -3,50 +3,25 @@ export interface ResumeTemplate {
   name: string;
   description: string;
   preview: string;
-  isPremium: boolean;
 }
 
 export const templates: ResumeTemplate[] = [
   {
     id: "classic",
     name: "Classic",
-    description: "Clean and professional template, perfect for traditional industries",
+    description: "Traditional format trusted by Fortune 500 companies and ATS systems worldwide",
     preview: "classic",
-    isPremium: false,
   },
   {
     id: "modern",
     name: "Modern",
-    description: "Contemporary design with a sleek layout for tech and creative roles",
+    description: "Clean contemporary layout optimized for tech, finance, and professional services",
     preview: "modern",
-    isPremium: false,
   },
   {
-    id: "minimal",
-    name: "Minimal",
-    description: "Simple and elegant with maximum readability",
-    preview: "minimal",
-    isPremium: false,
-  },
-  {
-    id: "executive",
-    name: "Executive",
-    description: "Sophisticated design for senior-level positions",
-    preview: "executive",
-    isPremium: true,
-  },
-  {
-    id: "creative",
-    name: "Creative",
-    description: "Stand out with a unique layout for design and marketing roles",
-    preview: "creative",
-    isPremium: true,
-  },
-  {
-    id: "tech",
-    name: "Tech Pro",
-    description: "Optimized for software developers and IT professionals",
-    preview: "tech",
-    isPremium: true,
+    id: "professional",
+    name: "Professional",
+    description: "Executive-level format ideal for senior roles and management positions",
+    preview: "professional",
   },
 ];
