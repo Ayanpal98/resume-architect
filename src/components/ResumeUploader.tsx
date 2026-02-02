@@ -102,13 +102,16 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     if (fileType === "application/pdf") {
       try {
         const pdfjsLib = await import("pdfjs-dist");
-        // Use versioned CDN URL for the worker
-        pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+        
+        // Use versioned CDN URL for the worker with proper extension
+        const workerUrl = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+        pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
         const arrayBuffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ 
           data: arrayBuffer,
           useSystemFonts: true,
+          standardFontDataUrl: `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/standard_fonts/`,
         }).promise;
 
         // First try text extraction
