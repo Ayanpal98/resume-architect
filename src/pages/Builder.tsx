@@ -40,6 +40,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 interface Experience {
   id: string;
@@ -556,6 +563,33 @@ const Builder = () => {
           </div>
         </div>
       </main>
+
+      {/* Mobile/Tablet Preview Button - Fixed FAB */}
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            variant="hero"
+            size="lg"
+            className="lg:hidden fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 shadow-xl"
+          >
+            <Eye className="w-6 h-6" />
+          </Button>
+        </SheetTrigger>
+        <SheetContent side="bottom" className="h-[85vh] p-0">
+          <SheetHeader className="bg-muted px-4 py-3 border-b border-border">
+            <div className="flex items-center justify-between">
+              <SheetTitle className="flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                Live Preview
+              </SheetTitle>
+              <span className="text-xs text-muted-foreground capitalize">{selectedTemplate} Template</span>
+            </div>
+          </SheetHeader>
+          <div className="p-4 overflow-y-auto h-[calc(85vh-60px)]">
+            <ResumePreview data={resumeData} templateId={selectedTemplate} />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 };
