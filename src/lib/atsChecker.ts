@@ -47,58 +47,78 @@ interface ResumeDataForCheck {
   skills: string[];
 }
 
-// Industry-standard ATS action verbs (expanded)
+// Industry-standard ATS action verbs (2024-2025 hiring standards - expanded)
 const ACTION_VERBS = [
-  // Leadership & Management
+  // Leadership & Management (High ATS weight)
   "led", "managed", "directed", "supervised", "coordinated", "oversaw", "spearheaded", "mentored", "coached",
-  // Achievement & Results
+  "championed", "orchestrated", "steered", "piloted", "governed", "administered",
+  // Achievement & Results (Highest ATS weight)
   "achieved", "accomplished", "delivered", "exceeded", "surpassed", "attained", "earned", "generated",
+  "captured", "secured", "won", "outperformed", "maximized",
   // Development & Creation
   "developed", "created", "designed", "built", "established", "launched", "initiated", "pioneered", "founded",
-  // Improvement & Optimization
+  "architected", "engineered", "constructed", "formulated", "innovated", "introduced",
+  // Improvement & Optimization (High demand 2024-2025)
   "improved", "enhanced", "optimized", "streamlined", "transformed", "revamped", "modernized", "upgraded",
+  "automated", "digitized", "accelerated", "refined", "elevated",
   // Analysis & Research
   "analyzed", "researched", "evaluated", "assessed", "identified", "investigated", "examined", "audited",
+  "diagnosed", "forecasted", "measured", "quantified", "benchmarked",
   // Implementation & Execution
   "implemented", "executed", "administered", "operated", "processed", "maintained", "performed",
+  "deployed", "integrated", "configured", "migrated", "scaled",
   // Communication & Collaboration
   "collaborated", "communicated", "negotiated", "presented", "facilitated", "liaised", "partnered",
+  "influenced", "advocated", "articulated", "convinced", "persuaded",
   // Problem Solving
   "resolved", "troubleshot", "diagnosed", "solved", "addressed", "mitigated", "prevented",
+  "remediated", "corrected", "debugged", "recovered",
   // Growth & Expansion
   "increased", "grew", "expanded", "scaled", "accelerated", "maximized", "boosted",
+  "amplified", "multiplied", "extended", "broadened",
   // Reduction & Efficiency
-  "reduced", "decreased", "minimized", "eliminated", "cut", "consolidated", "saved"
+  "reduced", "decreased", "minimized", "eliminated", "cut", "consolidated", "saved",
+  "lowered", "shortened", "compressed", "condensed",
+  // Technical & Engineering (High demand 2024-2025)
+  "programmed", "coded", "scripted", "refactored", "containerized", "orchestrated",
+  "provisioned", "instrumented", "monitored"
 ];
 
-// Industry-standard quantifiable patterns
+// Industry-standard quantifiable patterns (2024-2025 metrics)
 const QUANTIFIABLE_PATTERNS = [
   /\d+%/,                                           // Percentages
-  /\$[\d,]+(?:K|M|B)?/i,                           // Dollar amounts
+  /\$[\d,]+(?:\.\d{2})?(?:K|M|B)?/i,               // Dollar amounts
   /\d+\s*(?:years?|yrs?|months?|mos?)/i,           // Time periods
-  /\d+\s*(?:team|people|members|employees|staff|reports)/i, // Team size
-  /\d+\s*(?:projects?|initiatives?|programs?)/i,    // Project counts
-  /\d+\s*(?:clients?|customers?|accounts?|users?)/i, // Customer metrics
-  /(?:increased|improved|grew|boosted|raised).*?\d/i,
-  /(?:reduced|decreased|cut|saved|lowered).*?\d/i,
-  /\d+\s*(?:per|\/)\s*(?:day|week|month|year|hour)/i, // Rate metrics
+  /\d+\s*(?:team|people|members|employees|staff|reports|engineers|developers)/i, // Team size
+  /\d+\s*(?:projects?|initiatives?|programs?|products?|features?)/i,    // Project counts
+  /\d+\s*(?:clients?|customers?|accounts?|users?|subscribers?|DAU|MAU)/i, // Customer metrics
+  /(?:increased|improved|grew|boosted|raised|accelerated).*?\d/i,
+  /(?:reduced|decreased|cut|saved|lowered|eliminated).*?\d/i,
+  /\d+\s*(?:per|\/)\s*(?:day|week|month|year|hour|sprint|quarter)/i, // Rate metrics
   /(?:top|#)\s*\d+/i,                               // Rankings
-  /\d+x/i,                                          // Multipliers
+  /\d+x|\d+X/,                                      // Multipliers
   /\d{1,3}(?:,\d{3})+/,                            // Large numbers with commas
+  /\d+\s*(?:hours?|days?|weeks?)\s*(?:saved|faster|quicker)/i, // Time saved
+  /\d+\s*(?:bugs?|issues?|defects?|incidents?)\s*(?:resolved|fixed)/i, // Bug fixes
+  /(?:SLA|uptime|availability)\s*(?:of\s*)?\d+/i,  // SLA metrics
+  /\d+\s*(?:API|endpoints?|microservices?|repositories?)/i, // Technical scale
+  /(?:NPS|CSAT|satisfaction)\s*(?:score\s*)?(?:of\s*)?\d+/i, // Customer satisfaction
+  /\d+\s*(?:deployments?|releases?|sprints?)/i,    // DevOps metrics
 ];
 
-// ATS-friendly section headers (industry standard)
+// ATS-friendly section headers (industry standard 2024-2025)
 const STANDARD_SECTIONS = [
-  "summary", "objective", "professional summary", "career objective",
-  "experience", "work experience", "professional experience", "employment history",
-  "education", "academic background", "qualifications",
-  "skills", "technical skills", "core competencies", "areas of expertise",
-  "certifications", "licenses", "credentials",
-  "projects", "achievements", "accomplishments"
+  "summary", "professional summary", "executive summary", "career summary",
+  "experience", "work experience", "professional experience", "employment history", "work history",
+  "education", "academic background", "qualifications", "educational background",
+  "skills", "technical skills", "core competencies", "areas of expertise", "key skills",
+  "certifications", "licenses", "credentials", "professional certifications",
+  "projects", "key projects", "notable projects",
+  "achievements", "accomplishments", "awards", "honors"
 ];
 
 // Common ATS-breaking elements to avoid
-const PROBLEMATIC_CHARACTERS = /[│┃┄┅┆┇┈┉┊┋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟★☆●○◆◇■□▲△▶▷◀◁♦♠♣♥]/;
+const PROBLEMATIC_CHARACTERS = /[│┃┄┅┆┇┈┉┊┋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟★☆●○◆◇■□▲△▶▷◀◁♦♠♣♥🔹🔸⭐️✨💡🎯📊📈]/;
 const EXCESSIVE_PUNCTUATION = /[!@#$%^&*()]{3,}/;
 const URL_PATTERN = /https?:\/\/[^\s]+/gi;
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -664,11 +684,11 @@ function checkSkills(skills: string[]) {
   // Skill categorization and variety (6 points)
   const skillsJoined = skills.join(" ").toLowerCase();
   
-  // Technical skills detection (expanded)
-  const technicalPatterns = /\b(javascript|typescript|python|java|c\+\+|c#|ruby|php|swift|kotlin|go|rust|sql|mysql|postgresql|mongodb|react|angular|vue|node\.?js|express|django|flask|spring|docker|kubernetes|aws|azure|gcp|git|jenkins|ci\/cd|api|rest|graphql|html|css|sass|tailwind|excel|tableau|power\s?bi|salesforce|sap|jira|agile|scrum|linux|windows|macos)\b/gi;
+  // Technical skills detection (2024-2025 high-demand skills expanded)
+  const technicalPatterns = /\b(javascript|typescript|python|java|c\+\+|c#|ruby|php|swift|kotlin|go|golang|rust|sql|mysql|postgresql|mongodb|react|angular|vue|next\.?js|node\.?js|express|django|flask|fastapi|spring|docker|kubernetes|k8s|aws|azure|gcp|git|github|gitlab|jenkins|ci\/cd|terraform|ansible|api|rest|graphql|grpc|html|css|sass|tailwind|webpack|vite|excel|tableau|power\s?bi|looker|salesforce|sap|hubspot|jira|confluence|agile|scrum|kanban|linux|windows|macos|redis|kafka|elasticsearch|spark|hadoop|pytorch|tensorflow|machine\s?learning|ml|ai|llm|genai|devops|sre|security|oauth|jwt|microservices|serverless|lambda|cloudflare)\b/gi;
   
-  // Soft skills detection
-  const softSkillPatterns = /\b(communication|leadership|teamwork|problem[\s\-]?solving|analytical|creative|management|collaboration|presentation|organization|critical\s?thinking|time\s?management|adaptability|attention\s?to\s?detail|interpersonal|negotiation|conflict\s?resolution|decision[\s\-]?making|strategic\s?planning)\b/gi;
+  // Soft skills detection (2024-2025 hiring priorities)
+  const softSkillPatterns = /\b(communication|leadership|teamwork|problem[\s\-]?solving|analytical|creative|management|collaboration|presentation|organization|critical\s?thinking|time\s?management|adaptability|attention\s?to\s?detail|interpersonal|negotiation|conflict\s?resolution|decision[\s\-]?making|strategic\s?planning|stakeholder\s?management|cross[\s\-]?functional|mentoring|coaching|emotional\s?intelligence|remote\s?collaboration|async\s?communication)\b/gi;
 
   const technicalMatches = skillsJoined.match(technicalPatterns) || [];
   const softSkillMatches = skillsJoined.match(softSkillPatterns) || [];
@@ -680,7 +700,7 @@ function checkSkills(skills: string[]) {
     score += 6;
   } else if (hasTechnical) {
     score += 4;
-    recommendations.push("Add 2-3 soft skills (communication, leadership, problem-solving)");
+    recommendations.push("Add 2-3 soft skills (communication, leadership, stakeholder management)");
   } else if (hasSoftSkills) {
     score += 3;
     recommendations.push("Add more technical/hard skills relevant to your field");
@@ -789,17 +809,17 @@ function checkKeywordOptimization(resumeData: ResumeDataForCheck) {
     recommendations.push("Integrate key skills into your experience descriptions for better ATS matching");
   }
 
-  // Industry-specific keyword presence (5 points)
-  const industryKeywords = /\b(project|team|client|customer|stakeholder|budget|deadline|process|system|strategy|implementation|development|analysis|report|presentation|training|performance|quality|compliance|innovation|optimization|efficiency|growth|revenue|cost|profit|ROI)\b/gi;
+  // Industry-specific keyword presence (5 points) - 2024-2025 business terminology
+  const industryKeywords = /\b(project|team|client|customer|stakeholder|budget|deadline|process|system|strategy|implementation|development|analysis|report|presentation|training|performance|quality|compliance|innovation|optimization|efficiency|growth|revenue|cost|profit|ROI|OKR|KPI|metrics|pipeline|roadmap|sprint|backlog|milestone|deliverable|initiative|transformation|digital|automation|scalability|sustainability|agile|data[\s\-]?driven|user[\s\-]?centric|cross[\s\-]?functional)\b/gi;
   const industryMatches = allText.match(industryKeywords) || [];
   
-  if (industryMatches.length >= 20) {
+  if (industryMatches.length >= 25) {
     score += 5;
-  } else if (industryMatches.length >= 12) {
+  } else if (industryMatches.length >= 15) {
     score += 4;
-  } else if (industryMatches.length >= 6) {
+  } else if (industryMatches.length >= 8) {
     score += 2;
-    recommendations.push("Add more business/industry keywords (project, client, strategy, etc.)");
+    recommendations.push("Add more business/industry keywords (stakeholder, metrics, roadmap, etc.)");
   } else {
     score += 1;
     issues.push("Missing common professional keywords");

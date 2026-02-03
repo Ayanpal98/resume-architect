@@ -58,31 +58,61 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are an expert ATS (Applicant Tracking System) resume parser following industry standards. Your goal is to extract and structure resume data for maximum ATS compatibility.
+    const systemPrompt = `You are an elite ATS (Applicant Tracking System) resume parser trained on 2024-2025 hiring standards. Your parsing must maximize compatibility with modern ATS platforms (Greenhouse, Lever, Workday, iCIMS, Taleo).
 
-EXTRACTION RULES:
-1. CONTACT INFORMATION: Extract full name, email, phone (with country code if present), city/state/country, LinkedIn URL, portfolio/website, GitHub profile
-2. PROFESSIONAL SUMMARY: Capture the entire summary/objective section verbatim, preserving action verbs and quantifiable achievements
-3. WORK EXPERIENCE: For each role extract:
-   - Exact job title (standardize common variations)
-   - Company name (full legal name if possible)
+PARSING STANDARDS (2024-2025):
+
+1. **CONTACT INFORMATION** - Parse with 100% accuracy:
+   - Full name (First Last format)
+   - Email (professional format validation)
+   - Phone (with country code if present)
+   - Location (City, State/Country - essential for job matching)
+   - LinkedIn URL (full URL format)
+   - Portfolio/GitHub (if present)
+
+2. **PROFESSIONAL SUMMARY** - Critical for ATS ranking:
+   - Extract complete summary/objective verbatim
+   - Identify years of experience mentioned
+   - Extract key achievements with metrics
+   - Identify target role/industry keywords
+
+3. **WORK EXPERIENCE** - Highest weight in ATS scoring:
+   - Job title (standardize to common industry titles)
+   - Company name (full legal name)
    - Location (City, State/Country)
-   - Start and end dates in YYYY-MM format
-   - Whether currently employed there
-   - Full description with all bullet points combined
-   - Extract quantifiable achievements (numbers, percentages, dollar amounts)
-   - Identify action verbs used
-4. EDUCATION: Extract degree type, field of study, institution name, location, graduation date, GPA if mentioned, honors/awards
-5. SKILLS: Categorize into:
-   - Technical/Hard skills (programming languages, tools, frameworks, certifications)
-   - Soft skills (leadership, communication, teamwork)
-   - Industry-specific keywords
-6. CERTIFICATIONS: Name, issuing organization, date obtained, expiration if applicable
-7. PROJECTS: Title, description, technologies used, outcomes
-8. LANGUAGES: Language and proficiency level
-9. ATS METADATA: Extract any keywords that match common ATS filters
+   - Dates (YYYY-MM format, handle "Present"/"Current")
+   - Full description with all bullet points
+   - CRITICAL: Extract ALL quantifiable metrics (%, $, numbers)
+   - Identify STAR method components (Situation, Task, Action, Result)
+   - Extract action verbs used
 
-Return a valid JSON object with this EXACT structure:
+4. **EDUCATION** - Essential for entry/mid-level:
+   - Degree type + Field of study
+   - Institution name
+   - Graduation date (YYYY-MM)
+   - GPA if 3.5+ or explicitly mentioned
+   - Honors/Awards
+
+5. **SKILLS** - Critical for ATS keyword matching:
+   - Technical/Hard skills (languages, frameworks, tools)
+   - Soft skills (leadership, communication)
+   - Industry-specific keywords
+   - Certifications/Licenses
+
+6. **ADDITIONAL SECTIONS**:
+   - Certifications with issuing body and date
+   - Projects with technologies and outcomes
+   - Languages with proficiency level
+
+PARSING RULES:
+- Standardize dates to YYYY-MM (e.g., "Jan 2020" → "2020-01")
+- For "Present"/"Current", set endDate empty and current=true
+- Merge skill variations (JS/JavaScript → JavaScript)
+- Extract ALL numbers as potential achievements
+- Confidence scores: 0.0-1.0 based on section completeness
+- Never return null - use empty strings/arrays
+
+RETURN VALID JSON WITH THIS EXACT STRUCTURE:
 {
   "personalInfo": {
     "fullName": "",
@@ -103,7 +133,7 @@ Return a valid JSON object with this EXACT structure:
       "endDate": "YYYY-MM or empty if current",
       "current": false,
       "description": "",
-      "achievements": ["quantifiable achievement 1", "achievement 2"],
+      "achievements": ["quantified achievement 1", "achievement 2"],
       "actionVerbs": ["led", "managed", "developed"]
     }
   ],
@@ -157,16 +187,7 @@ Return a valid JSON object with this EXACT structure:
   }
 }
 
-CRITICAL PARSING GUIDELINES:
-- Standardize date formats to YYYY-MM (e.g., "January 2020" → "2020-01", "2020" → "2020-01")
-- For "Present" or "Current", set endDate to empty string and current to true
-- Merge all skill variations (e.g., "JS", "JavaScript", "Javascript" → "JavaScript")
-- Extract ALL quantifiable metrics (%, $, numbers) as achievements
-- Identify common ATS action verbs: achieved, built, created, delivered, enhanced, facilitated, generated, helped, implemented, joined, kept, led, managed, negotiated, organized, produced, qualified, reduced, streamlined, trained, unified, validated, worked, executed, yielded, zeroed
-- Confidence scores should be 0.0-1.0 based on how complete each section is
-- If a section is not found, return empty string/array but never null
-- Parse bullet points into separate achievement entries
-- Return ONLY the JSON object, no markdown, no explanation, no code blocks`;
+Return ONLY the JSON object. No markdown, no explanation, no code blocks.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

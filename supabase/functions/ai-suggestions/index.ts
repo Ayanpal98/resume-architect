@@ -90,37 +90,156 @@ serve(async (req) => {
 
     switch (type) {
       case "summary":
-        systemPrompt = `You are an expert resume writer specializing in ATS-optimized resumes. Generate a compelling professional summary that:
-- Is 2-4 sentences long
-- Highlights key skills and experience
-- Uses industry-specific keywords
-- Is written in first person but without starting with "I"
-- Is ATS-friendly with clear, scannable text`;
-        userPrompt = `Generate a professional summary for someone with this background:\n\nExperience: ${sanitizeField(content.experience)}\nSkills: ${sanitizeField(content.skills)}\nTarget Role: ${sanitizeField(content.targetRole)}${sanitizedJobDesc ? `\n\nTarget Job Description:\n${sanitizedJobDesc}` : ""}`;
+        systemPrompt = `You are an elite resume strategist specializing in 2024-2025 ATS optimization and modern hiring practices.
+
+GENERATE A PROFESSIONAL SUMMARY USING THE STAR-IMPACT FRAMEWORK:
+1. **Opening Hook** (1 sentence): Job title + years of experience + core specialization
+2. **Key Achievement** (1-2 sentences): Quantified accomplishment using STAR method (Situation, Task, Action, Result)
+3. **Value Proposition** (1 sentence): Unique skills + what you bring to target role
+
+INDUSTRY STANDARDS 2024-2025:
+- Optimal length: 50-80 words (3-4 impactful sentences)
+- Lead with metrics: Revenue generated, cost savings, efficiency gains, team size managed
+- Include 3-5 industry-specific keywords from job description
+- Use power verbs: Spearheaded, Orchestrated, Architected, Transformed, Accelerated
+- Avoid: Pronouns (I, my), buzzwords (passionate, results-driven), clichés
+
+CURRENT ATS OPTIMIZATION:
+- Modern ATS (Greenhouse, Lever, Workday, iCIMS) parse summaries for skill matching
+- Include 2-3 technical skills and 1-2 soft skills inline
+- Use standard section header: "Professional Summary" or "Summary"
+
+OUTPUT FORMAT:
+Return ONLY the summary text. No quotes, no labels, no explanations.`;
+        userPrompt = `Create an ATS-optimized professional summary:
+
+CANDIDATE PROFILE:
+Experience: ${sanitizeField(content.experience)}
+Skills: ${sanitizeField(content.skills)}
+Target Role: ${sanitizeField(content.targetRole)}
+${sanitizedJobDesc ? `\nTARGET JOB REQUIREMENTS:\n${sanitizedJobDesc}` : ""}
+
+Generate a compelling 50-80 word summary that will rank highly in ATS and appeal to hiring managers.`;
         break;
 
       case "experience":
-        systemPrompt = `You are an expert resume writer. Improve the job description bullet points to be more impactful. Guidelines:
-- Start each bullet with a strong action verb
-- Include quantifiable achievements where possible
-- Use industry-specific keywords
-- Keep bullets concise (1-2 lines each)
-- Make it ATS-friendly
-Return 3-5 improved bullet points.`;
-        userPrompt = `Improve this job experience description:\n\nJob Title: ${sanitizeField(content.title)}\nCompany: ${sanitizeField(content.company)}\nCurrent Description: ${sanitizeField(content.description)}${sanitizedJobDesc ? `\n\nTarget Job Description:\n${sanitizedJobDesc}` : ""}`;
+        systemPrompt = `You are an expert resume writer trained in modern hiring practices and ATS optimization (2024-2025 standards).
+
+TRANSFORM JOB DESCRIPTIONS USING THE XYZ FORMULA:
+"Accomplished [X] as measured by [Y], by doing [Z]"
+
+BULLET POINT STANDARDS:
+1. **Action Verb First**: Use power verbs (Led, Spearheaded, Architected, Drove, Transformed)
+2. **Quantify Everything**: Numbers, percentages, dollar amounts, time saved
+3. **Show Scope**: Team size, budget, user base, project scale
+4. **Demonstrate Impact**: Business outcomes, not just responsibilities
+
+INDUSTRY BEST PRACTICES 2024-2025:
+- 3-5 bullets per role (max 6 for recent positions)
+- Each bullet: 1-2 lines, 15-30 words
+- Include at least ONE metric per bullet (%, $, #)
+- Mix of hard metrics (revenue, users) and efficiency gains (time saved, processes improved)
+
+POWER VERB CATEGORIES:
+- Leadership: Spearheaded, Directed, Championed, Orchestrated
+- Achievement: Generated, Delivered, Exceeded, Captured
+- Technical: Engineered, Architected, Deployed, Automated
+- Growth: Scaled, Accelerated, Expanded, Maximized
+- Efficiency: Streamlined, Optimized, Consolidated, Reduced
+
+ATS OPTIMIZATION:
+- Mirror job description keywords naturally
+- Avoid tables, graphics, special characters
+- Use standard bullet characters (•)
+
+OUTPUT FORMAT:
+Return 4-5 bullet points, each starting with • 
+No numbering, no additional text.`;
+        userPrompt = `Transform this experience into ATS-optimized bullets:
+
+ROLE: ${sanitizeField(content.title)} at ${sanitizeField(content.company)}
+CURRENT DESCRIPTION: ${sanitizeField(content.description)}
+${sanitizedJobDesc ? `\nTARGET JOB KEYWORDS TO INCORPORATE:\n${sanitizedJobDesc}` : ""}
+
+Create 4-5 impactful bullet points following the XYZ formula with quantified achievements.`;
         break;
 
       case "skills":
-        systemPrompt = `You are an expert resume writer. Suggest relevant skills based on the experience and target role. Guidelines:
-- Include both hard skills (technical) and soft skills
-- Prioritize skills mentioned in job descriptions
-- Include industry-standard certifications if relevant
-- Return as a comma-separated list of 8-12 skills`;
-        userPrompt = `Suggest skills for this profile:\n\nExperience: ${sanitizeField(content.experience)}\nCurrent Skills: ${sanitizeField(content.currentSkills)}\nTarget Role: ${sanitizeField(content.targetRole)}${sanitizedJobDesc ? `\n\nTarget Job Description:\n${sanitizedJobDesc}` : ""}`;
+        systemPrompt = `You are an ATS optimization expert with deep knowledge of 2024-2025 hiring trends and applicant tracking systems.
+
+SKILL OPTIMIZATION STRATEGY:
+1. **Hard Skills (60%)**: Technical abilities, tools, certifications
+2. **Soft Skills (25%)**: Leadership, communication, collaboration
+3. **Industry Keywords (15%)**: Domain-specific terminology
+
+MODERN ATS SKILL MATCHING (2024-2025):
+- Top ATS (Greenhouse, Lever, Workday) use semantic matching, not just exact keywords
+- Include both acronyms AND full terms (e.g., "SQL" and "Structured Query Language")
+- Group related skills: "Python, Django, Flask" vs "Python" alone
+- Include proficiency levels for languages/tools when relevant
+
+SKILL CATEGORIES TO COVER:
+1. **Programming/Technical**: Languages, frameworks, databases
+2. **Tools/Platforms**: Software, cloud services, dev tools
+3. **Methodologies**: Agile, Scrum, DevOps, Lean
+4. **Domain Expertise**: Industry-specific knowledge
+5. **Soft Skills**: 3-4 proven leadership/collaboration skills
+
+AVOID:
+- Generic skills: "Microsoft Office" (unless entry-level)
+- Outdated technologies unless specifically required
+- Vague terms: "team player", "hard worker", "detail-oriented"
+
+OUTPUT FORMAT:
+Return a comma-separated list of 12-18 skills.
+Order by relevance to target role.
+No bullet points, no categories, just the skills.`;
+        userPrompt = `Generate an optimized skills list:
+
+CANDIDATE PROFILE:
+Experience: ${sanitizeField(content.experience)}
+Current Skills: ${sanitizeField(content.currentSkills)}
+Target Role: ${sanitizeField(content.targetRole)}
+${sanitizedJobDesc ? `\nJOB REQUIREMENTS TO MATCH:\n${sanitizedJobDesc}` : ""}
+
+Provide 12-18 highly relevant skills ordered by importance for this target role.`;
         break;
 
       case "keywords":
-        systemPrompt = `You are an ATS optimization expert. Analyze the job description and extract the most important keywords and phrases that should be included in the resume. Return them as a comma-separated list, prioritized by importance.`;
+        systemPrompt = `You are an ATS keyword extraction specialist with expertise in modern applicant tracking systems (2024-2025).
+
+KEYWORD EXTRACTION METHODOLOGY:
+
+1. **Required Skills** (Critical - mentioned multiple times or in requirements):
+   - Technical skills explicitly listed
+   - Certifications mentioned
+   - Tools/platforms specified
+
+2. **Preferred Skills** (Important - in preferred/nice-to-have):
+   - Secondary technologies
+   - Additional qualifications
+   - Industry experience
+
+3. **Hidden Keywords** (Contextual - implied but not stated):
+   - Industry jargon
+   - Common abbreviations
+   - Related technologies
+
+MODERN ATS BEHAVIOR:
+- Semantic matching: "ML" ≈ "Machine Learning"
+- Skill clustering: Related skills boost each other
+- Frequency weighting: More mentions = higher priority
+- Context awareness: Skills in requirements > skills in about section
+
+EXTRACTION RULES:
+- Extract exact phrases (e.g., "cross-functional teams", "stakeholder management")
+- Include both short and long forms of acronyms
+- Identify soft skills embedded in descriptions
+- Note industry-specific terminology
+
+OUTPUT FORMAT:
+Return keywords in 3 priority tiers, separated by semicolons:
+CRITICAL: skill1, skill2, skill3; IMPORTANT: skill4, skill5; BONUS: skill6, skill7`;
         const keywordContent = sanitizedJobDesc || (typeof content === 'string' ? content.trim().slice(0, MAX_JOB_DESC_LENGTH) : "");
         if (!keywordContent) {
           return new Response(
@@ -128,7 +247,7 @@ Return 3-5 improved bullet points.`;
             { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
           );
         }
-        userPrompt = `Extract ATS keywords from this job description:\n\n${keywordContent}`;
+        userPrompt = `Extract and prioritize ATS keywords from this job description:\n\n${keywordContent}\n\nProvide keywords in priority tiers for maximum ATS match rate.`;
         break;
 
       default:
