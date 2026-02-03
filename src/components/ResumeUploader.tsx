@@ -13,9 +13,12 @@ import {
   Eye,
   ArrowRight,
   RotateCcw,
+  ClipboardPaste,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { parseResumeFile } from "@/lib/aiService";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +30,7 @@ interface ResumeUploaderProps {
 }
 
 type UploadStep = "idle" | "uploading" | "extracting" | "ocr" | "preview" | "parsing" | "analyzing" | "complete" | "error";
+type InputMode = "upload" | "paste";
 
 // Convert PDF page to image using canvas
 const convertPdfPageToImage = async (pdf: any, pageNum: number): Promise<string> => {
@@ -66,6 +70,7 @@ const performOCR = async (images: string[]): Promise<string> => {
 
 export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: ResumeUploaderProps) => {
   const navigate = useNavigate();
+  const [inputMode, setInputMode] = useState<InputMode>("paste");
   const [step, setStep] = useState<UploadStep>("idle");
   const [progress, setProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
@@ -75,6 +80,7 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
   const [parsedData, setParsedData] = useState<any>(null);
   const [atsResult, setAtsResult] = useState<ATSCheckResult | null>(null);
   const [extractedText, setExtractedText] = useState<string>("");
+  const [pastedText, setPastedText] = useState<string>("");
   const [usedOCR, setUsedOCR] = useState(false);
   const [currentFile, setCurrentFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -330,11 +336,31 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     setParsedData(null);
     setAtsResult(null);
     setExtractedText("");
+    setPastedText("");
     setUsedOCR(false);
     setCurrentFile(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
+  };
+
+  // Handle pasted text submission
+  const handlePastedTextSubmit = async () => {
+    const trimmedText = pastedText.trim();
+    
+    if (trimmedText.length < 50) {
+      setError("Please paste more content. Minimum 50 characters required for analysis.");
+      setStep("error");
+      return;
+    }
+
+    setFileName("Pasted Content");
+    setFileSize(`${trimmedText.length.toLocaleString()} characters`);
+    setError(null);
+    setExtractedText(trimmedText);
+    setUsedOCR(false);
+    setStep("preview");
+    setProgress(45);
   };
 
   const getStepLabel = (): string => {
@@ -543,65 +569,142 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
     );
   }
 
-  // Idle state - Upload prompt
+  // Idle state - Upload or Paste prompt
   return (
-    <div
-      className={`relative border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer ${
-        dragActive
-          ? "border-primary bg-primary/5 scale-[1.02]"
-          : "border-border hover:border-primary/50 hover:bg-muted/50"
-      }`}
-      onDragEnter={handleDrag}
-      onDragLeave={handleDrag}
-      onDragOver={handleDrag}
-      onDrop={handleDrop}
-      onClick={() => fileInputRef.current?.click()}
-    >
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".pdf,.docx,.txt"
-        onChange={handleChange}
-        className="hidden"
-      />
+    <div className="relative border-2 border-border rounded-2xl p-6 bg-background">
+      <Tabs value={inputMode} onValueChange={(v) => setInputMode(v as InputMode)} className="w-full">
+        <TabsList className="grid w-full grid-cols-2 mb-6">
+          <TabsTrigger value="paste" className="gap-2">
+            <ClipboardPaste className="w-4 h-4" />
+            Paste Text
+          </TabsTrigger>
+          <TabsTrigger value="upload" className="gap-2">
+            <Upload className="w-4 h-4" />
+            Upload File
+          </TabsTrigger>
+        </TabsList>
 
-      <div className="w-20 h-20 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-        <Upload className="w-10 h-10 text-primary" />
-      </div>
+        <TabsContent value="paste" className="mt-0">
+          <div className="space-y-4">
+            <div className="text-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <ClipboardPaste className="w-8 h-8 text-primary" />
+              </div>
+              <h3 className="text-lg font-display font-bold text-foreground mb-1">
+                Paste Your Resume Content
+              </h3>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                Copy the text from your resume (PDF, Word, etc.) and paste it below for instant ATS analysis.
+              </p>
+            </div>
 
-      <h3 className="text-xl font-display font-bold text-foreground mb-2">
-        Upload Your Resume
-      </h3>
-      <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-        Drag & drop your resume file here, or click to browse. We'll analyze it with our ATS
-        checker.
-      </p>
+            <Textarea
+              placeholder="Paste your resume content here...
 
-      <Button variant="hero" size="lg" onClick={(e) => e.stopPropagation()}>
-        <FileText className="w-5 h-5 mr-2" />
-        Choose File
-      </Button>
+Example:
+John Doe
+Software Engineer
+john.doe@email.com | (555) 123-4567
 
-      <div className="mt-6 flex items-center justify-center gap-6 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <File className="w-3 h-3" />
-          PDF
-        </span>
-        <span className="flex items-center gap-1">
-          <File className="w-3 h-3" />
-          DOCX
-        </span>
-        <span className="flex items-center gap-1">
-          <File className="w-3 h-3" />
-          TXT
-        </span>
-        <span>Max 5MB</span>
-      </div>
+Professional Summary
+Experienced software engineer with 5+ years...
 
-      <div className="mt-6 pt-6 border-t border-border">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-full text-sm text-primary">
+Experience
+Senior Developer at Tech Company (2020-Present)
+• Led development of..."
+              value={pastedText}
+              onChange={(e) => setPastedText(e.target.value)}
+              className="min-h-[250px] font-mono text-sm resize-none"
+            />
+
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>
+                {pastedText.length > 0 
+                  ? `${pastedText.trim().split(/\s+/).filter(Boolean).length.toLocaleString()} words • ${pastedText.length.toLocaleString()} characters`
+                  : "Minimum 50 characters required"
+                }
+              </span>
+              {pastedText.length >= 50 && (
+                <span className="text-accent flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3" />
+                  Ready to analyze
+                </span>
+              )}
+            </div>
+
+            <Button 
+              variant="hero" 
+              size="lg" 
+              className="w-full"
+              disabled={pastedText.trim().length < 50}
+              onClick={handlePastedTextSubmit}
+            >
+              <Target className="w-5 h-5 mr-2" />
+              Analyze Resume
+            </Button>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="upload" className="mt-0">
+          <div
+            className={`relative border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
+              dragActive
+                ? "border-primary bg-primary/5 scale-[1.01]"
+                : "border-border hover:border-primary/50 hover:bg-muted/50"
+            }`}
+            onDragEnter={handleDrag}
+            onDragLeave={handleDrag}
+            onDragOver={handleDrag}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".pdf,.docx,.txt"
+              onChange={handleChange}
+              className="hidden"
+            />
+
+            <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+              <Upload className="w-8 h-8 text-primary" />
+            </div>
+
+            <h3 className="text-lg font-display font-bold text-foreground mb-2">
+              Upload Your Resume
+            </h3>
+            <p className="text-sm text-muted-foreground mb-4 max-w-sm mx-auto">
+              Drag & drop your resume file here, or click to browse.
+            </p>
+
+            <Button variant="hero" size="lg" onClick={(e) => e.stopPropagation()}>
+              <FileText className="w-5 h-5 mr-2" />
+              Choose File
+            </Button>
+
+            <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <span className="flex items-center gap-1">
+                <File className="w-3 h-3" />
+                PDF
+              </span>
+              <span className="flex items-center gap-1">
+                <File className="w-3 h-3" />
+                DOCX
+              </span>
+              <span className="flex items-center gap-1">
+                <File className="w-3 h-3" />
+                TXT
+              </span>
+              <span>Max 5MB</span>
+            </div>
+          </div>
+        </TabsContent>
+      </Tabs>
+
+      <div className="mt-6 pt-4 border-t border-border">
+        <div className="flex items-center justify-center gap-2 text-sm text-primary">
           <Target className="w-4 h-4" />
-          <span>Instant ATS score analysis on upload</span>
+          <span>Instant ATS score analysis</span>
         </div>
       </div>
     </div>
