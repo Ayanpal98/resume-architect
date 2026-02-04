@@ -278,25 +278,58 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
           </div>
         )}
 
-        {/* Quick Stats - Updated labels */}
-        <div className="grid grid-cols-2 gap-4 mt-6 pt-4 border-t border-white/20">
+        {/* Quick Stats - Updated with new metrics */}
+        <div className="grid grid-cols-4 gap-3 mt-6 pt-4 border-t border-white/20">
           <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <BarChart3 className="w-4 h-4 text-white/70" />
-            </div>
-            <div className="text-xl font-bold">{getScoreLabel(displayScore)}</div>
-            <div className="text-xs text-white/70">Readiness Level</div>
+            <div className="text-lg font-bold">{getScoreLabel(displayScore)}</div>
+            <div className="text-[10px] text-white/70">Readiness</div>
           </div>
           <div className="text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <Zap className="w-4 h-4 text-white/70" />
-            </div>
-            <div className="text-xl font-bold">
+            <div className="text-lg font-bold">{result.starScore || 0}%</div>
+            <div className="text-[10px] text-white/70">STAR Score</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold">{result.impactScore || 0}%</div>
+            <div className="text-[10px] text-white/70">Impact</div>
+          </div>
+          <div className="text-center">
+            <div className="text-lg font-bold">
               {result.categories.filter(c => c.passed).length}/{result.categories.length}
             </div>
-            <div className="text-xs text-white/70">Checks Passed</div>
+            <div className="text-[10px] text-white/70">Checks</div>
           </div>
         </div>
+
+        {/* Industry Match Banner */}
+        {result.industryMatch && result.industryMatch.matchPercentage >= 20 && (
+          <div className="mt-4 p-3 bg-white/10 rounded-lg border border-white/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-white/90" />
+                <span className="text-sm font-medium text-white capitalize">
+                  {result.industryMatch.industry} Industry Match
+                </span>
+              </div>
+              <Badge className="bg-white/20 text-white border-white/30">
+                {result.industryMatch.matchPercentage}%
+              </Badge>
+            </div>
+            {result.industryMatch.matchedKeywords.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-2">
+                {result.industryMatch.matchedKeywords.slice(0, 5).map((kw, idx) => (
+                  <span key={idx} className="text-[10px] bg-white/15 px-1.5 py-0.5 rounded text-white/90">
+                    {kw}
+                  </span>
+                ))}
+                {result.industryMatch.matchedKeywords.length > 5 && (
+                  <span className="text-[10px] text-white/60">
+                    +{result.industryMatch.matchedKeywords.length - 5} more
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Keyword Coverage Analysis - New Section */}
@@ -376,6 +409,89 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         </div>
       </div>
 
+      {/* STAR & Impact Metrics - New Section */}
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <TrendingUp className="w-5 h-5 text-primary" />
+          <h4 className="font-medium text-foreground">Achievement Quality</h4>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          {/* STAR Score */}
+          <div className="bg-muted/50 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-muted-foreground">STAR Method</span>
+              <span className={`text-sm font-bold ${(result.starScore || 0) >= 75 ? 'text-accent' : (result.starScore || 0) >= 50 ? 'text-primary' : 'text-muted-foreground'}`}>
+                {result.starScore || 0}%
+              </span>
+            </div>
+            <Progress value={result.starScore || 0} className="h-1.5" />
+            <p className="text-[10px] text-muted-foreground mt-1.5">
+              {(result.starScore || 0) >= 75 ? "Great storytelling structure!" : 
+               (result.starScore || 0) >= 50 ? "Good, add more context/results" : 
+               "Use Situation → Task → Action → Result"}
+            </p>
+          </div>
+
+          {/* Impact Score */}
+          <div className="bg-muted/50 rounded-lg p-3">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-muted-foreground">Impact Metrics</span>
+              <span className={`text-sm font-bold ${(result.impactScore || 0) >= 75 ? 'text-accent' : (result.impactScore || 0) >= 50 ? 'text-primary' : 'text-muted-foreground'}`}>
+                {result.impactScore || 0}%
+              </span>
+            </div>
+            <Progress value={result.impactScore || 0} className="h-1.5" />
+            <p className="text-[10px] text-muted-foreground mt-1.5">
+              {(result.impactScore || 0) >= 75 ? "Excellent quantified results!" : 
+               (result.impactScore || 0) >= 50 ? "Add more $, %, numbers" : 
+               "Quantify: revenue, users, time saved"}
+            </p>
+          </div>
+        </div>
+
+        {/* Quick tips based on scores */}
+        {((result.starScore || 0) < 50 || (result.impactScore || 0) < 50) && (
+          <div className="mt-3 p-2 bg-primary/5 rounded-lg border border-primary/20">
+            <div className="flex items-start gap-2">
+              <Lightbulb className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+              <div className="text-xs text-muted-foreground">
+                <span className="font-medium text-foreground">Pro tip:</span>{" "}
+                {(result.impactScore || 0) < 50 
+                  ? 'Try "Increased revenue by 25%" or "Reduced costs by $50K"'
+                  : 'Start bullets with context: "When faced with..." then show your action & result'}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Industry Keywords to Add - Only show if industry match exists */}
+      {result.industryMatch && result.industryMatch.missingKeywords.length > 0 && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <Shield className="w-5 h-5 text-primary" />
+            <h4 className="font-medium text-foreground">Boost Your {result.industryMatch.industry.charAt(0).toUpperCase() + result.industryMatch.industry.slice(1)} Score</h4>
+          </div>
+          
+          <p className="text-xs text-muted-foreground mb-3">
+            Consider adding these high-value {result.industryMatch.industry} keywords:
+          </p>
+          
+          <div className="flex flex-wrap gap-1.5">
+            {result.industryMatch.missingKeywords.slice(0, 8).map((keyword, idx) => (
+              <Badge 
+                key={idx} 
+                variant="outline" 
+                className="text-xs bg-primary/5 text-primary/80 border-primary/20 cursor-pointer hover:bg-primary/10"
+              >
+                + {keyword}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Format & Structure Check */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center gap-2 mb-3">
@@ -385,12 +501,12 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
         
         <div className="space-y-2">
           <div className={`flex items-center gap-3 p-2 rounded-lg ${
-            parsingClarity.bulletPointsDetected ? 'bg-accent/10' : 'bg-amber-500/10'
+            parsingClarity.bulletPointsDetected ? 'bg-accent/10' : 'bg-muted/50'
           }`}>
             {parsingClarity.bulletPointsDetected ? (
               <Check className="w-4 h-4 text-accent" />
             ) : (
-              <X className="w-4 h-4 text-amber-500" />
+              <AlertCircle className="w-4 h-4 text-muted-foreground" />
             )}
             <span className="text-sm text-foreground">
               {parsingClarity.bulletPointsDetected ? 'Great use of bullet points!' : 'Try adding bullet points for clarity'}
@@ -398,12 +514,12 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
           </div>
           
           <div className={`flex items-center gap-3 p-2 rounded-lg ${
-            parsingClarity.standardSectionHeadings ? 'bg-accent/10' : 'bg-amber-500/10'
+            parsingClarity.standardSectionHeadings ? 'bg-accent/10' : 'bg-muted/50'
           }`}>
             {parsingClarity.standardSectionHeadings ? (
               <Check className="w-4 h-4 text-accent" />
             ) : (
-              <X className="w-4 h-4 text-amber-500" />
+              <AlertCircle className="w-4 h-4 text-muted-foreground" />
             )}
             <span className="text-sm text-foreground">
               {parsingClarity.standardSectionHeadings ? 'Clear section headings' : 'Consider standard section headings'}
@@ -411,12 +527,12 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
           </div>
           
           <div className={`flex items-center gap-3 p-2 rounded-lg ${
-            parsingClarity.consistentFormatting ? 'bg-accent/10' : 'bg-amber-500/10'
+            parsingClarity.consistentFormatting ? 'bg-accent/10' : 'bg-muted/50'
           }`}>
             {parsingClarity.consistentFormatting ? (
               <Check className="w-4 h-4 text-accent" />
             ) : (
-              <X className="w-4 h-4 text-amber-500" />
+              <AlertCircle className="w-4 h-4 text-muted-foreground" />
             )}
             <span className="text-sm text-foreground">
               {parsingClarity.consistentFormatting ? "Nice, consistent formatting!" : "Let's make formatting more consistent"}

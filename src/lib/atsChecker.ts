@@ -1,3 +1,5 @@
+import { industryKeywords } from "./templates";
+
 export interface ATSCheckResult {
   overallScore: number;
   categories: ATSCategory[];
@@ -5,6 +7,9 @@ export interface ATSCheckResult {
   passStatus: "excellent" | "good" | "fair" | "poor";
   keywordDensity: number;
   readabilityScore: number;
+  impactScore: number;
+  starScore: number;
+  industryMatch: IndustryMatch | null;
 }
 
 export interface ATSCategory {
@@ -13,7 +18,14 @@ export interface ATSCategory {
   maxScore: number;
   issues: string[];
   passed: boolean;
-  weight: number; // Industry weight factor
+  weight: number;
+}
+
+export interface IndustryMatch {
+  industry: string;
+  matchPercentage: number;
+  matchedKeywords: string[];
+  missingKeywords: string[];
 }
 
 interface ResumeDataForCheck {
@@ -46,6 +58,37 @@ interface ResumeDataForCheck {
   }>;
   skills: string[];
 }
+
+// STAR methodology components for impact detection (2024-2025 best practices)
+const STAR_PATTERNS = {
+  situation: /\b(when|during|while|faced with|tasked with|in response to|given|upon|amid|amidst|following|after|before|upon discovering|in a situation where|challenged by)\b/i,
+  task: /\b(responsible for|charged with|assigned to|needed to|required to|expected to|goal was|objective was|mission was|mandate was|role was to|duty was)\b/i,
+  action: /\b(led|managed|developed|created|implemented|designed|built|established|launched|initiated|pioneered|orchestrated|spearheaded|executed|delivered|transformed|optimized|streamlined|automated|analyzed|collaborated|negotiated|presented|resolved|architected|engineered|scaled|deployed|integrated|configured|migrated)\b/i,
+  result: /\b(resulted in|leading to|which led to|achieving|accomplished|delivered|generated|produced|increased|decreased|reduced|improved|saved|grew|expanded|boosted|enhanced|maximized|minimized|eliminated|accelerated|driving|contributing to|enabling|resulting)\b/i,
+};
+
+// Impact multiplier patterns (high-value achievements)
+const IMPACT_PATTERNS = {
+  revenue: /(?:revenue|sales|profit|income|earnings|ARR|MRR)\s*(?:of|by|to)?\s*\$?[\d,.]+[KMB]?/i,
+  cost: /(?:cost|expense|spending|budget)\s*(?:reduction|savings?|cut)\s*(?:of|by)?\s*\$?[\d,.]+[KMB]?|(?:saved?|cut|reduced?)\s*\$?[\d,.]+[KMB]?/i,
+  efficiency: /(?:efficiency|productivity|performance)\s*(?:improvement|increase|gain)\s*(?:of|by)?\s*\d+%/i,
+  scale: /(?:scaled?|grew?|expanded?)\s*(?:to|by|from)?\s*\d+[xX]|\d+[xX]\s*(?:growth|increase|scale)/i,
+  team: /(?:led|managed|mentored|coached|supervised)\s*(?:a\s*)?(?:team\s*of\s*)?\d+\s*(?:people|engineers|developers|members|staff|reports)/i,
+  users: /\d+[KMB]?\+?\s*(?:users?|customers?|clients?|subscribers?|DAU|MAU|downloads?)/i,
+  time: /(?:reduced?|shortened?|cut|decreased?)\s*(?:time|duration|cycle|turnaround)\s*(?:by)?\s*\d+%/i,
+  uptime: /\d+\.?\d*%\s*(?:uptime|availability|reliability)|(?:uptime|availability)\s*(?:of|to)?\s*\d+\.?\d*%/i,
+};
+
+// 2024-2025 high-demand technical skills by category
+const SKILL_CATEGORIES_2025 = {
+  ai_ml: ["machine learning", "ml", "ai", "artificial intelligence", "deep learning", "neural network", "nlp", "llm", "genai", "generative ai", "chatgpt", "langchain", "rag", "vector database", "embeddings", "fine-tuning", "prompt engineering", "pytorch", "tensorflow", "hugging face", "computer vision", "mlops"],
+  cloud_devops: ["aws", "azure", "gcp", "google cloud", "kubernetes", "k8s", "docker", "terraform", "ansible", "jenkins", "ci/cd", "gitlab", "github actions", "cloudformation", "serverless", "lambda", "ecs", "eks", "argo", "helm", "istio", "observability", "prometheus", "grafana", "datadog"],
+  data_analytics: ["sql", "python", "r", "tableau", "power bi", "looker", "snowflake", "databricks", "spark", "kafka", "airflow", "dbt", "bigquery", "redshift", "data warehouse", "etl", "data pipeline", "data modeling", "analytics", "business intelligence", "bi"],
+  backend: ["node.js", "python", "java", "go", "golang", "rust", "c#", ".net", "spring", "django", "flask", "fastapi", "express", "nest.js", "graphql", "rest api", "microservices", "postgresql", "mysql", "mongodb", "redis", "elasticsearch", "rabbitmq", "grpc"],
+  frontend: ["react", "typescript", "javascript", "vue", "angular", "next.js", "tailwind", "css", "html", "webpack", "vite", "redux", "zustand", "react query", "testing library", "cypress", "playwright", "storybook", "figma", "responsive design"],
+  security: ["cybersecurity", "security", "oauth", "jwt", "sso", "saml", "encryption", "penetration testing", "vulnerability", "compliance", "soc 2", "gdpr", "hipaa", "zero trust", "iam", "rbac"],
+  product_agile: ["agile", "scrum", "kanban", "jira", "confluence", "product management", "roadmap", "okr", "kpi", "stakeholder", "user research", "a/b testing", "mvp", "sprint", "backlog", "retrospective"],
+};
 
 // Industry-standard ATS action verbs (2024-2025 hiring standards - expanded)
 const ACTION_VERBS = [
@@ -180,12 +223,21 @@ export const checkATSCompatibility = (resumeData: ResumeDataForCheck): ATSCheckR
   // Calculate readability score
   const readabilityScore = calculateReadabilityScore(resumeData);
 
+  // Calculate STAR methodology score (2024-2025 interview standard)
+  const starScore = calculateStarScore(resumeData);
+
+  // Calculate impact score (high-value achievement density)
+  const impactScore = calculateImpactScore(resumeData);
+
+  // Calculate industry match
+  const industryMatch = calculateIndustryMatch(resumeData);
+
   // Determine pass status based on industry thresholds
   let passStatus: ATSCheckResult["passStatus"];
-  if (overallScore >= 80) passStatus = "excellent";      // Top 20% of resumes
-  else if (overallScore >= 65) passStatus = "good";      // Above average
-  else if (overallScore >= 50) passStatus = "fair";      // Needs improvement
-  else passStatus = "poor";                               // Significant issues
+  if (overallScore >= 80) passStatus = "excellent";
+  else if (overallScore >= 65) passStatus = "good";
+  else if (overallScore >= 50) passStatus = "fair";
+  else passStatus = "poor";
 
   // Prioritize recommendations by impact
   const prioritizedRecommendations = prioritizeRecommendations(recommendations, categories);
@@ -197,6 +249,9 @@ export const checkATSCompatibility = (resumeData: ResumeDataForCheck): ATSCheckR
     passStatus,
     keywordDensity,
     readabilityScore,
+    impactScore,
+    starScore,
+    industryMatch,
   };
 };
 
@@ -989,6 +1044,116 @@ function calculateReadabilityScore(resumeData: ResumeDataForCheck): number {
   else if (avgWordLength > 7) score -= 5;
 
   return Math.max(Math.min(score, 100), 0);
+}
+
+// Calculate STAR methodology adherence score
+function calculateStarScore(resumeData: ResumeDataForCheck): number {
+  const allDescriptions = resumeData.experience.map(e => e.description).join(" ");
+  
+  if (!allDescriptions || allDescriptions.length < 50) return 0;
+  
+  let starComponents = 0;
+  
+  // Check for each STAR component
+  if (STAR_PATTERNS.situation.test(allDescriptions)) starComponents++;
+  if (STAR_PATTERNS.task.test(allDescriptions)) starComponents++;
+  if (STAR_PATTERNS.action.test(allDescriptions)) starComponents++;
+  if (STAR_PATTERNS.result.test(allDescriptions)) starComponents++;
+  
+  // Score based on how many STAR components are present
+  // Perfect STAR = 100, missing components reduce score
+  return Math.round((starComponents / 4) * 100);
+}
+
+// Calculate high-impact achievement density
+function calculateImpactScore(resumeData: ResumeDataForCheck): number {
+  const allText = [
+    resumeData.summary,
+    ...resumeData.experience.map(e => e.description),
+  ].join(" ");
+  
+  if (!allText || allText.length < 50) return 0;
+  
+  let impactCount = 0;
+  let maxImpact = Object.keys(IMPACT_PATTERNS).length;
+  
+  // Check each impact pattern
+  Object.values(IMPACT_PATTERNS).forEach(pattern => {
+    if (pattern.test(allText)) {
+      impactCount++;
+    }
+  });
+  
+  // Also count total quantifiable achievements
+  const quantifiableMatches = allText.match(/\$[\d,]+[KMB]?|\d+%|\d+[xX]|\d+\s*(?:users?|customers?|people|members)/gi) || [];
+  const quantifiableBonus = Math.min(quantifiableMatches.length * 5, 30);
+  
+  const baseScore = Math.round((impactCount / maxImpact) * 70);
+  
+  return Math.min(baseScore + quantifiableBonus, 100);
+}
+
+// Calculate industry-specific keyword match
+function calculateIndustryMatch(resumeData: ResumeDataForCheck): IndustryMatch | null {
+  const allText = [
+    resumeData.summary,
+    ...resumeData.experience.map(e => `${e.title} ${e.company} ${e.description}`),
+    ...resumeData.education.map(e => `${e.degree} ${e.school}`),
+    resumeData.skills.join(" "),
+  ].join(" ").toLowerCase();
+  
+  if (allText.length < 50) return null;
+  
+  let bestMatch: IndustryMatch | null = null;
+  let highestScore = 0;
+  
+  // Check each industry
+  Object.entries(industryKeywords).forEach(([industry, keywords]) => {
+    const matchedKeywords: string[] = [];
+    const missingKeywords: string[] = [];
+    
+    keywords.forEach(keyword => {
+      const normalizedKeyword = keyword.toLowerCase();
+      if (allText.includes(normalizedKeyword)) {
+        matchedKeywords.push(keyword);
+      } else {
+        missingKeywords.push(keyword);
+      }
+    });
+    
+    const matchPercentage = Math.round((matchedKeywords.length / keywords.length) * 100);
+    
+    if (matchPercentage > highestScore && matchedKeywords.length >= 3) {
+      highestScore = matchPercentage;
+      bestMatch = {
+        industry,
+        matchPercentage,
+        matchedKeywords: matchedKeywords.slice(0, 10),
+        missingKeywords: missingKeywords.slice(0, 8),
+      };
+    }
+  });
+  
+  // Also check 2025 skill categories for tech-specific roles
+  let techSkillMatches = 0;
+  let techSkillTotal = 0;
+  
+  Object.entries(SKILL_CATEGORIES_2025).forEach(([category, skills]) => {
+    skills.forEach(skill => {
+      techSkillTotal++;
+      if (allText.includes(skill.toLowerCase())) {
+        techSkillMatches++;
+      }
+    });
+  });
+  
+  // If tech skills dominate, boost tech industry match
+  if (techSkillMatches >= 10 && bestMatch?.industry === "tech") {
+    const techBonus = Math.min(Math.round((techSkillMatches / 20) * 20), 20);
+    bestMatch.matchPercentage = Math.min(bestMatch.matchPercentage + techBonus, 100);
+  }
+  
+  return bestMatch;
 }
 
 function prioritizeRecommendations(recommendations: string[], categories: ATSCategory[]): string[] {
