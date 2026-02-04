@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
 import { TemplateSelector } from "@/components/TemplateSelector";
+import { TemplateRecommendation } from "@/components/TemplateRecommendation";
 import { AISuggestionPanel } from "@/components/AISuggestionPanel";
 import { ResumeImport } from "@/components/ResumeImport";
 import { ATSScorePanel } from "@/components/ATSScorePanel";
@@ -306,18 +307,45 @@ const Builder = () => {
                   <span className="hidden md:inline">Templates</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[95vw] max-w-2xl max-h-[80vh] overflow-y-auto mx-auto">
+              <DialogContent className="w-[95vw] max-w-3xl max-h-[85vh] overflow-y-auto mx-auto">
                 <DialogHeader>
                   <DialogTitle>Choose Template</DialogTitle>
                 </DialogHeader>
-                <TemplateSelector
-                  selectedTemplate={selectedTemplate}
-                  onSelect={(id) => {
-                    setSelectedTemplate(id);
-                    setShowTemplates(false);
-                    toast.success(`${id.charAt(0).toUpperCase() + id.slice(1)} template selected`);
-                  }}
-                />
+                <div className="space-y-6">
+                  {/* AI Recommendations */}
+                  <div className="space-y-2">
+                    <h3 className="text-sm font-medium text-foreground">Recommended for You</h3>
+                    <TemplateRecommendation
+                      resumeData={resumeData}
+                      selectedTemplate={selectedTemplate}
+                      onSelectTemplate={(id) => {
+                        setSelectedTemplate(id);
+                        setShowTemplates(false);
+                        toast.success(`${id.charAt(0).toUpperCase() + id.slice(1)} template selected`);
+                      }}
+                    />
+                  </div>
+                  
+                  {/* Separator */}
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-border"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or browse all</span>
+                    </div>
+                  </div>
+                  
+                  {/* All Templates */}
+                  <TemplateSelector
+                    selectedTemplate={selectedTemplate}
+                    onSelect={(id) => {
+                      setSelectedTemplate(id);
+                      setShowTemplates(false);
+                      toast.success(`${id.charAt(0).toUpperCase() + id.slice(1)} template selected`);
+                    }}
+                  />
+                </div>
               </DialogContent>
             </Dialog>
 
