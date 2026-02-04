@@ -8,16 +8,28 @@ interface TemplateSelectorProps {
 }
 
 const TemplatePreview = ({ template, isSelected, onClick }: { template: ResumeTemplate; isSelected: boolean; onClick: () => void }) => {
-  const previewColors = {
+  const previewColors: Record<string, string> = {
     classic: "from-slate-800 to-slate-700",
     modern: "from-blue-700 to-indigo-700",
     professional: "from-gray-900 to-gray-800",
+    tech: "from-cyan-700 to-teal-800",
+    finance: "from-emerald-800 to-green-900",
+    healthcare: "from-sky-700 to-blue-800",
   };
 
-  const previewAccents = {
+  const previewAccents: Record<string, string> = {
     classic: "bg-slate-600",
     modern: "bg-blue-500",
     professional: "bg-gray-700",
+    tech: "bg-cyan-500",
+    finance: "bg-emerald-500",
+    healthcare: "bg-sky-500",
+  };
+
+  const industryIcons: Record<string, string> = {
+    tech: "💻",
+    finance: "📊",
+    healthcare: "🏥",
   };
 
   return (
@@ -66,30 +78,66 @@ const TemplatePreview = ({ template, isSelected, onClick }: { template: ResumeTe
 
       <div className="text-left">
         <div className="flex items-center gap-2">
+          {template.industry && industryIcons[template.industry] && (
+            <span className="text-sm">{industryIcons[template.industry]}</span>
+          )}
           <h3 className="font-semibold text-foreground">{template.name}</h3>
           <span className="text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded-full font-medium">ATS</span>
         </div>
         <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{template.description}</p>
+        {template.keywords && (
+          <div className="flex flex-wrap gap-1 mt-2">
+            {template.keywords.slice(0, 4).map((keyword) => (
+              <span key={keyword} className="text-[9px] bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
+                {keyword}
+              </span>
+            ))}
+            <span className="text-[9px] text-muted-foreground">+{template.keywords.length - 4} more</span>
+          </div>
+        )}
       </div>
     </button>
   );
 };
 
 export const TemplateSelector = ({ selectedTemplate, onSelect }: TemplateSelectorProps) => {
+  const generalTemplates = templates.filter(t => !t.industry);
+  const industryTemplates = templates.filter(t => t.industry);
+
   return (
-    <div className="space-y-4">
-      <p className="text-sm text-muted-foreground">
-        All templates are optimized for Applicant Tracking Systems (ATS) and widely accepted by employers.
-      </p>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {templates.map((template) => (
-          <TemplatePreview
-            key={template.id}
-            template={template}
-            isSelected={selectedTemplate === template.id}
-            onClick={() => onSelect(template.id)}
-          />
-        ))}
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium text-foreground">General Templates</h4>
+        <p className="text-xs text-muted-foreground">
+          Universal formats optimized for ATS and widely accepted by employers.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {generalTemplates.map((template) => (
+            <TemplatePreview
+              key={template.id}
+              template={template}
+              isSelected={selectedTemplate === template.id}
+              onClick={() => onSelect(template.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <h4 className="text-sm font-medium text-foreground">Industry-Specific Templates</h4>
+        <p className="text-xs text-muted-foreground">
+          Pre-optimized with industry keywords for targeted job applications.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          {industryTemplates.map((template) => (
+            <TemplatePreview
+              key={template.id}
+              template={template}
+              isSelected={selectedTemplate === template.id}
+              onClick={() => onSelect(template.id)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

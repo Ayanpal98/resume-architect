@@ -47,7 +47,7 @@ const ATS_SECTIONS = {
   projects: "PROJECTS",
 };
 
-// Template configurations optimized for ATS - 3 widely accepted formats
+// Template configurations optimized for ATS - 6 widely accepted formats
 const templateConfigs = {
   classic: {
     colors: { primary: "#1a365d", secondary: "#2d3748", accent: "#2d3748" },
@@ -72,6 +72,33 @@ const templateConfigs = {
     headerSize: 24,
     sectionSize: 12,
     bodySize: 10.5,
+    lineSpacing: 1.4,
+    useDividers: true,
+    bulletStyle: "•",
+  },
+  tech: {
+    colors: { primary: "#0e7490", secondary: "#334155", accent: "#0891b2" },
+    headerSize: 24,
+    sectionSize: 11,
+    bodySize: 10,
+    lineSpacing: 1.35,
+    useDividers: true,
+    bulletStyle: "▸",
+  },
+  finance: {
+    colors: { primary: "#065f46", secondary: "#1f2937", accent: "#047857" },
+    headerSize: 22,
+    sectionSize: 11,
+    bodySize: 10,
+    lineSpacing: 1.4,
+    useDividers: true,
+    bulletStyle: "•",
+  },
+  healthcare: {
+    colors: { primary: "#0369a1", secondary: "#374151", accent: "#0284c7" },
+    headerSize: 22,
+    sectionSize: 11,
+    bodySize: 10,
     lineSpacing: 1.4,
     useDividers: true,
     bulletStyle: "•",
