@@ -194,10 +194,10 @@ const Index = () => {
               <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
                 <FileText className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="text-lg font-display font-bold text-foreground">ResumeATS</span>
+              <span className="text-lg font-display font-bold text-foreground">ATSFy</span>
             </div>
             <div className="text-xs sm:text-sm text-muted-foreground">
-              © 2026 ResumeATS. All rights reserved.
+              © 2026 ATSFy. All rights reserved.
             </div>
           </div>
         </div>
