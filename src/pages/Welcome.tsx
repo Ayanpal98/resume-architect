@@ -27,7 +27,7 @@ const Welcome = () => {
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
               <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
             </div>
-            <span className="text-lg sm:text-xl font-display font-bold text-foreground">ResumeATS</span>
+            <span className="text-lg sm:text-xl font-display font-bold text-foreground">ATSFy</span>
           </div>
         </div>
       </nav>
@@ -37,7 +37,7 @@ const Welcome = () => {
         <div className="w-full max-w-3xl">
           <div className="text-center mb-8 sm:mb-12 animate-fade-up">
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-foreground mb-3 sm:mb-4">
-              Welcome to <span className="text-gradient">ResumeATS</span>
+              Welcome to <span className="text-gradient">ATSFy</span>
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground max-w-xl mx-auto">
               Tell us about yourself so we can personalize your experience
