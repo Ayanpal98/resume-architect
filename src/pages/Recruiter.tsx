@@ -6,7 +6,7 @@ import {
   ChevronDown, ChevronUp, Sparkles, BarChart3, Building2,
   Download, Filter, Star, ThumbsUp, ThumbsDown, Clock,
   GraduationCap, Award, MessageSquare, DollarSign, Trash2,
-  Eye, UserCheck, UserX, Minus
+  Eye, UserCheck, UserX, Minus, FileOutput, Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,6 +66,8 @@ interface CompetitiveAnalysis {
 interface CandidateAnalysis {
   id: string;
   fileName: string;
+  extractedText?: string;
+  docxUrl?: string;
   name: string;
   email: string;
   phone: string;
@@ -111,6 +113,8 @@ const Recruiter = () => {
   const [filterRecommendation, setFilterRecommendation] = useState<"all" | "highly_recommended" | "recommended" | "consider" | "not_recommended">("all");
   const [expandedCandidate, setExpandedCandidate] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
+  const [convertingFiles, setConvertingFiles] = useState<Set<number>>(new Set());
+  const [convertedFiles, setConvertedFiles] = useState<Map<number, { url: string; fileName: string }>>(new Map());
   const { toast } = useToast();
 
   const extractTextFromFile = async (file: File): Promise<string> => {
@@ -142,6 +146,67 @@ const Recruiter = () => {
     throw new Error(`Unsupported file type: ${extension}`);
   };
 
+  const convertToDocx = async (file: File, index: number) => {
+    setConvertingFiles(prev => new Set(prev).add(index));
+    
+    try {
+      const text = await extractTextFromFile(file);
+      
+      const { data, error } = await supabase.functions.invoke("convert-to-docx", {
+        body: { text, fileName: file.name },
+      });
+
+      if (error) throw new Error(error.message);
+
+      // Convert base64 to blob URL
+      const binaryString = atob(data.docxBase64);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+      const url = URL.createObjectURL(blob);
+
+      setConvertedFiles(prev => new Map(prev).set(index, { url, fileName: data.fileName }));
+      
+      toast({
+        title: "Conversion Complete",
+        description: `${file.name} converted to DOCX successfully.`,
+      });
+    } catch (error) {
+      console.error("Conversion error:", error);
+      toast({
+        title: "Conversion Failed",
+        description: `Could not convert ${file.name} to DOCX.`,
+        variant: "destructive",
+      });
+    } finally {
+      setConvertingFiles(prev => {
+        const next = new Set(prev);
+        next.delete(index);
+        return next;
+      });
+    }
+  };
+
+  const downloadDocx = (index: number) => {
+    const converted = convertedFiles.get(index);
+    if (converted) {
+      const a = document.createElement("a");
+      a.href = converted.url;
+      a.download = converted.fileName;
+      a.click();
+    }
+  };
+
+  const convertAllToDocx = async () => {
+    for (let i = 0; i < uploadedFiles.length; i++) {
+      if (!convertedFiles.has(i)) {
+        await convertToDocx(uploadedFiles[i], i);
+      }
+    }
+  };
+
   const analyzeCandidate = async (file: File): Promise<CandidateAnalysis> => {
     const text = await extractTextFromFile(file);
     
@@ -163,6 +228,7 @@ const Recruiter = () => {
       id: crypto.randomUUID(),
       fileName: file.name,
       status: "pending",
+      extractedText: text,
       ...data.analysis,
     };
   };
@@ -245,6 +311,11 @@ const Recruiter = () => {
 
   const removeFile = (index: number) => {
     setUploadedFiles(prev => prev.filter((_, i) => i !== index));
+    setConvertedFiles(prev => {
+      const next = new Map(prev);
+      next.delete(index);
+      return next;
+    });
   };
 
   const updateCandidateStatus = (id: string, status: CandidateAnalysis["status"]) => {
@@ -363,7 +434,7 @@ const Recruiter = () => {
             <div className="w-10 h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-display font-bold text-foreground">ResumeATS</span>
+            <span className="text-xl font-display font-bold text-foreground">ATSFy</span>
           </Link>
           <div className="flex items-center gap-3">
             <Badge variant="outline" className="hidden sm:flex items-center gap-1">
@@ -529,33 +600,78 @@ const Recruiter = () => {
                         <p className="text-sm font-medium text-foreground">
                           {uploadedFiles.length} file(s) ready
                         </p>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setUploadedFiles([])}
-                          className="text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={convertAllToDocx}
+                            disabled={convertingFiles.size > 0}
+                            className="text-xs"
+                          >
+                            <FileOutput className="w-3 h-3 mr-1" />
+                            Convert All
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setUploadedFiles([]);
+                              setConvertedFiles(new Map());
+                            }}
+                            className="text-destructive hover:text-destructive"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
-                      <div className="max-h-[150px] overflow-y-auto space-y-2">
+                      <div className="max-h-[200px] overflow-y-auto space-y-2">
                         {uploadedFiles.map((file, index) => (
                           <div
                             key={index}
-                            className="flex items-center justify-between p-2 bg-muted rounded-lg"
+                            className="flex items-center justify-between p-2 bg-muted rounded-lg gap-2"
                           >
                             <div className="flex items-center gap-2 truncate">
                               <FileText className="w-4 h-4 text-primary flex-shrink-0" />
-                              <span className="text-sm truncate">{file.name}</span>
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-sm truncate">{file.name}</span>
+                                {convertedFiles.has(index) && (
+                                  <span className="text-[10px] text-accent">✓ DOCX ready</span>
+                                )}
+                              </div>
                             </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeFile(index)}
-                              className="h-6 w-6 p-0"
-                            >
-                              <XCircle className="w-4 h-4" />
-                            </Button>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {convertingFiles.has(index) ? (
+                                <Loader2 className="w-4 h-4 animate-spin text-primary" />
+                              ) : convertedFiles.has(index) ? (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => downloadDocx(index)}
+                                  className="h-6 w-6 p-0 text-accent hover:text-accent"
+                                  title="Download DOCX"
+                                >
+                                  <Download className="w-4 h-4" />
+                                </Button>
+                              ) : (
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => convertToDocx(file, index)}
+                                  className="h-6 w-6 p-0"
+                                  title="Convert to DOCX"
+                                >
+                                  <FileOutput className="w-4 h-4" />
+                                </Button>
+                              )}
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => removeFile(index)}
+                                className="h-6 w-6 p-0"
+                              >
+                                <XCircle className="w-4 h-4" />
+                              </Button>
+                            </div>
                           </div>
                         ))}
                       </div>
