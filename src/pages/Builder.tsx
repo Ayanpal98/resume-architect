@@ -249,10 +249,18 @@ const Builder = () => {
     if (field === "summary") {
       setResumeData((prev) => ({ ...prev, summary: value }));
     } else if (field === "skills") {
-      const newSkills = value.split(",").map((s) => s.trim()).filter(Boolean);
+      // Parse grouped skills response from AI
+      const parsed = parseGroupedSkillsResponse(value);
+      const allNewSkills = flattenGroupedSkills(parsed);
+      
+      // If parsing didn't find groups, fall back to comma-separated
+      const skillsToAdd = allNewSkills.length > 0 
+        ? allNewSkills 
+        : value.split(",").map((s) => s.trim()).filter(Boolean);
+      
       setResumeData((prev) => ({
         ...prev,
-        skills: [...new Set([...prev.skills, ...newSkills])],
+        skills: [...new Set([...prev.skills, ...skillsToAdd])],
       }));
     }
   };
