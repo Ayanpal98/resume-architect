@@ -824,6 +824,16 @@ const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove, jobDescription
               />
             </div>
             
+            {/* Action Verbs Enhancer */}
+            {exp.description && exp.description.trim().length > 10 && (
+              <div className="mt-4">
+                <ActionVerbsEnhancer
+                  text={exp.description}
+                  onApply={(enhanced) => onUpdate(exp.id, "description", enhanced)}
+                />
+              </div>
+            )}
+            
             <div className="mt-4">
               <AISuggestionPanel
                 type="experience"
