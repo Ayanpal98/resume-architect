@@ -542,6 +542,14 @@ const Builder = () => {
                       newSkill={newSkill}
                       onNewSkillChange={setNewSkill}
                       onAdd={addSkill}
+                      onAddToCategory={(skill) => {
+                        if (skill.trim() && !resumeData.skills.includes(skill.trim())) {
+                          setResumeData((prev) => ({
+                            ...prev,
+                            skills: [...prev.skills, skill.trim()],
+                          }));
+                        }
+                      }}
                       onRemove={removeSkill}
                       onApplySuggestion={handleApplySuggestion}
                       resumeData={resumeData}
