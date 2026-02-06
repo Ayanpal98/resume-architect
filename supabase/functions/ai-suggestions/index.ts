@@ -167,34 +167,48 @@ Create 4-5 impactful bullet points following the XYZ formula with quantified ach
       case "skills":
         systemPrompt = `You are an ATS optimization expert with deep knowledge of 2024-2025 hiring trends and applicant tracking systems.
 
-SKILL OPTIMIZATION STRATEGY:
-1. **Hard Skills (60%)**: Technical abilities, tools, certifications
-2. **Soft Skills (25%)**: Leadership, communication, collaboration
-3. **Industry Keywords (15%)**: Domain-specific terminology
+SKILL GROUPING & OPTIMIZATION STRATEGY:
 
-MODERN ATS SKILL MATCHING (2024-2025):
-- Top ATS (Greenhouse, Lever, Workday) use semantic matching, not just exact keywords
-- Include both acronyms AND full terms (e.g., "SQL" and "Structured Query Language")
-- Group related skills: "Python, Django, Flask" vs "Python" alone
-- Include proficiency levels for languages/tools when relevant
+Modern ATS systems (Greenhouse, Lever, Workday, iCIMS) perform better with organized, categorized skills.
+You MUST return skills grouped by category for optimal ATS parsing and human readability.
 
-SKILL CATEGORIES TO COVER:
-1. **Programming/Technical**: Languages, frameworks, databases
-2. **Tools/Platforms**: Software, cloud services, dev tools
-3. **Methodologies**: Agile, Scrum, DevOps, Lean
-4. **Domain Expertise**: Industry-specific knowledge
-5. **Soft Skills**: 3-4 proven leadership/collaboration skills
+STANDARD SKILL CATEGORIES (use these exact names):
+1. **Programming Languages**: Python, JavaScript, TypeScript, Java, C++, etc.
+2. **Frameworks & Libraries**: React, Node.js, Django, Spring Boot, etc.
+3. **Cloud & DevOps**: AWS, Docker, Kubernetes, CI/CD, Terraform, etc.
+4. **Databases**: PostgreSQL, MongoDB, Redis, MySQL, etc.
+5. **Tools & Platforms**: Git, Jira, Figma, Postman, etc.
+6. **Testing & QA**: Jest, Cypress, Selenium, Unit Testing, etc.
+7. **Data & Analytics**: Machine Learning, Data Analysis, SQL, Tableau, etc.
+8. **Methodologies**: Agile, Scrum, DevOps, TDD, etc.
+9. **Soft Skills**: Leadership, Communication, Problem Solving, etc.
+10. **Design & UX**: UI/UX, Figma, Wireframing, User Research, etc.
+11. **Security & Compliance**: OAuth, JWT, SOC2, GDPR, etc.
+12. **Mobile Development**: React Native, iOS, Android, Flutter, etc.
+13. **Finance & Business**: Financial Analysis, Budgeting, CRM, etc.
+14. **Healthcare**: HIPAA, EHR, HL7, Clinical, etc.
 
-AVOID:
-- Generic skills: "Microsoft Office" (unless entry-level)
-- Outdated technologies unless specifically required
-- Vague terms: "team player", "hard worker", "detail-oriented"
+GROUPING RULES:
+- Only include categories that are relevant to the candidate's experience and target role
+- Each category should have 2-6 skills
+- Total skills across all categories: 12-20
+- Prioritize skills mentioned in the job description
+- Include both acronyms AND full terms when common (e.g., "CI/CD")
 
-OUTPUT FORMAT:
-Return a comma-separated list of 12-18 skills.
-Order by relevance to target role.
-No bullet points, no categories, just the skills.`;
-        userPrompt = `Generate an optimized skills list:
+OUTPUT FORMAT (CRITICAL - follow exactly):
+Return skills in this exact format, one category per line:
+Programming Languages: Python, JavaScript, TypeScript, Go
+Frameworks & Libraries: React, Node.js, Express, Django
+Cloud & DevOps: AWS, Docker, Kubernetes, CI/CD
+Soft Skills: Leadership, Cross-functional Collaboration
+
+IMPORTANT: 
+- Use colon (:) after category name
+- Separate skills with commas
+- One category per line
+- Do NOT include categories with no relevant skills
+- Do NOT add explanations or additional text`;
+        userPrompt = `Generate an optimized, GROUPED skills list:
 
 CANDIDATE PROFILE:
 Experience: ${sanitizeField(content.experience)}
@@ -202,7 +216,7 @@ Current Skills: ${sanitizeField(content.currentSkills)}
 Target Role: ${sanitizeField(content.targetRole)}
 ${sanitizedJobDesc ? `\nJOB REQUIREMENTS TO MATCH:\n${sanitizedJobDesc}` : ""}
 
-Provide 12-18 highly relevant skills ordered by importance for this target role.`;
+Return skills grouped by category in the exact format specified. Only include relevant categories.`;
         break;
 
       case "keywords":
