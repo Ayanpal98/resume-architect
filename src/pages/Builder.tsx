@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,9 +34,6 @@ import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
-import { groupSkills, parseGroupedSkillsResponse, flattenGroupedSkills, categorizeSkill } from "@/lib/skillsGrouping";
-import { SkillsGroupDisplay } from "@/components/SkillsGroupDisplay";
-import { ActionVerbsEnhancer } from "@/components/ActionVerbsEnhancer";
 import {
   Dialog,
   DialogContent,
@@ -250,18 +247,10 @@ const Builder = () => {
     if (field === "summary") {
       setResumeData((prev) => ({ ...prev, summary: value }));
     } else if (field === "skills") {
-      // Parse grouped skills response from AI
-      const parsed = parseGroupedSkillsResponse(value);
-      const allNewSkills = flattenGroupedSkills(parsed);
-      
-      // If parsing didn't find groups, fall back to comma-separated
-      const skillsToAdd = allNewSkills.length > 0 
-        ? allNewSkills 
-        : value.split(",").map((s) => s.trim()).filter(Boolean);
-      
+      const newSkills = value.split(",").map((s) => s.trim()).filter(Boolean);
       setResumeData((prev) => ({
         ...prev,
-        skills: [...new Set([...prev.skills, ...skillsToAdd])],
+        skills: [...new Set([...prev.skills, ...newSkills])],
       }));
     }
   };
@@ -543,14 +532,6 @@ const Builder = () => {
                       newSkill={newSkill}
                       onNewSkillChange={setNewSkill}
                       onAdd={addSkill}
-                      onAddToCategory={(skill) => {
-                        if (skill.trim() && !resumeData.skills.includes(skill.trim())) {
-                          setResumeData((prev) => ({
-                            ...prev,
-                            skills: [...prev.skills, skill.trim()],
-                          }));
-                        }
-                      }}
                       onRemove={removeSkill}
                       onApplySuggestion={handleApplySuggestion}
                       resumeData={resumeData}
@@ -824,16 +805,6 @@ const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove, jobDescription
               />
             </div>
             
-            {/* Action Verbs Enhancer */}
-            {exp.description && exp.description.trim().length > 10 && (
-              <div className="mt-4">
-                <ActionVerbsEnhancer
-                  text={exp.description}
-                  onApply={(enhanced) => onUpdate(exp.id, "description", enhanced)}
-                />
-              </div>
-            )}
-            
             <div className="mt-4">
               <AISuggestionPanel
                 type="experience"
@@ -938,71 +909,80 @@ interface SkillsFormProps {
   newSkill: string;
   onNewSkillChange: (value: string) => void;
   onAdd: () => void;
-  onAddToCategory: (skill: string, category?: string) => void;
   onRemove: (skill: string) => void;
   onApplySuggestion: (field: string, value: string) => void;
   resumeData: ResumeData;
   jobDescription: string;
 }
 
-const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onAddToCategory, onRemove, onApplySuggestion, resumeData, jobDescription }: SkillsFormProps) => {
-  // Group skills by category for display
-  const groupedSkills = useMemo(() => groupSkills(skills), [skills]);
-  
-  return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-display font-bold text-foreground mb-2">Skills</h2>
-        <p className="text-muted-foreground">
-          Add skills relevant to your target positions. Skills are automatically grouped by category for better ATS optimization.
-        </p>
-      </div>
+const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove, onApplySuggestion, resumeData, jobDescription }: SkillsFormProps) => (
+  <div className="space-y-6">
+    <div>
+      <h2 className="text-2xl font-display font-bold text-foreground mb-2">Skills</h2>
+      <p className="text-muted-foreground">Add skills relevant to your target positions.</p>
+    </div>
 
-      <div className="flex gap-2">
-        <Input
-          placeholder="Add a skill (e.g., JavaScript, Project Management)"
-          value={newSkill}
-          onChange={(e) => onNewSkillChange(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
-        />
-        <Button onClick={onAdd} variant="default">
-          <Plus className="w-4 h-4" />
-        </Button>
-      </div>
-
-      {/* Grouped Skills Display */}
-      <SkillsGroupDisplay
-        groupedSkills={groupedSkills}
-        onRemoveSkill={onRemove}
-        onAddSkill={onAddToCategory}
+    <div className="flex gap-2">
+      <Input
+        placeholder="Add a skill (e.g., JavaScript, Project Management)"
+        value={newSkill}
+        onChange={(e) => onNewSkillChange(e.target.value)}
+        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
       />
+      <Button onClick={onAdd} variant="default">
+        <Plus className="w-4 h-4" />
+      </Button>
+    </div>
 
-      <AISuggestionPanel
-        type="skills"
-        content={{
-          experience: resumeData.experience.map(e => `${e.title} at ${e.company}: ${e.description}`).join("\n"),
-          currentSkills: skills.join(", "),
-          targetRole: "",
-        }}
-        onApply={(suggestion) => onApplySuggestion("skills", suggestion)}
-        jobDescription={jobDescription}
-      />
+    {skills.length > 0 ? (
+      <div className="flex flex-wrap gap-2">
+        {skills.map((skill) => (
+          <span
+            key={skill}
+            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium group"
+          >
+            {skill}
+            <button
+              onClick={() => onRemove(skill)}
+              className="w-4 h-4 rounded-full bg-primary/20 hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center transition-colors"
+            >
+              <Trash2 className="w-3 h-3" />
+            </button>
+          </span>
+        ))}
+      </div>
+    ) : (
+      <div className="text-center py-8 bg-muted/50 rounded-xl border-2 border-dashed border-border">
+        <Wrench className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground text-sm">No skills added yet. Start typing above to add skills.</p>
+      </div>
+    )}
 
-      <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
-        <div className="flex items-start gap-3">
-          <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-          <div className="text-sm">
-            <p className="font-medium text-foreground mb-1">ATS-Optimized Skill Groups</p>
-            <p className="text-muted-foreground">
-              Skills are automatically categorized for better ATS parsing. Include technical skills (Python, AWS), 
-              frameworks (React, Django), and soft skills (Leadership, Communication) to maximize your match score.
-            </p>
-          </div>
+    <AISuggestionPanel
+      type="skills"
+      content={{
+        experience: resumeData.experience.map(e => `${e.title} at ${e.company}: ${e.description}`).join("\n"),
+        currentSkills: skills.join(", "),
+        targetRole: "",
+      }}
+      onApply={(suggestion) => onApplySuggestion("skills", suggestion)}
+      jobDescription={jobDescription}
+    />
+
+    <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
+      <div className="flex items-start gap-3">
+        <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+        <div className="text-sm">
+          <p className="font-medium text-foreground mb-1">Skill Keywords Matter</p>
+          <p className="text-muted-foreground">
+            Include both technical skills (e.g., Python, AWS) and soft skills (e.g., Leadership, Communication) 
+            that match the job descriptions you're targeting.
+          </p>
         </div>
       </div>
     </div>
-  );
-};
+  </div>
+);
 
 interface OptimizeSectionProps {
   jobDescription: string;
