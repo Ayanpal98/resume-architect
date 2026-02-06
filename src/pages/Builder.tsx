@@ -36,6 +36,7 @@ import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import { groupSkills, parseGroupedSkillsResponse, flattenGroupedSkills, categorizeSkill } from "@/lib/skillsGrouping";
 import { SkillsGroupDisplay } from "@/components/SkillsGroupDisplay";
+import { ActionVerbsEnhancer } from "@/components/ActionVerbsEnhancer";
 import {
   Dialog,
   DialogContent,
@@ -822,6 +823,16 @@ const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove, jobDescription
                 className="resize-none"
               />
             </div>
+            
+            {/* Action Verbs Enhancer */}
+            {exp.description && exp.description.trim().length > 10 && (
+              <div className="mt-4">
+                <ActionVerbsEnhancer
+                  text={exp.description}
+                  onApply={(enhanced) => onUpdate(exp.id, "description", enhanced)}
+                />
+              </div>
+            )}
             
             <div className="mt-4">
               <AISuggestionPanel
