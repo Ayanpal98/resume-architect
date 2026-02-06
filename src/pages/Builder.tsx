@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,8 @@ import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
+import { groupSkills, parseGroupedSkillsResponse, flattenGroupedSkills, categorizeSkill } from "@/lib/skillsGrouping";
+import { SkillsGroupDisplay } from "@/components/SkillsGroupDisplay";
 import {
   Dialog,
   DialogContent,
