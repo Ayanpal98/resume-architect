@@ -36,6 +36,7 @@ import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import { groupSkills, parseGroupedSkillsResponse, flattenGroupedSkills, categorizeSkill } from "@/lib/skillsGrouping";
 import { SkillsGroupDisplay } from "@/components/SkillsGroupDisplay";
+import { ActionVerbsEnhancer } from "@/components/ActionVerbsEnhancer";
 import {
   Dialog,
   DialogContent,
