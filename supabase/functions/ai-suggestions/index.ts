@@ -92,7 +92,10 @@ serve(async (req) => {
       case "summary":
         systemPrompt = `You are an elite resume strategist specializing in 2024-2025 ATS optimization and modern hiring practices.
 
-GENERATE A PROFESSIONAL SUMMARY USING THE STAR-IMPACT FRAMEWORK:
+GENERATE A PROFESSIONAL SUMMARY FOR TWO-COLUMN RESUME FORMAT:
+The summary appears in the RIGHT MAIN COLUMN under "PROFESSIONAL SUMMARY" header.
+
+STAR-IMPACT FRAMEWORK:
 1. **Opening Hook** (1 sentence): Job title + years of experience + core specialization
 2. **Key Achievement** (1-2 sentences): Quantified accomplishment using STAR method (Situation, Task, Action, Result)
 3. **Value Proposition** (1 sentence): Unique skills + what you bring to target role
@@ -104,14 +107,19 @@ INDUSTRY STANDARDS 2024-2025:
 - Use power verbs: Spearheaded, Orchestrated, Architected, Transformed, Accelerated
 - Avoid: Pronouns (I, my), buzzwords (passionate, results-driven), clichés
 
-CURRENT ATS OPTIMIZATION:
+TWO-COLUMN TEMPLATE OPTIMIZATION:
+- Summary appears prominently at top of main column
+- Keep sentences concise for narrow column width (~120mm)
+- Front-load key achievements for scanning
+
+ATS OPTIMIZATION:
 - Modern ATS (Greenhouse, Lever, Workday, iCIMS) parse summaries for skill matching
 - Include 2-3 technical skills and 1-2 soft skills inline
-- Use standard section header: "Professional Summary" or "Summary"
+- Standard section header: "PROFESSIONAL SUMMARY"
 
 OUTPUT FORMAT:
 Return ONLY the summary text. No quotes, no labels, no explanations.`;
-        userPrompt = `Create an ATS-optimized professional summary:
+        userPrompt = `Create an ATS-optimized professional summary for a two-column resume:
 
 CANDIDATE PROFILE:
 Experience: ${sanitizeField(content.experience)}
@@ -119,13 +127,16 @@ Skills: ${sanitizeField(content.skills)}
 Target Role: ${sanitizeField(content.targetRole)}
 ${sanitizedJobDesc ? `\nTARGET JOB REQUIREMENTS:\n${sanitizedJobDesc}` : ""}
 
-Generate a compelling 50-80 word summary that will rank highly in ATS and appeal to hiring managers.`;
+Generate a compelling 50-80 word summary optimized for two-column layout and ATS scanning.`;
         break;
 
       case "experience":
         systemPrompt = `You are an expert resume writer trained in modern hiring practices and ATS optimization (2024-2025 standards).
 
-TRANSFORM JOB DESCRIPTIONS USING THE XYZ FORMULA:
+TRANSFORM JOB DESCRIPTIONS FOR TWO-COLUMN RESUME LAYOUT:
+Experience appears in the RIGHT MAIN COLUMN under "WORK EXPERIENCE" header.
+
+XYZ FORMULA FOR EACH BULLET:
 "Accomplished [X] as measured by [Y], by doing [Z]"
 
 BULLET POINT STANDARDS:
@@ -134,11 +145,17 @@ BULLET POINT STANDARDS:
 3. **Show Scope**: Team size, budget, user base, project scale
 4. **Demonstrate Impact**: Business outcomes, not just responsibilities
 
+TWO-COLUMN LAYOUT OPTIMIZATION:
+- Keep bullets concise (15-25 words each) for ~120mm column width
+- Use standard bullet character (•) for ATS compatibility
+- Avoid long compound sentences that wrap awkwardly
+- Front-load key metrics and achievements
+
 INDUSTRY BEST PRACTICES 2024-2025:
 - 3-5 bullets per role (max 6 for recent positions)
-- Each bullet: 1-2 lines, 15-30 words
+- Each bullet: 1-2 lines, 15-25 words for two-column fit
 - Include at least ONE metric per bullet (%, $, #)
-- Mix of hard metrics (revenue, users) and efficiency gains (time saved, processes improved)
+- Mix of hard metrics and efficiency gains
 
 POWER VERB CATEGORIES:
 - Leadership: Spearheaded, Directed, Championed, Orchestrated
@@ -147,54 +164,57 @@ POWER VERB CATEGORIES:
 - Growth: Scaled, Accelerated, Expanded, Maximized
 - Efficiency: Streamlined, Optimized, Consolidated, Reduced
 
-ATS OPTIMIZATION:
-- Mirror job description keywords naturally
-- Avoid tables, graphics, special characters
-- Use standard bullet characters (•)
-
 OUTPUT FORMAT:
 Return 4-5 bullet points, each starting with • 
 No numbering, no additional text.`;
-        userPrompt = `Transform this experience into ATS-optimized bullets:
+        userPrompt = `Transform this experience into ATS-optimized bullets for two-column layout:
 
 ROLE: ${sanitizeField(content.title)} at ${sanitizeField(content.company)}
 CURRENT DESCRIPTION: ${sanitizeField(content.description)}
 ${sanitizedJobDesc ? `\nTARGET JOB KEYWORDS TO INCORPORATE:\n${sanitizedJobDesc}` : ""}
 
-Create 4-5 impactful bullet points following the XYZ formula with quantified achievements.`;
+Create 4-5 impactful, concise bullet points optimized for narrow column width.`;
         break;
 
       case "skills":
-        systemPrompt = `You are an ATS optimization expert with deep knowledge of 2024-2025 hiring trends and applicant tracking systems.
+        systemPrompt = `You are an ATS optimization expert with deep knowledge of 2024-2025 hiring trends and modern resume formats.
 
-SKILL OPTIMIZATION STRATEGY:
-1. **Hard Skills (60%)**: Technical abilities, tools, certifications
-2. **Soft Skills (25%)**: Leadership, communication, collaboration
-3. **Industry Keywords (15%)**: Domain-specific terminology
+SKILL OPTIMIZATION FOR TWO-COLUMN SIDEBAR LAYOUT:
+Skills appear in the LEFT SIDEBAR under "SKILLS & EXPERTISE" header, grouped by category.
+
+REQUIRED SKILL CATEGORIES (return skills grouped):
+1. **Technical Skills**: Programming languages, frameworks, databases, tools
+2. **Tools & Platforms**: Software, cloud services, dev tools, productivity apps
+3. **Soft Skills**: Leadership, communication, collaboration, problem-solving
+
+CATEGORY FORMAT:
+Return skills in this exact format:
+Technical Skills: skill1, skill2, skill3, skill4
+Tools & Platforms: tool1, tool2, tool3
+Soft Skills: softskill1, softskill2, softskill3
 
 MODERN ATS SKILL MATCHING (2024-2025):
-- Top ATS (Greenhouse, Lever, Workday) use semantic matching, not just exact keywords
-- Include both acronyms AND full terms (e.g., "SQL" and "Structured Query Language")
-- Group related skills: "Python, Django, Flask" vs "Python" alone
-- Include proficiency levels for languages/tools when relevant
+- Top ATS use semantic matching, not just exact keywords
+- Include both acronyms AND full terms when relevant
+- Group related skills logically
+- Include proficiency indicators for languages if applicable
 
-SKILL CATEGORIES TO COVER:
-1. **Programming/Technical**: Languages, frameworks, databases
-2. **Tools/Platforms**: Software, cloud services, dev tools
-3. **Methodologies**: Agile, Scrum, DevOps, Lean
-4. **Domain Expertise**: Industry-specific knowledge
-5. **Soft Skills**: 3-4 proven leadership/collaboration skills
+SIDEBAR OPTIMIZATION:
+- Keep individual skill names short (1-3 words ideal)
+- 4-6 skills per category for visual balance
+- Most important/relevant skills first within each category
+- Total 12-18 skills across all categories
 
 AVOID:
 - Generic skills: "Microsoft Office" (unless entry-level)
 - Outdated technologies unless specifically required
 - Vague terms: "team player", "hard worker", "detail-oriented"
+- Overly long skill descriptions
 
 OUTPUT FORMAT:
-Return a comma-separated list of 12-18 skills.
-Order by relevance to target role.
-No bullet points, no categories, just the skills.`;
-        userPrompt = `Generate an optimized skills list:
+Return skills grouped by category as shown above.
+Each category on its own line with colon separator.`;
+        userPrompt = `Generate categorized skills for two-column resume sidebar:
 
 CANDIDATE PROFILE:
 Experience: ${sanitizeField(content.experience)}
@@ -202,7 +222,7 @@ Current Skills: ${sanitizeField(content.currentSkills)}
 Target Role: ${sanitizeField(content.targetRole)}
 ${sanitizedJobDesc ? `\nJOB REQUIREMENTS TO MATCH:\n${sanitizedJobDesc}` : ""}
 
-Provide 12-18 highly relevant skills ordered by importance for this target role.`;
+Provide 12-18 skills grouped into Technical Skills, Tools & Platforms, and Soft Skills categories.`;
         break;
 
       case "keywords":
