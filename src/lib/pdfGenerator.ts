@@ -37,64 +37,52 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 };
 
-// ATS-friendly section headers
-const ATS_SECTIONS = {
-  summary: "PROFESSIONAL SUMMARY",
-  experience: "WORK EXPERIENCE",
-  education: "EDUCATION",
-  skills: "SKILLS & EXPERTISE",
-  contact: "CONTACT",
-};
-
-// Template configurations for two-column layout
+// Template configurations - compact single-page layout
 const templateConfigs = {
   classic: {
     colors: { 
       primary: "#1a365d", 
       secondary: "#2d3748", 
       accent: "#4a5568",
-      sidebar: "#f7fafc",
-      sidebarText: "#1a365d",
-      divider: "#cbd5e0"
+      sidebar: "#f1f5f9",
+      sidebarText: "#1e293b",
+      divider: "#94a3b8"
     },
-    headerSize: 20,
-    sectionSize: 10,
-    bodySize: 9,
-    lineSpacing: 1.3,
-    bulletStyle: "•",
-    sidebarWidth: 65,
+    headerSize: 16,
+    sectionSize: 9,
+    bodySize: 8,
+    smallSize: 7,
+    sidebarWidth: 58,
   },
   modern: {
     colors: { 
       primary: "#1e40af", 
       secondary: "#374151", 
       accent: "#3b82f6",
-      sidebar: "#1e40af",
+      sidebar: "#1e3a8a",
       sidebarText: "#ffffff",
       divider: "#60a5fa"
     },
-    headerSize: 22,
-    sectionSize: 10,
-    bodySize: 9,
-    lineSpacing: 1.3,
-    bulletStyle: "▸",
-    sidebarWidth: 65,
+    headerSize: 16,
+    sectionSize: 9,
+    bodySize: 8,
+    smallSize: 7,
+    sidebarWidth: 58,
   },
   professional: {
     colors: { 
       primary: "#0f172a", 
       secondary: "#334155", 
       accent: "#475569",
-      sidebar: "#0f172a",
+      sidebar: "#1e293b",
       sidebarText: "#f8fafc",
       divider: "#64748b"
     },
-    headerSize: 20,
-    sectionSize: 10,
-    bodySize: 9,
-    lineSpacing: 1.35,
-    bulletStyle: "•",
-    sidebarWidth: 62,
+    headerSize: 16,
+    sectionSize: 9,
+    bodySize: 8,
+    smallSize: 7,
+    sidebarWidth: 56,
   },
   tech: {
     colors: { 
@@ -105,12 +93,11 @@ const templateConfigs = {
       sidebarText: "#ecfeff",
       divider: "#22d3ee"
     },
-    headerSize: 22,
-    sectionSize: 10,
-    bodySize: 9,
-    lineSpacing: 1.3,
-    bulletStyle: "▸",
-    sidebarWidth: 65,
+    headerSize: 16,
+    sectionSize: 9,
+    bodySize: 8,
+    smallSize: 7,
+    sidebarWidth: 58,
   },
   finance: {
     colors: { 
@@ -121,12 +108,11 @@ const templateConfigs = {
       sidebarText: "#ecfdf5",
       divider: "#34d399"
     },
-    headerSize: 20,
-    sectionSize: 10,
-    bodySize: 9,
-    lineSpacing: 1.35,
-    bulletStyle: "•",
-    sidebarWidth: 62,
+    headerSize: 16,
+    sectionSize: 9,
+    bodySize: 8,
+    smallSize: 7,
+    sidebarWidth: 56,
   },
   healthcare: {
     colors: { 
@@ -137,57 +123,23 @@ const templateConfigs = {
       sidebarText: "#f0f9ff",
       divider: "#38bdf8"
     },
-    headerSize: 20,
-    sectionSize: 10,
-    bodySize: 9,
-    lineSpacing: 1.35,
-    bulletStyle: "•",
-    sidebarWidth: 65,
+    headerSize: 16,
+    sectionSize: 9,
+    bodySize: 8,
+    smallSize: 7,
+    sidebarWidth: 58,
   },
 };
 
-// Parse description into bullet points
-const parseBulletPoints = (description: string): string[] => {
+// Parse description into bullet points - limit to 3
+const parseBulletPoints = (description: string, maxBullets: number = 3): string[] => {
   if (!description) return [];
   const lines = description
     .split(/(?:\r?\n|•|▪|◦|➤|→|►|■|□|●|○|-\s)/)
     .map(line => line.trim())
-    .filter(line => line.length > 0);
+    .filter(line => line.length > 0)
+    .slice(0, maxBullets);
   return lines;
-};
-
-// Group skills into categories
-const groupSkills = (skills: string[]): Record<string, string[]> => {
-  const categories: Record<string, string[]> = {
-    "Technical Skills": [],
-    "Soft Skills": [],
-    "Tools & Platforms": [],
-    "Other": [],
-  };
-  
-  const technicalKeywords = ["javascript", "typescript", "python", "java", "react", "node", "sql", "aws", "azure", "docker", "kubernetes", "git", "api", "html", "css", "c++", "c#", "ruby", "go", "rust", "swift", "kotlin", "php", "scala", "r", "matlab", "linux", "devops", "ci/cd", "agile", "scrum"];
-  const softSkillKeywords = ["leadership", "communication", "teamwork", "problem-solving", "analytical", "creative", "time management", "collaboration", "presentation", "negotiation", "mentoring", "strategic", "decision-making"];
-  const toolKeywords = ["excel", "powerpoint", "word", "jira", "confluence", "slack", "salesforce", "tableau", "power bi", "figma", "adobe", "photoshop", "trello", "notion", "asana", "github", "gitlab", "vs code", "intellij", "postman", "jenkins", "terraform"];
-
-  skills.forEach(skill => {
-    const lowerSkill = skill.toLowerCase();
-    if (technicalKeywords.some(kw => lowerSkill.includes(kw))) {
-      categories["Technical Skills"].push(skill);
-    } else if (softSkillKeywords.some(kw => lowerSkill.includes(kw))) {
-      categories["Soft Skills"].push(skill);
-    } else if (toolKeywords.some(kw => lowerSkill.includes(kw))) {
-      categories["Tools & Platforms"].push(skill);
-    } else {
-      categories["Other"].push(skill);
-    }
-  });
-
-  // Remove empty categories
-  Object.keys(categories).forEach(key => {
-    if (categories[key].length === 0) delete categories[key];
-  });
-
-  return categories;
 };
 
 export const generatePDF = (data: ResumeData, templateId: string = "classic"): jsPDF => {
@@ -200,249 +152,185 @@ export const generatePDF = (data: ResumeData, templateId: string = "classic"): j
   const config = templateConfigs[templateId as keyof typeof templateConfigs] || templateConfigs.classic;
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 12;
+  const margin = 8;
   const sidebarWidth = config.sidebarWidth;
-  const mainColumnX = sidebarWidth + 8;
+  const mainColumnX = sidebarWidth + 5;
   const mainColumnWidth = pageWidth - mainColumnX - margin;
   
-  let mainYPos = 18;
-  let sidebarYPos = 18;
+  let mainYPos = 10;
+  let sidebarYPos = 10;
 
   // Draw sidebar background
-  const drawSidebarBackground = () => {
-    doc.setFillColor(config.colors.sidebar);
-    doc.rect(0, 0, sidebarWidth, pageHeight, "F");
-  };
+  doc.setFillColor(config.colors.sidebar);
+  doc.rect(0, 0, sidebarWidth, pageHeight, "F");
 
-  drawSidebarBackground();
-
-  // Helper: Add wrapped text
-  const addWrappedText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number = 4): number => {
+  // Helper: Add wrapped text compactly
+  const addWrappedText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number = 3.2): number => {
     const lines = doc.splitTextToSize(text, maxWidth);
     lines.forEach((line: string, index: number) => {
-      if (y + (index * lineHeight) > pageHeight - 12) {
-        doc.addPage();
-        drawSidebarBackground();
-        y = 18;
-      }
       doc.text(line, x, y + (index * lineHeight));
     });
     return y + lines.length * lineHeight;
   };
 
-  // Helper: Check new page for main column
-  const checkMainNewPage = (requiredSpace: number): void => {
-    if (mainYPos + requiredSpace > pageHeight - 12) {
-      doc.addPage();
-      drawSidebarBackground();
-      mainYPos = 18;
-    }
-  };
-
-  // Helper: Add section header with underline
+  // Helper: Add section header
   const addSectionHeader = (title: string, x: number, y: number, width: number, isSidebar: boolean = false): number => {
     doc.setFontSize(config.sectionSize);
     doc.setFont("helvetica", "bold");
-    
-    if (isSidebar) {
-      doc.setTextColor(config.colors.sidebarText);
-    } else {
-      doc.setTextColor(config.colors.primary);
-    }
-    
+    doc.setTextColor(isSidebar ? config.colors.sidebarText : config.colors.primary);
     doc.text(title.toUpperCase(), x, y);
-    
-    // Draw underline
-    y += 1.5;
+    y += 1;
     doc.setDrawColor(isSidebar ? config.colors.divider : config.colors.primary);
-    doc.setLineWidth(0.4);
-    doc.line(x, y, x + width - 4, y);
-    
-    return y + 5;
+    doc.setLineWidth(0.3);
+    doc.line(x, y, x + width - 2, y);
+    return y + 3.5;
   };
 
-  // ========== SIDEBAR CONTENT ==========
+  // ========== SIDEBAR ==========
   
-  // Name in sidebar header
+  // Name
   doc.setFontSize(config.headerSize);
   doc.setFont("helvetica", "bold");
   doc.setTextColor(config.colors.sidebarText);
-  
   const name = data.personalInfo.fullName || "Your Name";
-  const nameLines = doc.splitTextToSize(name, sidebarWidth - 12);
+  const nameLines = doc.splitTextToSize(name, sidebarWidth - 8);
   nameLines.forEach((line: string, i: number) => {
-    doc.text(line, 8, sidebarYPos + (i * 7));
+    doc.text(line, 5, sidebarYPos + (i * 5));
   });
-  sidebarYPos += nameLines.length * 7 + 8;
+  sidebarYPos += nameLines.length * 5 + 5;
 
-  // Contact section
-  sidebarYPos = addSectionHeader(ATS_SECTIONS.contact, 8, sidebarYPos, sidebarWidth - 8, true);
-  
-  doc.setFontSize(config.bodySize);
+  // Contact
+  sidebarYPos = addSectionHeader("CONTACT", 5, sidebarYPos, sidebarWidth - 6, true);
+  doc.setFontSize(config.smallSize);
   doc.setFont("helvetica", "normal");
   doc.setTextColor(config.colors.sidebarText);
   
   const contactItems = [
-    { icon: "✉", value: data.personalInfo.email },
-    { icon: "📱", value: data.personalInfo.phone },
-    { icon: "📍", value: data.personalInfo.location },
-    { icon: "🔗", value: data.personalInfo.linkedin },
-    { icon: "🌐", value: data.personalInfo.portfolio },
-  ].filter(item => item.value);
+    data.personalInfo.email,
+    data.personalInfo.phone,
+    data.personalInfo.location,
+    data.personalInfo.linkedin,
+    data.personalInfo.portfolio,
+  ].filter(Boolean);
 
   contactItems.forEach(item => {
-    doc.text(`${item.icon}  ${item.value}`, 8, sidebarYPos);
-    sidebarYPos += 5;
-  });
-  
-  sidebarYPos += 6;
-
-  // Skills section in sidebar
-  if (data.skills && data.skills.length > 0) {
-    sidebarYPos = addSectionHeader(ATS_SECTIONS.skills, 8, sidebarYPos, sidebarWidth - 8, true);
-    
-    const groupedSkills = groupSkills(data.skills);
-    
-    Object.entries(groupedSkills).forEach(([category, skills]) => {
-      // Category name
-      doc.setFontSize(config.bodySize - 0.5);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(config.colors.divider);
-      doc.text(category, 8, sidebarYPos);
-      sidebarYPos += 4;
-      
-      // Skills as bullet points or wrapped text
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(config.colors.sidebarText);
-      doc.setFontSize(config.bodySize - 1);
-      
-      skills.forEach(skill => {
-        const skillText = `${config.bulletStyle} ${skill}`;
-        const skillLines = doc.splitTextToSize(skillText, sidebarWidth - 14);
-        skillLines.forEach((line: string, i: number) => {
-          if (sidebarYPos > pageHeight - 12) {
-            doc.addPage();
-            drawSidebarBackground();
-            sidebarYPos = 18;
-          }
-          doc.text(line, 8, sidebarYPos);
-          sidebarYPos += 3.5;
-        });
-      });
-      
+    const lines = doc.splitTextToSize(item, sidebarWidth - 8);
+    lines.forEach((line: string) => {
+      doc.text(line, 5, sidebarYPos);
       sidebarYPos += 3;
     });
+  });
+  sidebarYPos += 4;
+
+  // Skills
+  if (data.skills && data.skills.length > 0) {
+    sidebarYPos = addSectionHeader("SKILLS", 5, sidebarYPos, sidebarWidth - 6, true);
+    doc.setFontSize(config.smallSize);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(config.colors.sidebarText);
+    
+    // Display skills as compact list
+    data.skills.slice(0, 12).forEach(skill => {
+      const skillText = `• ${skill}`;
+      const lines = doc.splitTextToSize(skillText, sidebarWidth - 8);
+      lines.forEach((line: string) => {
+        doc.text(line, 5, sidebarYPos);
+        sidebarYPos += 2.8;
+      });
+    });
+    sidebarYPos += 4;
   }
 
-  // Education in sidebar
+  // Education
   if (data.education && data.education.length > 0) {
-    sidebarYPos += 3;
-    sidebarYPos = addSectionHeader(ATS_SECTIONS.education, 8, sidebarYPos, sidebarWidth - 8, true);
+    sidebarYPos = addSectionHeader("EDUCATION", 5, sidebarYPos, sidebarWidth - 6, true);
     
-    data.education.forEach((edu) => {
-      if (sidebarYPos > pageHeight - 25) {
-        doc.addPage();
-        drawSidebarBackground();
-        sidebarYPos = 18;
-      }
-      
-      // Degree
-      doc.setFontSize(config.bodySize);
+    data.education.slice(0, 2).forEach((edu) => {
+      doc.setFontSize(config.smallSize);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(config.colors.sidebarText);
-      const degreeLines = doc.splitTextToSize(edu.degree || "Degree", sidebarWidth - 14);
-      degreeLines.forEach((line: string, i: number) => {
-        doc.text(line, 8, sidebarYPos);
-        sidebarYPos += 4;
+      
+      const degreeLines = doc.splitTextToSize(edu.degree || "Degree", sidebarWidth - 8);
+      degreeLines.forEach((line: string) => {
+        doc.text(line, 5, sidebarYPos);
+        sidebarYPos += 2.8;
       });
       
-      // School
       doc.setFont("helvetica", "normal");
-      doc.setFontSize(config.bodySize - 1);
-      const schoolLines = doc.splitTextToSize(edu.school || "School", sidebarWidth - 14);
-      schoolLines.forEach((line: string, i: number) => {
-        doc.text(line, 8, sidebarYPos);
-        sidebarYPos += 3.5;
+      const schoolLines = doc.splitTextToSize(edu.school || "School", sidebarWidth - 8);
+      schoolLines.forEach((line: string) => {
+        doc.text(line, 5, sidebarYPos);
+        sidebarYPos += 2.8;
       });
       
-      // Date and GPA
       if (edu.graduationDate) {
-        doc.text(formatDate(edu.graduationDate), 8, sidebarYPos);
-        sidebarYPos += 3.5;
+        doc.text(formatDate(edu.graduationDate), 5, sidebarYPos);
+        sidebarYPos += 2.8;
       }
-      if (edu.gpa) {
-        doc.text(`GPA: ${edu.gpa}`, 8, sidebarYPos);
-        sidebarYPos += 3.5;
-      }
-      
-      sidebarYPos += 4;
+      sidebarYPos += 2;
     });
   }
 
-  // ========== MAIN COLUMN CONTENT ==========
+  // ========== MAIN COLUMN ==========
 
-  // Professional Summary
+  // Summary
   if (data.summary && data.summary.trim()) {
-    mainYPos = addSectionHeader(ATS_SECTIONS.summary, mainColumnX, mainYPos, mainColumnWidth);
-    
+    mainYPos = addSectionHeader("PROFESSIONAL SUMMARY", mainColumnX, mainYPos, mainColumnWidth);
     doc.setFontSize(config.bodySize);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(config.colors.secondary);
-    mainYPos = addWrappedText(data.summary, mainColumnX, mainYPos, mainColumnWidth, config.lineSpacing * 3.2);
-    mainYPos += 6;
+    // Truncate summary if too long
+    const summaryText = data.summary.length > 400 ? data.summary.slice(0, 400) + "..." : data.summary;
+    mainYPos = addWrappedText(summaryText, mainColumnX, mainYPos, mainColumnWidth, 3.2);
+    mainYPos += 4;
   }
 
-  // Work Experience
+  // Experience
   if (data.experience && data.experience.length > 0) {
-    mainYPos = addSectionHeader(ATS_SECTIONS.experience, mainColumnX, mainYPos, mainColumnWidth);
+    mainYPos = addSectionHeader("WORK EXPERIENCE", mainColumnX, mainYPos, mainColumnWidth);
 
-    data.experience.forEach((exp, index) => {
-      checkMainNewPage(25);
-
+    // Limit to 3 experiences for single page
+    data.experience.slice(0, 3).forEach((exp, index) => {
       // Job title
-      doc.setFontSize(config.bodySize + 0.5);
+      doc.setFontSize(config.bodySize);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(config.colors.primary);
       doc.text(exp.title || "Job Title", mainColumnX, mainYPos);
 
-      // Date range - right aligned
+      // Date
       const dateStr = `${formatDate(exp.startDate)} - ${exp.current ? "Present" : formatDate(exp.endDate)}`;
-      doc.setFontSize(config.bodySize - 0.5);
+      doc.setFontSize(config.smallSize);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(config.colors.accent);
       doc.text(dateStr, pageWidth - margin, mainYPos, { align: "right" });
-      mainYPos += 4;
+      mainYPos += 3;
 
-      // Company and location
-      doc.setFontSize(config.bodySize);
+      // Company
+      doc.setFontSize(config.smallSize);
       doc.setFont("helvetica", "italic");
       doc.setTextColor(config.colors.accent);
       const companyLine = [exp.company, exp.location].filter(Boolean).join(" | ");
       doc.text(companyLine || "Company", mainColumnX, mainYPos);
-      mainYPos += 5;
+      mainYPos += 3.5;
 
-      // Description with bullets
+      // Bullets - max 3 per job
       if (exp.description) {
         doc.setFont("helvetica", "normal");
         doc.setTextColor(config.colors.secondary);
-        const bullets = parseBulletPoints(exp.description);
+        doc.setFontSize(config.smallSize);
+        const bullets = parseBulletPoints(exp.description, 3);
 
-        if (bullets.length > 1) {
-          bullets.forEach((bullet) => {
-            checkMainNewPage(8);
-            const bulletText = `${config.bulletStyle}  ${bullet}`;
-            const lines = doc.splitTextToSize(bulletText, mainColumnWidth - 4);
-            lines.forEach((line: string, lineIndex: number) => {
-              doc.text(lineIndex === 0 ? line : `    ${line}`, mainColumnX, mainYPos);
-              mainYPos += config.lineSpacing * 3;
-            });
+        bullets.forEach((bullet) => {
+          const bulletText = `• ${bullet.length > 120 ? bullet.slice(0, 120) + "..." : bullet}`;
+          const lines = doc.splitTextToSize(bulletText, mainColumnWidth - 2);
+          lines.slice(0, 2).forEach((line: string) => {
+            doc.text(line, mainColumnX, mainYPos);
+            mainYPos += 2.8;
           });
-        } else {
-          mainYPos = addWrappedText(exp.description, mainColumnX, mainYPos, mainColumnWidth, config.lineSpacing * 3);
-        }
+        });
       }
 
-      mainYPos += index < data.experience.length - 1 ? 5 : 2;
+      mainYPos += index < Math.min(data.experience.length, 3) - 1 ? 3 : 0;
     });
   }
 
