@@ -540,11 +540,20 @@ const Builder = () => {
                     />
                   )}
                   {activeSection === "optimize" && (
-                    <OptimizeSection
+                    <ResumeImprovementPanel
+                      resumeData={resumeData}
                       jobDescription={jobDescription}
                       onJobDescriptionChange={setJobDescription}
-                      resumeData={resumeData}
-                      onApplySuggestion={handleApplySuggestion}
+                      onApplySummary={(summary) => setResumeData(prev => ({ ...prev, summary }))}
+                      onApplyExperience={(index, description) => {
+                        setResumeData(prev => ({
+                          ...prev,
+                          experience: prev.experience.map((exp, i) =>
+                            i === index ? { ...exp, description } : exp
+                          ),
+                        }));
+                      }}
+                      onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
                     />
                   )}
                   {activeSection === "jobmatch" && (
