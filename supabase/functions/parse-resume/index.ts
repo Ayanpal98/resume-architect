@@ -232,8 +232,56 @@ Return ONLY the JSON object. No markdown, no explanation, no code blocks.`;
     try {
       parsedResume = JSON.parse(content);
     } catch (parseError) {
-      console.error("JSON parse error:", parseError, "Content:", content);
-      throw new Error("Failed to parse AI response as JSON");
+      console.error("JSON parse error (attempt 1):", parseError);
+      
+      // Attempt to repair common AI JSON corruption
+      try {
+        // Remove non-ASCII characters that break JSON (e.g. 侬 instead of ])
+        let cleaned = content.replace(/[^\x00-\x7F]/g, (match) => {
+          // Keep common unicode chars in actual content (names, locations)
+          // but replace if they appear where JSON syntax is expected
+          return '';
+        });
+        
+        // Try to fix unbalanced brackets/braces
+        const openBraces = (cleaned.match(/{/g) || []).length;
+        const closeBraces = (cleaned.match(/}/g) || []).length;
+        const openBrackets = (cleaned.match(/\[/g) || []).length;
+        const closeBrackets = (cleaned.match(/\]/g) || []).length;
+        
+        for (let i = 0; i < openBrackets - closeBrackets; i++) cleaned += ']';
+        for (let i = 0; i < openBraces - closeBraces; i++) cleaned += '}';
+        
+        // Remove trailing commas before ] or }
+        cleaned = cleaned.replace(/,\s*([}\]])/g, '$1');
+        
+        parsedResume = JSON.parse(cleaned);
+        console.log("JSON repaired successfully after cleanup");
+      } catch (repairError) {
+        // Last resort: extract JSON object from content
+        try {
+          const jsonMatch = content.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            let extracted = jsonMatch[0].replace(/[^\x00-\x7F]/g, '');
+            // Fix brackets
+            const ob = (extracted.match(/{/g) || []).length;
+            const cb = (extracted.match(/}/g) || []).length;
+            const oq = (extracted.match(/\[/g) || []).length;
+            const cq = (extracted.match(/\]/g) || []).length;
+            for (let i = 0; i < oq - cq; i++) extracted = extracted.replace(/,?\s*$/, '') + ']';
+            for (let i = 0; i < ob - cb; i++) extracted += '}';
+            extracted = extracted.replace(/,\s*([}\]])/g, '$1');
+            parsedResume = JSON.parse(extracted);
+            console.log("JSON extracted and repaired successfully");
+          } else {
+            console.error("No JSON object found in content");
+            throw new Error("Failed to parse AI response as JSON");
+          }
+        } catch (extractError) {
+          console.error("All JSON repair attempts failed. Content snippet:", content.substring(0, 500));
+          throw new Error("Failed to parse AI response as JSON");
+        }
+      }
     }
 
     // Normalize the parsed data for backward compatibility
