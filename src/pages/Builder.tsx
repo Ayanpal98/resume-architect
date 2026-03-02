@@ -33,6 +33,7 @@ import { CoverLetterGenerator } from "@/components/CoverLetterGenerator";
 import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
+import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
@@ -539,11 +540,20 @@ const Builder = () => {
                     />
                   )}
                   {activeSection === "optimize" && (
-                    <OptimizeSection
+                    <ResumeImprovementPanel
+                      resumeData={resumeData}
                       jobDescription={jobDescription}
                       onJobDescriptionChange={setJobDescription}
-                      resumeData={resumeData}
-                      onApplySuggestion={handleApplySuggestion}
+                      onApplySummary={(summary) => setResumeData(prev => ({ ...prev, summary }))}
+                      onApplyExperience={(index, description) => {
+                        setResumeData(prev => ({
+                          ...prev,
+                          experience: prev.experience.map((exp, i) =>
+                            i === index ? { ...exp, description } : exp
+                          ),
+                        }));
+                      }}
+                      onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
                     />
                   )}
                   {activeSection === "jobmatch" && (
@@ -984,79 +994,7 @@ const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove, onApp
   </div>
 );
 
-interface OptimizeSectionProps {
-  jobDescription: string;
-  onJobDescriptionChange: (value: string) => void;
-  resumeData: ResumeData;
-  onApplySuggestion: (field: string, value: string) => void;
-}
-
-const OptimizeSection = ({ jobDescription, onJobDescriptionChange, resumeData, onApplySuggestion }: OptimizeSectionProps) => (
-  <div className="space-y-6">
-    <div>
-      <h2 className="text-2xl font-display font-bold text-foreground mb-2">AI Optimization</h2>
-      <p className="text-muted-foreground">Paste a job description to get tailored suggestions for your resume.</p>
-    </div>
-
-    <div>
-      <label className="block text-sm font-medium text-foreground mb-2">
-        <Target className="w-4 h-4 inline mr-2" />
-        Target Job Description
-      </label>
-      <Textarea
-        placeholder="Paste the job description you're applying for..."
-        rows={8}
-        value={jobDescription}
-        onChange={(e) => onJobDescriptionChange(e.target.value)}
-        className="resize-none"
-      />
-      <p className="text-xs text-muted-foreground mt-2">
-        The AI will analyze this to suggest relevant keywords and improvements.
-      </p>
-    </div>
-
-    {jobDescription && (
-      <div className="space-y-4">
-        <h3 className="font-medium text-foreground">AI Suggestions</h3>
-        
-        <AISuggestionPanel
-          type="keywords"
-          content={jobDescription}
-          onApply={(suggestion) => {
-            const keywords = suggestion.split(",").map(k => k.trim()).filter(Boolean);
-            onApplySuggestion("skills", keywords.join(", "));
-          }}
-          jobDescription={jobDescription}
-        />
-
-        <AISuggestionPanel
-          type="summary"
-          content={{
-            experience: resumeData.experience.map(e => `${e.title} at ${e.company}`).join(", "),
-            skills: resumeData.skills.join(", "),
-            targetRole: "",
-          }}
-          onApply={(suggestion) => onApplySuggestion("summary", suggestion)}
-          jobDescription={jobDescription}
-        />
-      </div>
-    )}
-
-    <div className="p-4 bg-primary/5 rounded-xl border border-primary/20">
-      <div className="flex items-start gap-3">
-        <Sparkles className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-        <div className="text-sm">
-          <p className="font-medium text-foreground mb-1">How AI Optimization Works</p>
-          <p className="text-muted-foreground">
-            Our AI analyzes the job description to identify key requirements and suggests improvements 
-            to your resume content. This helps ensure your resume contains relevant keywords that 
-            ATS systems look for.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+// OptimizeSection removed — replaced by ResumeImprovementPanel component
 
 interface ResumePreviewProps {
   data: ResumeData;
