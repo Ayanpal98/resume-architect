@@ -90,44 +90,30 @@ serve(async (req) => {
 
     switch (type) {
       case "summary":
-        systemPrompt = `You are an elite resume strategist specializing in 2024-2025 ATS optimization and modern hiring practices.
+        systemPrompt = `You are an elite resume strategist. Generate a PROFESSIONAL SUMMARY following this exact rule:
 
-GENERATE A PROFESSIONAL SUMMARY FOR TWO-COLUMN RESUME FORMAT:
-The summary appears in the RIGHT MAIN COLUMN under "PROFESSIONAL SUMMARY" header.
+FORMULA: "Who you are + experience + key skills + impact"
 
-STAR-IMPACT FRAMEWORK:
-1. **Opening Hook** (1 sentence): Job title + years of experience + core specialization
-2. **Key Achievement** (1-2 sentences): Quantified accomplishment using STAR method (Situation, Task, Action, Result)
-3. **Value Proposition** (1 sentence): Unique skills + what you bring to target role
+STRICT RULES:
+1. Role-specific: Tailor every word to the target role
+2. Keyword-rich: Embed 3-5 exact keywords from the job description naturally
+3. Results-focused: Include at least 1-2 quantified achievements (%, $, #)
+4. Lead with job title + years of experience + core specialization
+5. Use power verbs: Spearheaded, Orchestrated, Architected, Transformed, Accelerated
+6. NO pronouns (I, my), NO buzzwords (passionate, results-driven), NO clichés
+7. 3-4 impactful sentences, 50-80 words
+8. Must read as a compelling elevator pitch that passes ATS keyword matching
 
-INDUSTRY STANDARDS 2024-2025:
-- Optimal length: 50-80 words (3-4 impactful sentences)
-- Lead with metrics: Revenue generated, cost savings, efficiency gains, team size managed
-- Include 3-5 industry-specific keywords from job description
-- Use power verbs: Spearheaded, Orchestrated, Architected, Transformed, Accelerated
-- Avoid: Pronouns (I, my), buzzwords (passionate, results-driven), clichés
+OUTPUT: Return ONLY the summary text. No quotes, no labels, no explanations.`;
+        userPrompt = `Create an ATS-optimized professional summary:
 
-TWO-COLUMN TEMPLATE OPTIMIZATION:
-- Summary appears prominently at top of main column
-- Keep sentences concise for narrow column width (~120mm)
-- Front-load key achievements for scanning
-
-ATS OPTIMIZATION:
-- Modern ATS (Greenhouse, Lever, Workday, iCIMS) parse summaries for skill matching
-- Include 2-3 technical skills and 1-2 soft skills inline
-- Standard section header: "PROFESSIONAL SUMMARY"
-
-OUTPUT FORMAT:
-Return ONLY the summary text. No quotes, no labels, no explanations.`;
-        userPrompt = `Create an ATS-optimized professional summary for a two-column resume:
-
-CANDIDATE PROFILE:
+CANDIDATE:
 Experience: ${sanitizeField(content.experience)}
 Skills: ${sanitizeField(content.skills)}
 Target Role: ${sanitizeField(content.targetRole)}
-${sanitizedJobDesc ? `\nTARGET JOB REQUIREMENTS:\n${sanitizedJobDesc}` : ""}
+${sanitizedJobDesc ? `\nJOB DESCRIPTION:\n${sanitizedJobDesc}` : ""}
 
-Generate a compelling 50-80 word summary optimized for two-column layout and ATS scanning.`;
+Follow the formula: Who you are + experience + key skills + impact.`;
         break;
 
       case "experience":
