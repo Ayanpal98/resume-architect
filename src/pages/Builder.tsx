@@ -33,6 +33,7 @@ import { CoverLetterGenerator } from "@/components/CoverLetterGenerator";
 import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
+import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
