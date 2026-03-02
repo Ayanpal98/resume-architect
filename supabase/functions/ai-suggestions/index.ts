@@ -117,31 +117,13 @@ Follow the formula: Who you are + experience + key skills + impact.`;
         break;
 
       case "experience":
-        systemPrompt = `You are an expert resume writer trained in modern hiring practices and ATS optimization (2024-2025 standards).
+        systemPrompt = `You are an expert resume writer. Transform job descriptions into ATS-optimized bullet points.
 
-TRANSFORM JOB DESCRIPTIONS FOR TWO-COLUMN RESUME LAYOUT:
-Experience appears in the RIGHT MAIN COLUMN under "WORK EXPERIENCE" header.
-
-XYZ FORMULA FOR EACH BULLET:
-"Accomplished [X] as measured by [Y], by doing [Z]"
-
-BULLET POINT STANDARDS:
-1. **Action Verb First**: Use power verbs (Led, Spearheaded, Architected, Drove, Transformed)
-2. **Quantify Everything**: Numbers, percentages, dollar amounts, time saved
-3. **Show Scope**: Team size, budget, user base, project scale
-4. **Demonstrate Impact**: Business outcomes, not just responsibilities
-
-TWO-COLUMN LAYOUT OPTIMIZATION:
-- Keep bullets concise (15-25 words each) for ~120mm column width
-- Use standard bullet character (•) for ATS compatibility
-- Avoid long compound sentences that wrap awkwardly
-- Front-load key metrics and achievements
-
-INDUSTRY BEST PRACTICES 2024-2025:
-- 3-5 bullets per role (max 6 for recent positions)
-- Each bullet: 1-2 lines, 15-25 words for two-column fit
-- Include at least ONE metric per bullet (%, $, #)
-- Mix of hard metrics and efficiency gains
+STRICT RULES FOR EVERY BULLET:
+1. MUST start with a strong action verb (Led, Spearheaded, Architected, Drove, Engineered, Automated, Scaled)
+2. MUST include a measurable result (numbers, %, $, time saved, team size)
+3. NO responsibility-only points — ONLY impact statements
+4. Follow XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]"
 
 POWER VERB CATEGORIES:
 - Leadership: Spearheaded, Directed, Championed, Orchestrated
@@ -150,16 +132,21 @@ POWER VERB CATEGORIES:
 - Growth: Scaled, Accelerated, Expanded, Maximized
 - Efficiency: Streamlined, Optimized, Consolidated, Reduced
 
-OUTPUT FORMAT:
-Return 4-5 bullet points, each starting with • 
-No numbering, no additional text.`;
-        userPrompt = `Transform this experience into ATS-optimized bullets for two-column layout:
+ANTI-PATTERNS TO AVOID:
+- "Responsible for..." → Replace with action + result
+- "Worked on..." → Replace with specific contribution + outcome
+- "Helped with..." → Replace with led/drove + metric
+- Any bullet without a number or measurable outcome
+
+OUTPUT: Return 4-6 bullet points, each starting with •
+No numbering, no headers, no additional text.`;
+        userPrompt = `Transform this experience into impact-driven bullets:
 
 ROLE: ${sanitizeField(content.title)} at ${sanitizeField(content.company)}
 CURRENT DESCRIPTION: ${sanitizeField(content.description)}
-${sanitizedJobDesc ? `\nTARGET JOB KEYWORDS TO INCORPORATE:\n${sanitizedJobDesc}` : ""}
+${sanitizedJobDesc ? `\nJOB KEYWORDS TO INCORPORATE:\n${sanitizedJobDesc}` : ""}
 
-Create 4-5 impactful, concise bullet points optimized for narrow column width.`;
+Every bullet must have: Action verb + Result + Numbers. No responsibility-only points.`;
         break;
 
       case "skills":
