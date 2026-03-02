@@ -150,52 +150,35 @@ Every bullet must have: Action verb + Result + Numbers. No responsibility-only p
         break;
 
       case "skills":
-        systemPrompt = `You are an ATS optimization expert with deep knowledge of 2024-2025 hiring trends and modern resume formats.
+        systemPrompt = `You are an ATS skills optimization expert.
 
-SKILL OPTIMIZATION FOR TWO-COLUMN SIDEBAR LAYOUT:
-Skills appear in the LEFT SIDEBAR under "SKILLS & EXPERTISE" header, grouped by category.
+STRICT RULES:
+1. 15-20 relevant skills ONLY — no filler
+2. Group into exactly 3 categories:
+   - Technical Skills: Languages, frameworks, databases
+   - Tools & Platforms: Software, cloud services, dev tools
+   - Core Skills: Leadership, problem-solving, communication
+3. NO repetition across categories
+4. NO random buzzwords or generic terms
+5. If a skill is NOT in the job description → DO NOT include it
+6. Include both acronyms AND full terms when relevant (e.g., "AWS (Amazon Web Services)")
+7. Most job-relevant skills listed first within each category
 
-REQUIRED SKILL CATEGORIES (return skills grouped):
-1. **Technical Skills**: Programming languages, frameworks, databases, tools
-2. **Tools & Platforms**: Software, cloud services, dev tools, productivity apps
-3. **Soft Skills**: Leadership, communication, collaboration, problem-solving
+OUTPUT FORMAT (exact):
+Technical Skills: skill1, skill2, skill3, skill4, skill5, skill6
+Tools & Platforms: tool1, tool2, tool3, tool4, tool5
+Core Skills: skill1, skill2, skill3, skill4
 
-CATEGORY FORMAT:
-Return skills in this exact format:
-Technical Skills: skill1, skill2, skill3, skill4
-Tools & Platforms: tool1, tool2, tool3
-Soft Skills: softskill1, softskill2, softskill3
+No extra text, no explanations.`;
+        userPrompt = `Generate ATS-optimized skills:
 
-MODERN ATS SKILL MATCHING (2024-2025):
-- Top ATS use semantic matching, not just exact keywords
-- Include both acronyms AND full terms when relevant
-- Group related skills logically
-- Include proficiency indicators for languages if applicable
-
-SIDEBAR OPTIMIZATION:
-- Keep individual skill names short (1-3 words ideal)
-- 4-6 skills per category for visual balance
-- Most important/relevant skills first within each category
-- Total 12-18 skills across all categories
-
-AVOID:
-- Generic skills: "Microsoft Office" (unless entry-level)
-- Outdated technologies unless specifically required
-- Vague terms: "team player", "hard worker", "detail-oriented"
-- Overly long skill descriptions
-
-OUTPUT FORMAT:
-Return skills grouped by category as shown above.
-Each category on its own line with colon separator.`;
-        userPrompt = `Generate categorized skills for two-column resume sidebar:
-
-CANDIDATE PROFILE:
+CANDIDATE:
 Experience: ${sanitizeField(content.experience)}
 Current Skills: ${sanitizeField(content.currentSkills)}
 Target Role: ${sanitizeField(content.targetRole)}
-${sanitizedJobDesc ? `\nJOB REQUIREMENTS TO MATCH:\n${sanitizedJobDesc}` : ""}
+${sanitizedJobDesc ? `\nJOB DESCRIPTION (only include skills found here):\n${sanitizedJobDesc}` : ""}
 
-Provide 12-18 skills grouped into Technical Skills, Tools & Platforms, and Soft Skills categories.`;
+15-20 skills grouped into Technical Skills, Tools & Platforms, and Core Skills. Only job-relevant skills.`;
         break;
 
       case "keywords":
