@@ -264,6 +264,7 @@ const Builder = () => {
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "skills", label: "Skills", icon: Wrench },
     { id: "optimize", label: "AI Optimize", icon: Sparkles },
+    { id: "report", label: "Report", icon: BarChart3 },
     { id: "jobmatch", label: "Job Match", icon: Target },
     { id: "coverletter", label: "Cover Letter", icon: FileText },
   ];
