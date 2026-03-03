@@ -3,7 +3,7 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
+import {
   FileText, 
   ArrowLeft, 
   Plus, 
@@ -20,7 +20,8 @@ import {
   Upload,
   GitCompare,
   Layout,
-  Target
+  Target,
+  BarChart3
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
