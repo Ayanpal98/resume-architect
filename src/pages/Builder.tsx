@@ -34,6 +34,7 @@ import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
+import { OptimizationReport } from "@/components/OptimizationReport";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
