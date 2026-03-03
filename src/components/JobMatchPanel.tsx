@@ -394,7 +394,24 @@ export const JobMatchPanel = ({
             </div>
           )}
         </div>
-      )}
+
+          {/* Export Report Button */}
+          <Button
+            onClick={handleExportReport}
+            disabled={isExporting}
+            variant="default"
+            className="w-full"
+            size="lg"
+          >
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-2" />
+            )}
+            Export {beforeAnalysis ? "Before & After " : ""}Match Report as PDF
+          </Button>
+        </div>
+      )
 
       {!analysis && !isLoading && (
         <div className="bg-primary/5 rounded-xl p-6 border border-primary/20 text-center">
