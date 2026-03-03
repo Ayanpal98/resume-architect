@@ -51,11 +51,14 @@ const getScoreBgColor = (score: number) => {
 
 export const JobMatchPanel = ({ 
   resumeData, 
+  originalResumeData,
   jobDescription,
   onJobDescriptionChange 
 }: JobMatchPanelProps) => {
   const [analysis, setAnalysis] = useState<JobMatchAnalysis | null>(null);
+  const [beforeAnalysis, setBeforeAnalysis] = useState<JobMatchAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["skills", "experience"]);
 
   const handleAnalyze = async () => {
@@ -66,14 +69,44 @@ export const JobMatchPanel = ({
 
     setIsLoading(true);
     try {
-      const result = await analyzeJobMatch(resumeData, jobDescription);
-      setAnalysis(result);
-      toast.success(`Job match: ${result.overallMatch}%`);
+      // If we have original resume data, run before analysis too
+      const promises: Promise<JobMatchAnalysis>[] = [analyzeJobMatch(resumeData, jobDescription)];
+      if (originalResumeData) {
+        promises.push(analyzeJobMatch(originalResumeData, jobDescription));
+      }
+
+      const results = await Promise.all(promises);
+      setAnalysis(results[0]);
+      if (results[1]) {
+        setBeforeAnalysis(results[1]);
+      }
+      
+      toast.success(`Job match: ${results[0].overallMatch}%${results[1] ? ` (was ${results[1].overallMatch}%)` : ""}`);
     } catch (error) {
       console.error("Analysis error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to analyze job match");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleExportReport = () => {
+    if (!analysis) return;
+    setIsExporting(true);
+    try {
+      const reportData: JobMatchReportData = {
+        resumeData,
+        jobDescription,
+        beforeAnalysis: beforeAnalysis || analysis,
+        afterAnalysis: beforeAnalysis ? analysis : undefined,
+        atsScore: checkATSCompatibility(resumeData).overallScore,
+      };
+      downloadJobMatchReport(reportData);
+      toast.success("Job match report downloaded!");
+    } catch {
+      toast.error("Failed to generate report");
+    } finally {
+      setIsExporting(false);
     }
   };
 
