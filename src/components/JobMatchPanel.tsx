@@ -11,12 +11,17 @@ import {
   ChevronUp,
   Briefcase,
   Wrench,
-  Search
+  Search,
+  Download,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeJobMatch, JobMatchAnalysis } from "@/lib/aiService";
 import { toast } from "sonner";
+import { downloadJobMatchReport, JobMatchReportData } from "@/lib/reportGenerator";
+import { ResumeData } from "@/lib/pdfGenerator";
+import { checkATSCompatibility } from "@/lib/atsChecker";
 import {
   Collapsible,
   CollapsibleContent,
@@ -25,6 +30,7 @@ import {
 
 interface JobMatchPanelProps {
   resumeData: any;
+  originalResumeData?: any;
   jobDescription: string;
   onJobDescriptionChange: (value: string) => void;
 }
@@ -45,11 +51,14 @@ const getScoreBgColor = (score: number) => {
 
 export const JobMatchPanel = ({ 
   resumeData, 
+  originalResumeData,
   jobDescription,
   onJobDescriptionChange 
 }: JobMatchPanelProps) => {
   const [analysis, setAnalysis] = useState<JobMatchAnalysis | null>(null);
+  const [beforeAnalysis, setBeforeAnalysis] = useState<JobMatchAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
   const [expandedSections, setExpandedSections] = useState<string[]>(["skills", "experience"]);
 
   const handleAnalyze = async () => {
@@ -60,14 +69,44 @@ export const JobMatchPanel = ({
 
     setIsLoading(true);
     try {
-      const result = await analyzeJobMatch(resumeData, jobDescription);
-      setAnalysis(result);
-      toast.success(`Job match: ${result.overallMatch}%`);
+      // If we have original resume data, run before analysis too
+      const promises: Promise<JobMatchAnalysis>[] = [analyzeJobMatch(resumeData, jobDescription)];
+      if (originalResumeData) {
+        promises.push(analyzeJobMatch(originalResumeData, jobDescription));
+      }
+
+      const results = await Promise.all(promises);
+      setAnalysis(results[0]);
+      if (results[1]) {
+        setBeforeAnalysis(results[1]);
+      }
+      
+      toast.success(`Job match: ${results[0].overallMatch}%${results[1] ? ` (was ${results[1].overallMatch}%)` : ""}`);
     } catch (error) {
       console.error("Analysis error:", error);
       toast.error(error instanceof Error ? error.message : "Failed to analyze job match");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleExportReport = () => {
+    if (!analysis) return;
+    setIsExporting(true);
+    try {
+      const reportData: JobMatchReportData = {
+        resumeData,
+        jobDescription,
+        beforeAnalysis: beforeAnalysis || analysis,
+        afterAnalysis: beforeAnalysis ? analysis : undefined,
+        atsScore: checkATSCompatibility(resumeData).overallScore,
+      };
+      downloadJobMatchReport(reportData);
+      toast.success("Job match report downloaded!");
+    } catch {
+      toast.error("Failed to generate report");
+    } finally {
+      setIsExporting(false);
     }
   };
 
@@ -122,12 +161,26 @@ export const JobMatchPanel = ({
 
       {analysis && (
         <div className="space-y-4">
+          {/* Before/After Comparison Banner */}
+          {beforeAnalysis && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-center">
+                <p className="text-xs font-medium text-destructive uppercase tracking-wide mb-1">Before</p>
+                <p className="text-3xl font-bold text-destructive">{beforeAnalysis.overallMatch}%</p>
+              </div>
+              <div className="p-4 bg-accent/10 border border-accent/20 rounded-xl text-center">
+                <p className="text-xs font-medium text-accent uppercase tracking-wide mb-1">After</p>
+                <p className="text-3xl font-bold text-accent">{analysis.overallMatch}%</p>
+              </div>
+            </div>
+          )}
+
           {/* Overall Score */}
           <div className={`${getScoreBgColor(analysis.overallMatch)} rounded-2xl p-6 text-white`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Target className="w-5 h-5" />
-                <span className="font-medium">Overall Match Score</span>
+                <span className="font-medium">{beforeAnalysis ? "Current Match Score" : "Overall Match Score"}</span>
               </div>
               <div className="text-4xl font-bold">{analysis.overallMatch}%</div>
             </div>
@@ -340,6 +393,22 @@ export const JobMatchPanel = ({
               </ul>
             </div>
           )}
+
+          {/* Export Report Button */}
+          <Button
+            onClick={handleExportReport}
+            disabled={isExporting}
+            variant="default"
+            className="w-full"
+            size="lg"
+          >
+            {isExporting ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <Download className="w-4 h-4 mr-2" />
+            )}
+            Export {beforeAnalysis ? "Before & After " : ""}Match Report as PDF
+          </Button>
         </div>
       )}
 
