@@ -161,12 +161,26 @@ export const JobMatchPanel = ({
 
       {analysis && (
         <div className="space-y-4">
+          {/* Before/After Comparison Banner */}
+          {beforeAnalysis && (
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-4 bg-destructive/10 border border-destructive/20 rounded-xl text-center">
+                <p className="text-xs font-medium text-destructive uppercase tracking-wide mb-1">Before</p>
+                <p className="text-3xl font-bold text-destructive">{beforeAnalysis.overallMatch}%</p>
+              </div>
+              <div className="p-4 bg-accent/10 border border-accent/20 rounded-xl text-center">
+                <p className="text-xs font-medium text-accent uppercase tracking-wide mb-1">After</p>
+                <p className="text-3xl font-bold text-accent">{analysis.overallMatch}%</p>
+              </div>
+            </div>
+          )}
+
           {/* Overall Score */}
           <div className={`${getScoreBgColor(analysis.overallMatch)} rounded-2xl p-6 text-white`}>
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Target className="w-5 h-5" />
-                <span className="font-medium">Overall Match Score</span>
+                <span className="font-medium">{beforeAnalysis ? "Current Match Score" : "Overall Match Score"}</span>
               </div>
               <div className="text-4xl font-bold">{analysis.overallMatch}%</div>
             </div>
