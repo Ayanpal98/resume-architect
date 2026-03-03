@@ -3,7 +3,7 @@ import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
+import {
   FileText, 
   ArrowLeft, 
   Plus, 
@@ -20,7 +20,8 @@ import {
   Upload,
   GitCompare,
   Layout,
-  Target
+  Target,
+  BarChart3
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
@@ -34,6 +35,7 @@ import { JobMatchPanel } from "@/components/JobMatchPanel";
 import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
+import { OptimizationReport } from "@/components/OptimizationReport";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import {
   Dialog,
@@ -262,6 +264,7 @@ const Builder = () => {
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "skills", label: "Skills", icon: Wrench },
     { id: "optimize", label: "AI Optimize", icon: Sparkles },
+    { id: "report", label: "Report", icon: BarChart3 },
     { id: "jobmatch", label: "Job Match", icon: Target },
     { id: "coverletter", label: "Cover Letter", icon: FileText },
   ];
@@ -554,6 +557,13 @@ const Builder = () => {
                         }));
                       }}
                       onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
+                    />
+                  )}
+                  {activeSection === "report" && (
+                    <OptimizationReport
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
                     />
                   )}
                   {activeSection === "jobmatch" && (
