@@ -11,12 +11,17 @@ import {
   ChevronUp,
   Briefcase,
   Wrench,
-  Search
+  Search,
+  Download,
+  RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { analyzeJobMatch, JobMatchAnalysis } from "@/lib/aiService";
 import { toast } from "sonner";
+import { downloadJobMatchReport, JobMatchReportData } from "@/lib/reportGenerator";
+import { ResumeData } from "@/lib/pdfGenerator";
+import { checkATSCompatibility } from "@/lib/atsChecker";
 import {
   Collapsible,
   CollapsibleContent,
@@ -25,6 +30,7 @@ import {
 
 interface JobMatchPanelProps {
   resumeData: any;
+  originalResumeData?: any;
   jobDescription: string;
   onJobDescriptionChange: (value: string) => void;
 }
