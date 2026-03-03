@@ -559,6 +559,12 @@ const Builder = () => {
                       onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
                     />
                   )}
+                  {activeSection === "report" && (
+                    <OptimizationReport
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
+                    />
                   {activeSection === "jobmatch" && (
                     <JobMatchPanel
                       resumeData={resumeData}
