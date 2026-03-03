@@ -393,7 +393,6 @@ export const JobMatchPanel = ({
               </ul>
             </div>
           )}
-        </div>
 
           {/* Export Report Button */}
           <Button
@@ -411,7 +410,7 @@ export const JobMatchPanel = ({
             Export {beforeAnalysis ? "Before & After " : ""}Match Report as PDF
           </Button>
         </div>
-      )
+      )}
 
       {!analysis && !isLoading && (
         <div className="bg-primary/5 rounded-xl p-6 border border-primary/20 text-center">
