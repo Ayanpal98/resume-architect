@@ -569,6 +569,7 @@ const Builder = () => {
                   {activeSection === "jobmatch" && (
                     <JobMatchPanel
                       resumeData={resumeData}
+                      originalResumeData={originalResumeData || undefined}
                       jobDescription={jobDescription}
                       onJobDescriptionChange={setJobDescription}
                     />
