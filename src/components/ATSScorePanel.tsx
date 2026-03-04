@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { downloadATSReadinessReport, ATSReadinessReportData } from "@/lib/reportGenerator";
 import { 
   CheckCircle2, 
   XCircle, 
