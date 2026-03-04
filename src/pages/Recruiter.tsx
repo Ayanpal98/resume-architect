@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import jsPDF from "jspdf";
 import { Link } from "react-router-dom";
 import { 
   FileText, Upload, Users, Target, CheckCircle2, XCircle, 
