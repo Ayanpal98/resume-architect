@@ -105,6 +105,8 @@ import {
 
 interface ATSScorePanelProps {
   result: ATSCheckResult;
+  originalResult?: ATSCheckResult;
+  resumeData?: any;
   onDismiss?: () => void;
 }
 
