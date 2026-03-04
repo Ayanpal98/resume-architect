@@ -778,6 +778,30 @@ export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }:
         </div>
       )}
 
+      {/* Export ATS Report Button */}
+      {resumeData && (
+        <div className="border-t border-border p-4">
+          <Button
+            onClick={() => {
+              try {
+                downloadATSReadinessReport({
+                  resumeData,
+                  currentResult: result,
+                  originalResult,
+                });
+                // toast handled by caller
+              } catch {}
+            }}
+            variant="default"
+            className="w-full"
+            size="lg"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export {originalResult ? "Before & After " : ""}ATS Report as PDF
+          </Button>
+        </div>
+      )}
+
       {/* Readiness Scale Legend */}
       <div className="border-t border-border p-4 bg-muted/30">
         <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground mb-2">
