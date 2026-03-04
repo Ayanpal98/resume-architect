@@ -446,7 +446,12 @@ const Builder = () => {
                     </button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto p-0">
-                    <ATSScorePanel result={atsResult} onDismiss={() => setShowATSDetails(false)} />
+                    <ATSScorePanel 
+                      result={atsResult} 
+                      originalResult={originalResumeData ? checkATSCompatibility(originalResumeData) : undefined}
+                      resumeData={resumeData}
+                      onDismiss={() => setShowATSDetails(false)} 
+                    />
                   </DialogContent>
                 </Dialog>
 
