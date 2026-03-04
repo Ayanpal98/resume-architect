@@ -18,7 +18,9 @@ import {
   TrendingUp,
   Shield,
   Sparkles,
-  User
+  User,
+  Download,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
