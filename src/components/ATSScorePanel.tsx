@@ -182,7 +182,7 @@ const getParsingClarity = (result: ATSCheckResult): ParsingClarity => {
   };
 };
 
-export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
+export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }: ATSScorePanelProps) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
 
