@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { downloadATSReadinessReport, ATSReadinessReportData } from "@/lib/reportGenerator";
 import { 
   CheckCircle2, 
   XCircle, 
@@ -17,7 +18,9 @@ import {
   TrendingUp,
   Shield,
   Sparkles,
-  User
+  User,
+  Download,
+  Loader2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -105,6 +108,8 @@ import {
 
 interface ATSScorePanelProps {
   result: ATSCheckResult;
+  originalResult?: ATSCheckResult;
+  resumeData?: any;
   onDismiss?: () => void;
 }
 
@@ -180,7 +185,7 @@ const getParsingClarity = (result: ATSCheckResult): ParsingClarity => {
   };
 };
 
-export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
+export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }: ATSScorePanelProps) => {
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
 
@@ -770,6 +775,30 @@ export const ATSScorePanel = ({ result, onDismiss }: ATSScorePanelProps) => {
               )}
             </TabsContent>
           </Tabs>
+        </div>
+      )}
+
+      {/* Export ATS Report Button */}
+      {resumeData && (
+        <div className="border-t border-border p-4">
+          <Button
+            onClick={() => {
+              try {
+                downloadATSReadinessReport({
+                  resumeData,
+                  currentResult: result,
+                  originalResult,
+                });
+                // toast handled by caller
+              } catch {}
+            }}
+            variant="default"
+            className="w-full"
+            size="lg"
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export {originalResult ? "Before & After " : ""}ATS Report as PDF
+          </Button>
         </div>
       )}
 
