@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import jsPDF from "jspdf";
 import { Link } from "react-router-dom";
 import { 
   FileText, Upload, Users, Target, CheckCircle2, XCircle, 
@@ -386,42 +387,323 @@ const Recruiter = () => {
   }), [candidates]);
 
   const generateReport = () => {
-    const reportData = filteredCandidates.map((c, index) => ({
-      Rank: index + 1,
-      Name: c.name,
-      Email: c.email,
-      Phone: c.phone,
-      CurrentRole: c.currentRole,
-      Experience: c.totalExperience,
-      OverallScore: c.overallScore,
-      TechnicalScore: c.technicalSkillsScore,
-      ExperienceScore: c.experienceScore,
-      EducationScore: c.educationScore,
-      Recommendation: c.recommendation.replace("_", " ").toUpperCase(),
-      Status: c.status.toUpperCase(),
-      MatchedSkills: c.matchedSkills.join("; "),
-      MissingSkills: c.missingSkills.join("; "),
-      Strengths: c.strengths.map(s => s.point).join("; "),
-      Concerns: c.concerns.map(c => c.point).join("; "),
-    }));
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
+    const ml = 15, mr = 15, cw = pw - ml - mr, bm = 20;
+    let y = 15;
+    let pn = 1;
 
-    const headers = Object.keys(reportData[0] || {});
-    const csvContent = [
-      headers.join(","),
-      ...reportData.map(row => headers.map(h => `"${(row as any)[h] || ''}"`).join(","))
-    ].join("\n");
+    const C = {
+      primary: "#2b3f8e", accent: "#0ea573", destructive: "#e53e3e",
+      warning: "#d69e2e", dark: "#1a202c", muted: "#718096",
+      light: "#e2e8f0", bg: "#f7fafc", white: "#ffffff",
+    };
 
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `candidate-report-${new Date().toISOString().split('T')[0]}.csv`;
-    a.click();
-    URL.revokeObjectURL(url);
+    const checkPage = (n: number) => { if (y + n > ph - bm) { footer(); doc.addPage(); y = 15; } };
+    const footer = () => {
+      doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
+      doc.text(`Candidate Screening Report — Page ${pn}`, pw / 2, ph - 8, { align: "center" });
+      doc.text(new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }), pw - mr, ph - 8, { align: "right" });
+      pn++;
+    };
+    const wrap = (text: string, x: number, maxW: number, lh = 4) => {
+      doc.splitTextToSize(text, maxW).forEach((line: string) => { checkPage(lh); doc.text(line, x, y); y += lh; });
+    };
+    const section = (title: string) => {
+      checkPage(12); y += 4;
+      doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(C.primary);
+      doc.text(title, ml, y); y += 2;
+      doc.setDrawColor(C.primary); doc.setLineWidth(0.6); doc.line(ml, y, pw - mr, y); y += 5;
+    };
+
+    // ===== COVER PAGE =====
+    doc.setFillColor(C.primary); doc.rect(0, 0, pw, 45, "F");
+    doc.setFontSize(22); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+    doc.text("Candidate Screening Report", pw / 2, 22, { align: "center" });
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor("#c3cfe2");
+    doc.text(jobTitle ? `Position: ${jobTitle}` : "AI-Powered Candidate Analysis", pw / 2, 32, { align: "center" });
+    y = 55;
+
+    // Report meta
+    doc.setFillColor(C.bg); doc.roundedRect(ml, y, cw, 22, 3, 3, "F");
+    doc.setDrawColor(C.light); doc.roundedRect(ml, y, cw, 22, 3, 3, "S");
+    doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+    doc.text(`Candidates Analyzed: ${filteredCandidates.length}`, ml + 5, y + 7);
+    doc.text(`Average Score: ${stats.avgScore}%`, ml + 5, y + 13);
+    doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
+    doc.text(`Shortlisted: ${stats.shortlisted}  |  Rejected: ${stats.rejected}  |  Highly Recommended: ${stats.highlyRecommended}`, ml + 5, y + 19);
+    y += 28;
+
+    // ===== RANKING SUMMARY TABLE =====
+    section("CANDIDATE RANKING SUMMARY");
+    checkPage(10);
+    doc.setFillColor(C.primary); doc.rect(ml, y, cw, 7, "F");
+    doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+    doc.text("#", ml + 2, y + 5);
+    doc.text("Candidate", ml + 10, y + 5);
+    doc.text("Score", ml + 70, y + 5);
+    doc.text("Recommendation", ml + 90, y + 5);
+    doc.text("Status", ml + 135, y + 5);
+    doc.text("Experience", ml + 155, y + 5);
+    y += 7;
+
+    filteredCandidates.forEach((c, i) => {
+      checkPage(8);
+      doc.setFillColor(i % 2 === 0 ? C.bg : C.white); doc.rect(ml, y, cw, 7, "F");
+      doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      doc.text(`${i + 1}`, ml + 2, y + 5);
+      doc.text(c.name.substring(0, 30), ml + 10, y + 5);
+      const sc = c.overallScore >= 80 ? C.accent : c.overallScore >= 60 ? C.warning : C.destructive;
+      doc.setFont("helvetica", "bold"); doc.setTextColor(sc);
+      doc.text(`${c.overallScore}%`, ml + 70, y + 5);
+      doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      doc.text(c.recommendation.replace(/_/g, " "), ml + 90, y + 5);
+      const stColor = c.status === "shortlisted" ? C.accent : c.status === "rejected" ? C.destructive : C.muted;
+      doc.setTextColor(stColor);
+      doc.text(c.status, ml + 135, y + 5);
+      doc.setTextColor(C.dark);
+      doc.text(c.totalExperience || "N/A", ml + 155, y + 5);
+      y += 7;
+    });
+    y += 5;
+
+    // ===== DETAILED CANDIDATE PROFILES =====
+    filteredCandidates.forEach((c, idx) => {
+      // Start each candidate on a new page (except first if space available)
+      if (idx > 0) { footer(); doc.addPage(); y = 15; }
+
+      section(`CANDIDATE ${idx + 1}: ${c.name.toUpperCase()}`);
+
+      // Contact & basic info
+      doc.setFillColor(C.bg); checkPage(24);
+      doc.roundedRect(ml, y, cw, 22, 3, 3, "F");
+      doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+      doc.text(c.name, ml + 5, y + 6);
+      doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted); doc.setFontSize(8);
+      doc.text(`${c.currentRole || "N/A"}  |  ${c.totalExperience || "N/A"} experience`, ml + 5, y + 11);
+      doc.text([c.email, c.phone, c.location].filter(Boolean).join("  |  "), ml + 5, y + 16);
+      doc.text(`File: ${c.fileName}`, ml + 5, y + 20);
+
+      // Score circle
+      const scoreColor = c.overallScore >= 80 ? C.accent : c.overallScore >= 60 ? C.warning : C.destructive;
+      const sx = pw - mr - 20;
+      doc.setFillColor(scoreColor); doc.circle(sx + 5, y + 11, 8, "F");
+      doc.setFontSize(12); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+      doc.text(`${c.overallScore}%`, sx + 5, y + 13, { align: "center" });
+      y += 26;
+
+      // Score breakdown
+      checkPage(18);
+      doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+      doc.text("SCORE BREAKDOWN", ml, y); y += 4;
+
+      const scores = [
+        { label: "Technical Skills", score: c.technicalSkillsScore },
+        { label: "Experience", score: c.experienceScore },
+        { label: "Education", score: c.educationScore },
+        { label: "Soft Skills", score: c.softSkillsScore },
+        { label: "ATS Compatibility", score: c.atsScore },
+      ];
+      const barW = (cw - 8) / 5;
+      scores.forEach((s, i) => {
+        const bx = ml + i * (barW + 2);
+        doc.setFillColor(C.light); doc.roundedRect(bx, y, barW, 12, 2, 2, "F");
+        doc.setFontSize(10); doc.setFont("helvetica", "bold");
+        const col = s.score >= 80 ? C.accent : s.score >= 60 ? C.warning : C.destructive;
+        doc.setTextColor(col);
+        doc.text(`${s.score}%`, bx + barW / 2, y + 5.5, { align: "center" });
+        doc.setFontSize(6); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
+        doc.text(s.label, bx + barW / 2, y + 10, { align: "center" });
+      });
+      y += 16;
+
+      // Fit scores
+      if (c.fitScore) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+        doc.text("FIT ASSESSMENT", ml, y); y += 4;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        doc.text(`Technical Fit: ${c.fitScore.technical}/10  |  Cultural Fit: ${c.fitScore.cultural}/10  |  Growth Potential: ${c.fitScore.growth}/10`, ml, y);
+        y += 5;
+      }
+
+      // Recommendation
+      checkPage(10);
+      const recColor = c.recommendation === "highly_recommended" ? C.accent : c.recommendation === "recommended" ? C.primary : c.recommendation === "consider" ? C.warning : C.destructive;
+      doc.setFillColor(recColor + "15");
+      doc.roundedRect(ml, y, cw, 10, 2, 2, "F");
+      doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(recColor);
+      doc.text(`Recommendation: ${c.recommendation.replace(/_/g, " ").toUpperCase()}`, ml + 4, y + 4.5);
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      if (c.recommendationReason) {
+        const reasonLines = doc.splitTextToSize(c.recommendationReason, cw - 8);
+        doc.text(reasonLines[0] || "", ml + 4, y + 8.5);
+      }
+      y += 14;
+
+      // Skills
+      checkPage(10);
+      doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.accent);
+      doc.text("✓ MATCHED SKILLS", ml, y); y += 3.5;
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      if (c.matchedSkills.length > 0) {
+        wrap(c.matchedSkills.join(", "), ml + 2, cw - 4, 3.5);
+      } else {
+        doc.text("None identified", ml + 2, y); y += 3.5;
+      }
+      y += 2;
+
+      if (c.missingSkills.length > 0) {
+        checkPage(8);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.destructive);
+        doc.text("✗ MISSING SKILLS", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        wrap(c.missingSkills.join(", "), ml + 2, cw - 4, 3.5);
+        y += 2;
+      }
+
+      if (c.partialSkills && c.partialSkills.length > 0) {
+        checkPage(8);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.warning);
+        doc.text("○ PARTIAL SKILLS", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        wrap(c.partialSkills.join(", "), ml + 2, cw - 4, 3.5);
+        y += 2;
+      }
+
+      // Experience summary
+      if (c.experienceSummary) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+        doc.text("EXPERIENCE SUMMARY", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        wrap(c.experienceSummary, ml + 2, cw - 4, 3.5);
+        y += 2;
+      }
+
+      // Education
+      if (c.educationDetails) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+        doc.text("EDUCATION", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        const eduLine = [c.educationDetails.degree, c.educationDetails.field, c.educationDetails.institution].filter(Boolean).join(" — ");
+        if (eduLine) { wrap(eduLine, ml + 2, cw - 4, 3.5); }
+        if (c.educationDetails.certifications?.length > 0) {
+          doc.text(`Certifications: ${c.educationDetails.certifications.join(", ")}`, ml + 2, y);
+          y += 3.5;
+        }
+        y += 2;
+      }
+
+      // Key achievements
+      if (c.keyAchievements?.length > 0) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+        doc.text("KEY ACHIEVEMENTS", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        c.keyAchievements.forEach(a => {
+          checkPage(5);
+          wrap(`•  ${a}`, ml + 2, cw - 6, 3.5);
+        });
+        y += 2;
+      }
+
+      // Strengths
+      if (c.strengths?.length > 0) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.accent);
+        doc.text("STRENGTHS", ml, y); y += 3.5;
+        c.strengths.forEach(s => {
+          checkPage(8);
+          doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+          wrap(`•  ${s.point}`, ml + 2, cw - 6, 3.5);
+          if (s.evidence) {
+            doc.setFont("helvetica", "italic"); doc.setTextColor(C.muted);
+            wrap(`   Evidence: ${s.evidence}`, ml + 6, cw - 10, 3.5);
+          }
+        });
+        y += 2;
+      }
+
+      // Concerns
+      if (c.concerns?.length > 0) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.destructive);
+        doc.text("CONCERNS & RED FLAGS", ml, y); y += 3.5;
+        c.concerns.forEach(con => {
+          checkPage(8);
+          doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+          const sevColor = con.severity === "high" ? C.destructive : con.severity === "medium" ? C.warning : C.muted;
+          doc.setTextColor(sevColor);
+          wrap(`•  [${con.severity.toUpperCase()}] ${con.point}`, ml + 2, cw - 6, 3.5);
+          if (con.mitigation) {
+            doc.setFont("helvetica", "italic"); doc.setTextColor(C.muted);
+            wrap(`   Mitigation: ${con.mitigation}`, ml + 6, cw - 10, 3.5);
+          }
+        });
+        y += 2;
+      }
+
+      // Competitive analysis
+      if (c.competitiveAnalysis) {
+        checkPage(12);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+        doc.text("COMPETITIVE ANALYSIS", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        doc.text(`Percentile: ${c.competitiveAnalysis.percentile}`, ml + 2, y); y += 3.5;
+        if (c.competitiveAnalysis.standoutFactors?.length > 0) {
+          doc.setFont("helvetica", "bold"); doc.text("Standout Factors:", ml + 2, y); y += 3.5;
+          doc.setFont("helvetica", "normal");
+          c.competitiveAnalysis.standoutFactors.forEach(f => { wrap(`•  ${f}`, ml + 4, cw - 8, 3.5); });
+        }
+        if (c.competitiveAnalysis.improvementAreas?.length > 0) {
+          doc.setFont("helvetica", "bold"); doc.text("Areas to Probe:", ml + 2, y); y += 3.5;
+          doc.setFont("helvetica", "normal");
+          c.competitiveAnalysis.improvementAreas.forEach(a => { wrap(`•  ${a}`, ml + 4, cw - 8, 3.5); });
+        }
+        y += 2;
+      }
+
+      // Salary range
+      if (c.salaryRange) {
+        checkPage(8);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
+        doc.text("EXPECTED SALARY RANGE", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        doc.text(c.salaryRange, ml + 2, y); y += 5;
+      }
+
+      // Interview questions
+      if (c.interviewQuestions?.length > 0) {
+        checkPage(10);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.primary);
+        doc.text("SUGGESTED INTERVIEW QUESTIONS", ml, y); y += 3.5;
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        c.interviewQuestions.forEach((q, qi) => {
+          checkPage(5);
+          wrap(`${qi + 1}. ${q}`, ml + 2, cw - 6, 3.5);
+        });
+        y += 2;
+      }
+
+      // Status
+      checkPage(8);
+      doc.setFontSize(8); doc.setFont("helvetica", "bold");
+      const statusColor = c.status === "shortlisted" ? C.accent : c.status === "rejected" ? C.destructive : C.muted;
+      doc.setTextColor(statusColor);
+      doc.text(`Current Status: ${c.status.toUpperCase()}`, ml, y);
+      y += 5;
+    });
+
+    footer();
+    const dateStr = new Date().toISOString().split("T")[0];
+    doc.save(`candidate-screening-report-${dateStr}.pdf`);
 
     toast({
       title: "Report Downloaded",
-      description: `Exported ${filteredCandidates.length} candidate(s) to CSV.`,
+      description: `Exported ${filteredCandidates.length} candidate(s) to PDF.`,
     });
   };
 
