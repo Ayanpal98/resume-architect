@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
+import { supabase } from "@/integrations/supabase/client";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { TemplateRecommendation } from "@/components/TemplateRecommendation";
 import { AISuggestionPanel } from "@/components/AISuggestionPanel";
@@ -218,6 +219,8 @@ const Builder = () => {
     try {
       downloadPDF(resumeData, selectedTemplate);
       toast.success("Resume downloaded successfully!");
+      // Increment global counter
+      supabase.rpc("increment_stat", { stat_name: "resumes_optimized" }).then();
     } catch (error) {
       toast.error("Failed to generate PDF");
     }

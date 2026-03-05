@@ -1,6 +1,7 @@
 import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 const Index = () => {
   return <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -71,8 +72,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Stats Section */}
-      
+      {/* Live Stats Section */}
+      <section className="py-12 px-4 sm:px-6">
+        <div className="container mx-auto max-w-4xl">
+          <LiveStatsCounter />
+        </div>
+      </section>
 
       {/* Features Section */}
       <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
