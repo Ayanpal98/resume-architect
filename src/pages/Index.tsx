@@ -1,6 +1,7 @@
 import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 const Index = () => {
   return <div className="min-h-screen bg-background">
       {/* Navigation */}
