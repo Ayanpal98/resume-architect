@@ -14,13 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      platform_stats: {
+        Row: {
+          candidate_screenings: number
+          id: string
+          resumes_optimized: number
+          updated_at: string
+        }
+        Insert: {
+          candidate_screenings?: number
+          id?: string
+          resumes_optimized?: number
+          updated_at?: string
+        }
+        Update: {
+          candidate_screenings?: number
+          id?: string
+          resumes_optimized?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      increment_stat: { Args: { stat_name: string }; Returns: undefined }
     }
     Enums: {
       [_ in never]: never
