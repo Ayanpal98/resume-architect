@@ -218,6 +218,8 @@ const Builder = () => {
     try {
       downloadPDF(resumeData, selectedTemplate);
       toast.success("Resume downloaded successfully!");
+      // Increment global counter
+      supabase.rpc("increment_stat", { stat_name: "resumes_optimized" }).then();
     } catch (error) {
       toast.error("Failed to generate PDF");
     }
