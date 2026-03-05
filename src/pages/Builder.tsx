@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
+import { supabase } from "@/integrations/supabase/client";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { TemplateRecommendation } from "@/components/TemplateRecommendation";
 import { AISuggestionPanel } from "@/components/AISuggestionPanel";
