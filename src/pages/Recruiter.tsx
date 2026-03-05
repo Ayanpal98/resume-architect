@@ -225,6 +225,9 @@ const Recruiter = () => {
       throw new Error(error.message || "Failed to analyze candidate");
     }
 
+    // Increment candidate screening counter
+    supabase.rpc("increment_stat", { stat_name: "candidate_screenings" }).then();
+
     return {
       id: crypto.randomUUID(),
       fileName: file.name,
