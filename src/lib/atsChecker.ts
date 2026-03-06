@@ -1207,7 +1207,208 @@ function calculateIndustryMatch(resumeData: ResumeDataForCheck): IndustryMatch |
   return bestMatch;
 }
 
-function prioritizeRecommendations(recommendations: string[], categories: ATSCategory[]): string[] {
+// === NEW FEATURES (all client-side, zero AI credits) ===
+
+// Semantic synonym mappings for keyword matching
+const SEMANTIC_SYNONYMS: Record<string, string[]> = {
+  "javascript": ["js", "ecmascript", "es6", "es2015"],
+  "typescript": ["ts"],
+  "python": ["py"],
+  "machine learning": ["ml", "predictive modeling", "statistical learning"],
+  "artificial intelligence": ["ai", "intelligent systems"],
+  "project management": ["pm", "program management", "project coordination"],
+  "customer relationship management": ["crm", "salesforce", "hubspot"],
+  "search engine optimization": ["seo"],
+  "user experience": ["ux", "usability"],
+  "user interface": ["ui", "interface design"],
+  "continuous integration": ["ci", "ci/cd", "continuous delivery"],
+  "amazon web services": ["aws"],
+  "google cloud platform": ["gcp", "google cloud"],
+  "microsoft azure": ["azure"],
+  "database": ["db", "dbms", "data store"],
+  "application programming interface": ["api", "rest api", "restful"],
+  "software development": ["software engineering", "programming", "coding"],
+  "data analysis": ["data analytics", "data science", "analytics"],
+  "leadership": ["led", "managed", "directed", "supervised"],
+  "communication": ["communicated", "presented", "collaborated"],
+  "kubernetes": ["k8s"],
+  "react": ["react.js", "reactjs"],
+  "node.js": ["nodejs", "node"],
+  "next.js": ["nextjs"],
+  "vue.js": ["vuejs", "vue"],
+  "postgresql": ["postgres"],
+  "mongodb": ["mongo"],
+  "elasticsearch": ["elastic"],
+};
+
+// 1. Contextual Keyword Placement — checks where skills appear
+function analyzeContextualPlacement(resumeData: ResumeDataForCheck): ContextualPlacement {
+  const summaryLower = (resumeData.summary || "").toLowerCase();
+  const expLower = resumeData.experience.map(e => `${e.title} ${e.description}`.toLowerCase()).join(" ");
+  
+  const inSummary: string[] = [];
+  const inExperience: string[] = [];
+  const skillsOnly: string[] = [];
+
+  resumeData.skills.forEach(skill => {
+    const s = skill.toLowerCase();
+    const foundInSummary = summaryLower.includes(s);
+    const foundInExp = expLower.includes(s);
+
+    if (foundInSummary) inSummary.push(skill);
+    if (foundInExp) inExperience.push(skill);
+    if (!foundInSummary && !foundInExp) skillsOnly.push(skill);
+  });
+
+  const totalSkills = resumeData.skills.length || 1;
+  const reinforced = new Set([...inSummary, ...inExperience]).size;
+  const score = Math.round((reinforced / totalSkills) * 100);
+
+  return { summary: inSummary, experience: inExperience, skillsOnly, score };
+}
+
+// 2. Skill Categorization — Technical / Tools & Platforms / Core
+function categorizeSkills(skills: string[]): SkillCategorization {
+  const toolPatterns = /\b(jira|confluence|git|github|gitlab|docker|kubernetes|k8s|jenkins|terraform|ansible|aws|azure|gcp|figma|sketch|adobe|photoshop|illustrator|tableau|power\s?bi|looker|excel|google\s?sheets|slack|notion|trello|asana|postman|vs\s?code|intellij|xcode|android\s?studio|datadog|grafana|prometheus|splunk|new\s?relic|salesforce|hubspot|sap|servicenow|snowflake|databricks|airflow|kafka|redis|elasticsearch|mongodb|postgresql|mysql|bigquery|redshift)\b/i;
+  
+  const corePatterns = /\b(communication|leadership|teamwork|problem[\s-]?solving|analytical|creative|collaboration|presentation|organization|critical\s?thinking|time\s?management|adaptability|attention\s?to\s?detail|interpersonal|negotiation|decision[\s-]?making|strategic\s?planning|stakeholder\s?management|cross[\s-]?functional|mentoring|coaching|project\s?management|agile|scrum|kanban|remote\s?collaboration)\b/i;
+
+  const technical: string[] = [];
+  const tools: string[] = [];
+  const core: string[] = [];
+  const uncategorized: string[] = [];
+
+  skills.forEach(skill => {
+    if (toolPatterns.test(skill)) {
+      tools.push(skill);
+    } else if (corePatterns.test(skill)) {
+      core.push(skill);
+    } else if (/\b(javascript|typescript|python|java|c\+\+|c#|ruby|php|swift|kotlin|go|rust|sql|html|css|sass|react|angular|vue|next\.?js|node\.?js|express|django|flask|spring|graphql|rest|api|microservices|machine\s?learning|ai|ml|devops|ci\/cd|security|oauth|testing|tdd|bdd|data\s?structures|algorithms|system\s?design|oop|functional|serverless|blockchain)\b/i.test(skill)) {
+      technical.push(skill);
+    } else {
+      uncategorized.push(skill);
+    }
+  });
+
+  return { technical, tools, core, uncategorized };
+}
+
+// 3. Semantic Keyword Matching — finds synonyms/variants
+function findSemanticMatches(resumeData: ResumeDataForCheck): SemanticMatch[] {
+  const allText = [
+    resumeData.summary,
+    ...resumeData.experience.map(e => `${e.title} ${e.description}`),
+    resumeData.skills.join(" ")
+  ].join(" ").toLowerCase();
+
+  const matches: SemanticMatch[] = [];
+
+  Object.entries(SEMANTIC_SYNONYMS).forEach(([canonical, synonyms]) => {
+    const foundSynonyms = synonyms.filter(syn => allText.includes(syn.toLowerCase()));
+    const hasCanonical = allText.includes(canonical.toLowerCase());
+
+    if (foundSynonyms.length > 0 && !hasCanonical) {
+      matches.push({
+        keyword: canonical,
+        synonymsFound: foundSynonyms,
+        section: "resume",
+      });
+    } else if (hasCanonical && foundSynonyms.length > 0) {
+      matches.push({
+        keyword: canonical,
+        synonymsFound: foundSynonyms,
+        section: "both",
+      });
+    }
+  });
+
+  return matches;
+}
+
+// 4. Balanced Density — checks keyword distribution across sections
+function analyzeDensityBalance(resumeData: ResumeDataForCheck): DensityBalance {
+  const countKeywords = (text: string): number => {
+    if (!text || text.length < 10) return 0;
+    const words = text.split(/\s+/).filter(w => w.length > 3);
+    if (words.length === 0) return 0;
+    let count = 0;
+    ACTION_VERBS.forEach(verb => {
+      if (new RegExp(`\\b${verb}\\w*\\b`, 'i').test(text)) count++;
+    });
+    return Math.round((count / words.length) * 100);
+  };
+
+  const summaryDensity = countKeywords(resumeData.summary);
+  const expText = resumeData.experience.map(e => e.description).join(" ");
+  const experienceDensity = countKeywords(expText);
+  const allText = [resumeData.summary, expText, resumeData.skills.join(" ")].join(" ");
+  const overallDensity = countKeywords(allText);
+
+  const diff = Math.abs(summaryDensity - experienceDensity);
+  const isBalanced = diff <= 8 && overallDensity >= 3 && overallDensity <= 15;
+
+  let recommendation = "";
+  if (overallDensity < 3) recommendation = "Add more action verbs and industry keywords throughout";
+  else if (overallDensity > 15) recommendation = "Keyword density is high — reduce repetition to sound natural";
+  else if (summaryDensity < 2 && experienceDensity > 5) recommendation = "Mirror key terms from experience into your summary";
+  else if (!isBalanced) recommendation = "Distribute keywords more evenly across sections";
+  else recommendation = "Great balance across sections!";
+
+  return { summaryDensity, experienceDensity, overallDensity, isBalanced, recommendation };
+}
+
+// 5. Proof-Based Keywords — checks if skills have evidence in experience
+function analyzeProofBasedKeywords(resumeData: ResumeDataForCheck): ProofBasedKeyword[] {
+  const expTexts = resumeData.experience.map(e => e.description.toLowerCase());
+  const results: ProofBasedKeyword[] = [];
+
+  // Only check top 10 skills for performance
+  const topSkills = resumeData.skills.slice(0, 10);
+
+  topSkills.forEach(skill => {
+    const skillLower = skill.toLowerCase();
+    let hasProof = false;
+    let proofSnippet: string | undefined;
+
+    for (const desc of expTexts) {
+      if (desc.includes(skillLower)) {
+        // Find the sentence containing the skill
+        const sentences = desc.split(/[.•\-\n]+/);
+        const match = sentences.find(s => s.toLowerCase().includes(skillLower) && s.trim().length > 20);
+        if (match) {
+          hasProof = true;
+          proofSnippet = match.trim().slice(0, 100);
+          break;
+        }
+        // Even without full sentence, it's still mentioned
+        hasProof = true;
+        break;
+      }
+      // Check semantic synonyms too
+      const synonymEntry = Object.entries(SEMANTIC_SYNONYMS).find(
+        ([canonical, syns]) => canonical === skillLower || syns.includes(skillLower)
+      );
+      if (synonymEntry) {
+        const allTerms = [synonymEntry[0], ...synonymEntry[1]];
+        for (const term of allTerms) {
+          if (desc.includes(term)) {
+            hasProof = true;
+            const sentences = desc.split(/[.•\-\n]+/);
+            proofSnippet = sentences.find(s => s.toLowerCase().includes(term))?.trim().slice(0, 100);
+            break;
+          }
+        }
+        if (hasProof) break;
+      }
+    }
+
+    results.push({ skill, hasProof, proofSnippet });
+  });
+
+  return results;
+}
+
+
   // Remove duplicates
   const unique = [...new Set(recommendations)];
   
