@@ -1409,6 +1409,7 @@ function analyzeProofBasedKeywords(resumeData: ResumeDataForCheck): ProofBasedKe
 }
 
 
+function prioritizeRecommendations(recommendations: string[], categories: ATSCategory[]): string[] {
   // Remove duplicates
   const unique = [...new Set(recommendations)];
   
