@@ -29,6 +29,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
   ATSCheckResult, 
   ATSCategory,
+  ContextualPlacement,
+  SkillCategorization,
+  SemanticMatch,
+  DensityBalance,
+  ProofBasedKeyword,
   getScoreColor,
   getScoreBgColor,
   getScoreLabel,
