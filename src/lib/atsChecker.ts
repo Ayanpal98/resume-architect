@@ -10,6 +10,45 @@ export interface ATSCheckResult {
   impactScore: number;
   starScore: number;
   industryMatch: IndustryMatch | null;
+  contextualPlacement: ContextualPlacement;
+  skillCategorization: SkillCategorization;
+  semanticMatches: SemanticMatch[];
+  densityBalance: DensityBalance;
+  proofBasedKeywords: ProofBasedKeyword[];
+}
+
+export interface ContextualPlacement {
+  summary: string[];
+  experience: string[];
+  skillsOnly: string[];
+  score: number; // % of skills reinforced in context
+}
+
+export interface SkillCategorization {
+  technical: string[];
+  tools: string[];
+  core: string[];
+  uncategorized: string[];
+}
+
+export interface SemanticMatch {
+  keyword: string;
+  synonymsFound: string[];
+  section: string;
+}
+
+export interface DensityBalance {
+  summaryDensity: number;
+  experienceDensity: number;
+  overallDensity: number;
+  isBalanced: boolean;
+  recommendation: string;
+}
+
+export interface ProofBasedKeyword {
+  skill: string;
+  hasProof: boolean;
+  proofSnippet?: string;
 }
 
 export interface ATSCategory {
