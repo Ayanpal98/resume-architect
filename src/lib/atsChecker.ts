@@ -298,6 +298,11 @@ export const checkATSCompatibility = (resumeData: ResumeDataForCheck): ATSCheckR
     impactScore,
     starScore,
     industryMatch,
+    contextualPlacement,
+    skillCategorization,
+    semanticMatches,
+    densityBalance,
+    proofBasedKeywords,
   };
 };
 
