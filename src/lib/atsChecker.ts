@@ -271,6 +271,13 @@ export const checkATSCompatibility = (resumeData: ResumeDataForCheck): ATSCheckR
   // Calculate industry match
   const industryMatch = calculateIndustryMatch(resumeData);
 
+  // Calculate new features (all client-side, zero AI credits)
+  const contextualPlacement = analyzeContextualPlacement(resumeData);
+  const skillCategorization = categorizeSkills(resumeData.skills);
+  const semanticMatches = findSemanticMatches(resumeData);
+  const densityBalance = analyzeDensityBalance(resumeData);
+  const proofBasedKeywords = analyzeProofBasedKeywords(resumeData);
+
   // Determine pass status based on industry thresholds
   let passStatus: ATSCheckResult["passStatus"];
   if (overallScore >= 80) passStatus = "excellent";
