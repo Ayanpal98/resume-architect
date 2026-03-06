@@ -476,7 +476,186 @@ export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }:
         )}
       </div>
 
-      {/* Industry Keywords to Add - Only show if industry match exists */}
+      {/* Contextual Keyword Placement */}
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <Target className="w-5 h-5 text-primary" />
+          <h4 className="font-medium text-foreground">Contextual Keyword Placement</h4>
+          <Badge variant="secondary" className="ml-auto text-xs">{result.contextualPlacement.score}% reinforced</Badge>
+        </div>
+        <div className="space-y-2">
+          <div className="bg-accent/10 rounded-lg p-3">
+            <div className="flex items-center gap-2 mb-1.5">
+              <Check className="w-3.5 h-3.5 text-accent" />
+              <span className="text-xs font-medium text-foreground">In Summary & Experience</span>
+              <Badge variant="outline" className="text-[10px] ml-auto">{result.contextualPlacement.summary.length + result.contextualPlacement.experience.length}</Badge>
+            </div>
+            {[...new Set([...result.contextualPlacement.summary, ...result.contextualPlacement.experience])].length > 0 ? (
+              <div className="flex flex-wrap gap-1">
+                {[...new Set([...result.contextualPlacement.summary, ...result.contextualPlacement.experience])].slice(0, 8).map((s, i) => (
+                  <span key={i} className="text-[10px] bg-accent/20 text-accent px-1.5 py-0.5 rounded">{s}</span>
+                ))}
+              </div>
+            ) : (
+              <p className="text-[10px] text-muted-foreground">Weave your skills into summary & experience bullets</p>
+            )}
+          </div>
+          {result.contextualPlacement.skillsOnly.length > 0 && (
+            <div className="bg-amber-500/10 rounded-lg p-3">
+              <div className="flex items-center gap-2 mb-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-amber-500" />
+                <span className="text-xs font-medium text-foreground">Skills Section Only</span>
+                <Badge variant="outline" className="text-[10px] ml-auto">{result.contextualPlacement.skillsOnly.length}</Badge>
+              </div>
+              <div className="flex flex-wrap gap-1">
+                {result.contextualPlacement.skillsOnly.slice(0, 6).map((s, i) => (
+                  <span key={i} className="text-[10px] bg-amber-500/15 text-amber-600 px-1.5 py-0.5 rounded">{s}</span>
+                ))}
+                {result.contextualPlacement.skillsOnly.length > 6 && (
+                  <span className="text-[10px] text-muted-foreground">+{result.contextualPlacement.skillsOnly.length - 6} more</span>
+                )}
+              </div>
+              <p className="text-[10px] text-muted-foreground mt-1">Mention these in experience bullets for stronger ATS matching</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Skill Categorization */}
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart3 className="w-5 h-5 text-primary" />
+          <h4 className="font-medium text-foreground">Skill Categorization</h4>
+        </div>
+        <div className="space-y-2">
+          {result.skillCategorization.technical.length > 0 && (
+            <div className="bg-primary/10 rounded-lg p-3">
+              <span className="text-xs font-medium text-foreground">Technical Skills</span>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {result.skillCategorization.technical.map((s, i) => (
+                  <Badge key={i} variant="outline" className="text-[10px] bg-primary/15 text-primary border-primary/20">{s}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          {result.skillCategorization.tools.length > 0 && (
+            <div className="bg-blue-500/10 rounded-lg p-3">
+              <span className="text-xs font-medium text-foreground">Tools & Platforms</span>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {result.skillCategorization.tools.map((s, i) => (
+                  <Badge key={i} variant="outline" className="text-[10px] bg-blue-500/15 text-blue-600 border-blue-500/20">{s}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          {result.skillCategorization.core.length > 0 && (
+            <div className="bg-accent/10 rounded-lg p-3">
+              <span className="text-xs font-medium text-foreground">Core Skills</span>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {result.skillCategorization.core.map((s, i) => (
+                  <Badge key={i} variant="outline" className="text-[10px] bg-accent/15 text-accent border-accent/20">{s}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+          {result.skillCategorization.uncategorized.length > 0 && (
+            <div className="bg-muted/50 rounded-lg p-3">
+              <span className="text-xs font-medium text-muted-foreground">Other</span>
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {result.skillCategorization.uncategorized.map((s, i) => (
+                  <Badge key={i} variant="outline" className="text-[10px]">{s}</Badge>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Semantic Keyword Matching */}
+      {result.semanticMatches.length > 0 && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <Sparkles className="w-5 h-5 text-primary" />
+            <h4 className="font-medium text-foreground">Semantic Keyword Matches</h4>
+          </div>
+          <p className="text-xs text-muted-foreground mb-2">Synonyms & variants detected — ATS may recognize these as equivalent</p>
+          <div className="space-y-1.5">
+            {result.semanticMatches.slice(0, 6).map((m, i) => (
+              <div key={i} className="flex items-center gap-2 text-xs bg-muted/50 rounded-lg p-2">
+                <span className="font-medium text-foreground capitalize">{m.keyword}</span>
+                <span className="text-muted-foreground">↔</span>
+                <div className="flex gap-1">
+                  {m.synonymsFound.map((s, j) => (
+                    <span key={j} className="bg-primary/10 text-primary px-1.5 py-0.5 rounded">{s}</span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Balanced Density */}
+      <div className="p-4 border-b border-border">
+        <div className="flex items-center gap-2 mb-3">
+          <Zap className="w-5 h-5 text-primary" />
+          <h4 className="font-medium text-foreground">Keyword Density Balance</h4>
+          {result.densityBalance.isBalanced ? (
+            <Badge className="ml-auto bg-accent/20 text-accent border-accent/30 text-[10px]">Balanced</Badge>
+          ) : (
+            <Badge className="ml-auto bg-amber-500/20 text-amber-600 border-amber-500/30 text-[10px]">Needs Tuning</Badge>
+          )}
+        </div>
+        <div className="grid grid-cols-3 gap-2 mb-2">
+          <div className="bg-muted/50 rounded-lg p-2 text-center">
+            <div className="text-sm font-bold text-foreground">{result.densityBalance.summaryDensity}%</div>
+            <div className="text-[10px] text-muted-foreground">Summary</div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2 text-center">
+            <div className="text-sm font-bold text-foreground">{result.densityBalance.experienceDensity}%</div>
+            <div className="text-[10px] text-muted-foreground">Experience</div>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-2 text-center">
+            <div className="text-sm font-bold text-foreground">{result.densityBalance.overallDensity}%</div>
+            <div className="text-[10px] text-muted-foreground">Overall</div>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground">{result.densityBalance.recommendation}</p>
+      </div>
+
+      {/* Proof-Based Keywords */}
+      {result.proofBasedKeywords.length > 0 && (
+        <div className="p-4 border-b border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <Shield className="w-5 h-5 text-primary" />
+            <h4 className="font-medium text-foreground">Proof-Based Keywords</h4>
+            <Badge variant="secondary" className="ml-auto text-xs">
+              {result.proofBasedKeywords.filter(p => p.hasProof).length}/{result.proofBasedKeywords.length} backed
+            </Badge>
+          </div>
+          <p className="text-xs text-muted-foreground mb-2">Skills with evidence in your experience carry more weight</p>
+          <div className="space-y-1.5">
+            {result.proofBasedKeywords.map((pk, i) => (
+              <div key={i} className={`flex items-start gap-2 p-2 rounded-lg text-xs ${pk.hasProof ? 'bg-accent/10' : 'bg-amber-500/10'}`}>
+                {pk.hasProof ? (
+                  <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                ) : (
+                  <XCircle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                )}
+                <div>
+                  <span className="font-medium text-foreground">{pk.skill}</span>
+                  {pk.hasProof && pk.proofSnippet ? (
+                    <p className="text-muted-foreground mt-0.5 line-clamp-1">"{pk.proofSnippet}..."</p>
+                  ) : !pk.hasProof ? (
+                    <p className="text-amber-600 mt-0.5">Add an experience bullet demonstrating this skill</p>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {result.industryMatch && result.industryMatch.missingKeywords.length > 0 && (
         <div className="p-4 border-b border-border">
           <div className="flex items-center gap-2 mb-3">
