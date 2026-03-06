@@ -535,7 +535,7 @@ const Recruiter = () => {
       // Recommendation
       checkPage(10);
       const recColor = c.recommendation === "highly_recommended" ? C.accent : c.recommendation === "recommended" ? C.primary : c.recommendation === "consider" ? C.warning : C.destructive;
-      doc.setFillColor(recColor + "15");
+      doc.setFillColor(C.bg);
       doc.roundedRect(ml, y, cw, 10, 2, 2, "F");
       doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(recColor);
       doc.text(`Recommendation: ${c.recommendation.replace(/_/g, " ").toUpperCase()}`, ml + 4, y + 4.5);
