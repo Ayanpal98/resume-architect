@@ -99,7 +99,38 @@ const parseBulletPoints = (description: string): string[] => {
     .filter(line => line.length > 0);
 };
 
-export const generatePDF = (data: ResumeData, templateId: string = "classic"): jsPDF => {
+// Auto-categorize skills into labeled groups for PDF rendering
+const categorizeSkillsForPDF = (skills: string[]): Record<string, string[]> => {
+  const toolPatterns = /^(jira|confluence|git|github|gitlab|docker|kubernetes|k8s|jenkins|terraform|ansible|aws|azure|gcp|figma|sketch|adobe|photoshop|illustrator|tableau|power\s?bi|looker|excel|google\s?sheets|slack|notion|trello|asana|postman|vs\s?code|intellij|xcode|salesforce|hubspot|sap|servicenow|snowflake|databricks|airflow|kafka|redis|elasticsearch|mongodb|postgresql|mysql|bigquery|redshift|datadog|grafana|prometheus|splunk|new\s?relic|heroku|vercel|netlify|circleci|travis)$/i;
+  const technicalPatterns = /^(javascript|typescript|python|java|c\+\+|c#|ruby|php|swift|kotlin|go|golang|rust|sql|html|css|sass|tailwind|react|angular|vue|next\.?js|node\.?js|express|django|flask|fastapi|spring|graphql|rest\s?api|grpc|machine\s?learning|ml|ai|llm|deep\s?learning|pytorch|tensorflow|r|scala|perl|dart|flutter|objective-c|assembly|matlab|solidity|elixir|haskell|clojure|webpack|vite|microservices|serverless|devops|ci\/cd|agile|scrum|tdd|oop|data\s?structures|algorithms|system\s?design)$/i;
+
+  const groups: Record<string, string[]> = {
+    "Technical Skills": [],
+    "Tools & Platforms": [],
+    "Core Skills": [],
+  };
+
+  skills.forEach((skill) => {
+    const s = skill.trim();
+    if (!s) return;
+    if (toolPatterns.test(s)) {
+      groups["Tools & Platforms"].push(s);
+    } else if (technicalPatterns.test(s)) {
+      groups["Technical Skills"].push(s);
+    } else {
+      groups["Core Skills"].push(s);
+    }
+  });
+
+  // Remove empty groups
+  Object.keys(groups).forEach((k) => {
+    if (groups[k].length === 0) delete groups[k];
+  });
+
+  return groups;
+};
+
+
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const config = templateConfigs[templateId as keyof typeof templateConfigs] || templateConfigs.classic;
   const pageWidth = doc.internal.pageSize.getWidth();
