@@ -185,17 +185,38 @@ export const generatePDF = (data: ResumeData, templateId: string = "classic"): j
     yPos += 2;
   }
 
-  // ========== CORE SKILLS ==========
+// ========== CORE SKILLS (Categorized, max 15) ==========
   if (data.skills && data.skills.length > 0) {
     addSectionHeader("CORE SKILLS");
-    doc.setFontSize(config.bodySize);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(config.colors.secondary);
 
-    // Display skills as comma-separated keywords for ATS
-    const skillsText = data.skills.join("  •  ");
-    addWrappedText(skillsText, marginLeft, yPos, contentWidth);
-    yPos += 2;
+    // Auto-categorize skills into groups
+    const categorized = categorizeSkillsForPDF(data.skills.slice(0, 15));
+
+    Object.entries(categorized).forEach(([category, items]) => {
+      if (items.length === 0) return;
+      checkPage(8);
+
+      // Category label (bold)
+      doc.setFontSize(config.smallSize);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(config.colors.primary);
+      const labelWidth = doc.getTextWidth(category + ":  ");
+      doc.text(category + ":", marginLeft, yPos);
+
+      // Skills inline (normal)
+      doc.setFont("helvetica", "normal");
+      doc.setTextColor(config.colors.secondary);
+      const skillsLine = items.join("  •  ");
+      const availableWidth = contentWidth - labelWidth;
+      const lines = doc.splitTextToSize(skillsLine, availableWidth);
+      lines.forEach((line: string, i: number) => {
+        checkPage(4.5);
+        doc.text(line, marginLeft + labelWidth, yPos);
+        if (i < lines.length - 1) yPos += 4;
+      });
+      yPos += 5;
+    });
+    yPos += 1;
   }
 
   // ========== WORK EXPERIENCE ==========
