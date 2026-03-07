@@ -407,7 +407,7 @@ const Recruiter = () => {
     const checkPage = (n: number) => { if (y + n > ph - bm) { footer(); doc.addPage(); y = 15; } };
     const footer = () => {
       doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
-      doc.text(`Candidate Screening Report — Page ${pn}`, pw / 2, ph - 8, { align: "center" });
+      doc.text(`ATSFy Technologies\u2122 — Candidate Screening Report — Page ${pn}`, pw / 2, ph - 8, { align: "center" });
       doc.text(new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }), pw - mr, ph - 8, { align: "right" });
       pn++;
     };
