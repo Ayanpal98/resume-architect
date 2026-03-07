@@ -130,7 +130,7 @@ const categorizeSkillsForPDF = (skills: string[]): Record<string, string[]> => {
   return groups;
 };
 
-
+export const generatePDF = (data: ResumeData, templateId: string = "classic"): jsPDF => {
   const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
   const config = templateConfigs[templateId as keyof typeof templateConfigs] || templateConfigs.classic;
   const pageWidth = doc.internal.pageSize.getWidth();
