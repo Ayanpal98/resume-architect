@@ -144,8 +144,11 @@
     if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
- 
-     if (!text || typeof text !== 'string') {
+
+    const body = await req.json();
+    const { text, fileName } = body;
+
+    if (!text || typeof text !== 'string') {
        return new Response(
          JSON.stringify({ error: "Text content is required" }),
          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
