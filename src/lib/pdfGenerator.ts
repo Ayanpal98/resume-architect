@@ -221,8 +221,11 @@ export const generatePDF = (data: ResumeData, templateId: string = "classic"): j
   if (data.skills && data.skills.length > 0) {
     addSectionHeader("CORE SKILLS");
 
-    // Auto-categorize skills into groups
-    const categorized = categorizeSkillsForPDF(data.skills.slice(0, 15));
+    // Use manual categories if available, otherwise auto-categorize
+    const skillsToUse = data.skills.slice(0, 15);
+    const categorized = data.skillCategoryMap && Object.keys(data.skillCategoryMap).length > 0
+      ? groupSkillsByManualCategory(skillsToUse, data.skillCategoryMap)
+      : categorizeSkillsForPDF(skillsToUse);
 
     Object.entries(categorized).forEach(([category, items]) => {
       if (items.length === 0) return;
