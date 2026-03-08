@@ -48,7 +48,8 @@ const Auth = () => {
         options: { emailRedirectTo: window.location.origin },
       });
       if (error) throw error;
-      toast.success("Check your email to confirm your account!");
+      toast.success("Account created successfully! You're now signed in.");
+      navigate("/");
     } catch (error: any) {
       toast.error(error.message || "Sign up failed");
     } finally {
