@@ -27,6 +27,8 @@ serve(async (req) => {
     if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+
+    const body = await req.json();
     
     // Input validation
     if (!body || typeof body !== 'object') {
