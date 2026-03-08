@@ -555,10 +555,14 @@ const Builder = () => {
                   {activeSection === "skills" && (
                     <SkillsForm
                       skills={resumeData.skills}
+                      skillCategoryMap={resumeData.skillCategoryMap || {}}
                       newSkill={newSkill}
+                      newSkillCategory={newSkillCategory}
                       onNewSkillChange={setNewSkill}
+                      onNewSkillCategoryChange={setNewSkillCategory}
                       onAdd={addSkill}
                       onRemove={removeSkill}
+                      onUpdateCategory={updateSkillCategory}
                       onApplySuggestion={handleApplySuggestion}
                       resumeData={resumeData}
                       jobDescription={jobDescription}
