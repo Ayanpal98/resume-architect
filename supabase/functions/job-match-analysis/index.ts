@@ -29,6 +29,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    const body = await req.json();
+
     // Validate request body
     if (!body || typeof body !== 'object') {
       return new Response(
