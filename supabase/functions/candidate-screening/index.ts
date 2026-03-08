@@ -257,7 +257,7 @@ Provide a comprehensive analysis following the JSON structure specified. Be thor
         );
       }
       
-      throw new Error(`AI service error: ${response.status}`);
+      throw new Error("AI service error");
     }
 
     const data = await response.json();
