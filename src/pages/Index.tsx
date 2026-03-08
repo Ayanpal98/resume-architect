@@ -1,8 +1,10 @@
-import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users } from "lucide-react";
+import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
+import { useAuth } from "@/contexts/AuthContext";
 const Index = () => {
+  const { user, signOut } = useAuth();
   return <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -19,12 +21,24 @@ const Index = () => {
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link to="/welcome">
-              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Sign In</Button>
-            </Link>
-            <Link to="/welcome">
-              <Button variant="hero" size="sm">Get Started</Button>
-            </Link>
+            {user ? (
+              <>
+                <span className="text-sm text-muted-foreground hidden sm:inline">{user.email}</span>
+                <Button variant="ghost" size="sm" onClick={signOut} className="gap-1">
+                  <LogOut className="w-4 h-4" />
+                  <span className="hidden sm:inline">Sign Out</span>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Sign In</Button>
+                </Link>
+                <Link to="/auth">
+                  <Button variant="hero" size="sm">Get Started</Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>
