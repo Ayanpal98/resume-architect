@@ -953,83 +953,130 @@ const EducationForm = ({ education, onAdd, onUpdate, onRemove }: EducationFormPr
 
 interface SkillsFormProps {
   skills: string[];
+  skillCategoryMap: Record<string, string>;
   newSkill: string;
+  newSkillCategory: string;
   onNewSkillChange: (value: string) => void;
+  onNewSkillCategoryChange: (value: string) => void;
   onAdd: () => void;
   onRemove: (skill: string) => void;
+  onUpdateCategory: (skill: string, category: string) => void;
   onApplySuggestion: (field: string, value: string) => void;
   resumeData: ResumeData;
   jobDescription: string;
 }
 
-const SkillsForm = ({ skills, newSkill, onNewSkillChange, onAdd, onRemove, onApplySuggestion, resumeData, jobDescription }: SkillsFormProps) => (
-  <div className="space-y-6">
-    <div>
-      <h2 className="text-2xl font-display font-bold text-foreground mb-2">Skills</h2>
-      <p className="text-muted-foreground">Add skills relevant to your target positions.</p>
-    </div>
+const SKILL_CATEGORIES = ["Technical Skills", "Tools & Platforms", "Core Skills"];
 
-    <div className="flex gap-2">
-      <Input
-        placeholder="Add a skill (e.g., JavaScript, Project Management)"
-        value={newSkill}
-        onChange={(e) => onNewSkillChange(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
+const SkillsForm = ({ skills, skillCategoryMap, newSkill, newSkillCategory, onNewSkillChange, onNewSkillCategoryChange, onAdd, onRemove, onUpdateCategory, onApplySuggestion, resumeData, jobDescription }: SkillsFormProps) => {
+  // Group skills by category for display
+  const grouped: Record<string, string[]> = {};
+  skills.forEach((skill) => {
+    const cat = skillCategoryMap[skill] || "Core Skills";
+    if (!grouped[cat]) grouped[cat] = [];
+    grouped[cat].push(skill);
+  });
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-display font-bold text-foreground mb-2">Skills</h2>
+        <p className="text-muted-foreground">Add up to 15 skills and assign them to categories. They'll appear categorized in your resume PDF.</p>
+      </div>
+
+      <div className="flex gap-2">
+        <Input
+          placeholder="Add a skill (e.g., JavaScript)"
+          value={newSkill}
+          onChange={(e) => onNewSkillChange(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), onAdd())}
+          className="flex-1"
+        />
+        <select
+          value={newSkillCategory}
+          onChange={(e) => onNewSkillCategoryChange(e.target.value)}
+          className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 min-w-[140px]"
+        >
+          {SKILL_CATEGORIES.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+        <Button onClick={onAdd} variant="default" disabled={skills.length >= 15}>
+          <Plus className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {skills.length >= 15 && (
+        <p className="text-xs text-amber-600 font-medium">Maximum 15 skills reached.</p>
+      )}
+
+      {skills.length > 0 ? (
+        <div className="space-y-4">
+          {SKILL_CATEGORIES.map((cat) => {
+            const catSkills = grouped[cat];
+            if (!catSkills || catSkills.length === 0) return null;
+            return (
+              <div key={cat}>
+                <h3 className="text-sm font-semibold text-foreground mb-2">{cat}</h3>
+                <div className="flex flex-wrap gap-2">
+                  {catSkills.map((skill) => (
+                    <span
+                      key={skill}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium group"
+                    >
+                      <select
+                        value={skillCategoryMap[skill] || "Core Skills"}
+                        onChange={(e) => onUpdateCategory(skill, e.target.value)}
+                        className="bg-transparent text-xs border-none outline-none cursor-pointer p-0 appearance-none w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity absolute"
+                        title="Change category"
+                      />
+                      {skill}
+                      <button
+                        onClick={() => onRemove(skill)}
+                        className="w-4 h-4 rounded-full bg-primary/20 hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center transition-colors"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      ) : (
+        <div className="text-center py-8 bg-muted/50 rounded-xl border-2 border-dashed border-border">
+          <Wrench className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
+          <p className="text-muted-foreground text-sm">No skills added yet. Start typing above to add skills.</p>
+        </div>
+      )}
+
+      <AISuggestionPanel
+        type="skills"
+        content={{
+          experience: resumeData.experience.map(e => `${e.title} at ${e.company}: ${e.description}`).join("\n"),
+          currentSkills: skills.join(", "),
+          targetRole: "",
+        }}
+        onApply={(suggestion) => onApplySuggestion("skills", suggestion)}
+        jobDescription={jobDescription}
       />
-      <Button onClick={onAdd} variant="default">
-        <Plus className="w-4 h-4" />
-      </Button>
-    </div>
 
-    {skills.length > 0 ? (
-      <div className="flex flex-wrap gap-2">
-        {skills.map((skill) => (
-          <span
-            key={skill}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium group"
-          >
-            {skill}
-            <button
-              onClick={() => onRemove(skill)}
-              className="w-4 h-4 rounded-full bg-primary/20 hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center transition-colors"
-            >
-              <Trash2 className="w-3 h-3" />
-            </button>
-          </span>
-        ))}
-      </div>
-    ) : (
-      <div className="text-center py-8 bg-muted/50 rounded-xl border-2 border-dashed border-border">
-        <Wrench className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
-        <p className="text-muted-foreground text-sm">No skills added yet. Start typing above to add skills.</p>
-      </div>
-    )}
-
-    <AISuggestionPanel
-      type="skills"
-      content={{
-        experience: resumeData.experience.map(e => `${e.title} at ${e.company}: ${e.description}`).join("\n"),
-        currentSkills: skills.join(", "),
-        targetRole: "",
-      }}
-      onApply={(suggestion) => onApplySuggestion("skills", suggestion)}
-      jobDescription={jobDescription}
-    />
-
-    <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
-      <div className="flex items-start gap-3">
-        <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-        <div className="text-sm">
-          <p className="font-medium text-foreground mb-1">Skill Keywords Matter</p>
-          <p className="text-muted-foreground">
-            Include both technical skills (e.g., Python, AWS) and soft skills (e.g., Leadership, Communication) 
-            that match the job descriptions you're targeting.
-          </p>
+      <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
+        <div className="flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+          <div className="text-sm">
+            <p className="font-medium text-foreground mb-1">Categorized Skills</p>
+            <p className="text-muted-foreground">
+              Skills are grouped into Technical Skills, Tools & Platforms, and Core Skills in your final PDF. 
+              Use the category dropdown when adding skills to control placement.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 // OptimizeSection removed — replaced by ResumeImprovementPanel component
 
