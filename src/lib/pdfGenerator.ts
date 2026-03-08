@@ -100,6 +100,17 @@ const parseBulletPoints = (description: string): string[] => {
     .filter(line => line.length > 0);
 };
 
+// Group skills using manual category assignments
+const groupSkillsByManualCategory = (skills: string[], categoryMap: Record<string, string>): Record<string, string[]> => {
+  const groups: Record<string, string[]> = {};
+  skills.forEach((skill) => {
+    const category = categoryMap[skill] || "Core Skills";
+    if (!groups[category]) groups[category] = [];
+    groups[category].push(skill);
+  });
+  return groups;
+};
+
 // Auto-categorize skills into labeled groups for PDF rendering
 const categorizeSkillsForPDF = (skills: string[]): Record<string, string[]> => {
   const toolPatterns = /^(jira|confluence|git|github|gitlab|docker|kubernetes|k8s|jenkins|terraform|ansible|aws|azure|gcp|figma|sketch|adobe|photoshop|illustrator|tableau|power\s?bi|looker|excel|google\s?sheets|slack|notion|trello|asana|postman|vs\s?code|intellij|xcode|salesforce|hubspot|sap|servicenow|snowflake|databricks|airflow|kafka|redis|elasticsearch|mongodb|postgresql|mysql|bigquery|redshift|datadog|grafana|prometheus|splunk|new\s?relic|heroku|vercel|netlify|circleci|travis)$/i;
