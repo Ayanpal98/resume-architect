@@ -92,6 +92,7 @@ const initialResumeData: ResumeData = {
 };
 
 const Builder = () => {
+  const { signOut } = useAuth();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const incomingState = location.state as { resumeData?: ResumeData; atsResult?: ATSCheckResult } | null;
