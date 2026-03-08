@@ -6,6 +6,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Input validation constants
+const MAX_JOB_DESC_LENGTH = 50000;
+const MAX_RESUME_DATA_SIZE = 100000;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -24,9 +28,28 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    const body = await req.json();
+    const { resumeData, jobDescription } = body;
+
     if (!resumeData || !jobDescription) {
       return new Response(
         JSON.stringify({ error: "Both resumeData and jobDescription are required" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate jobDescription size
+    if (typeof jobDescription !== 'string' || jobDescription.length > MAX_JOB_DESC_LENGTH) {
+      return new Response(
+        JSON.stringify({ error: `Job description exceeds maximum length of ${MAX_JOB_DESC_LENGTH} characters.` }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Validate resumeData size
+    if (typeof resumeData !== 'object' || JSON.stringify(resumeData).length > MAX_RESUME_DATA_SIZE) {
+      return new Response(
+        JSON.stringify({ error: `Resume data exceeds maximum size of ${MAX_RESUME_DATA_SIZE} characters.` }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -166,7 +189,7 @@ Analyze this resume against the job description. Provide specific, actionable im
   } catch (error) {
     console.error("Error in resume-improve function:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

@@ -287,7 +287,7 @@ CRITICAL: skill1, skill2, skill3; IMPORTANT: skill4, skill5; BONUS: skill6, skil
   } catch (error) {
     console.error("Error in ai-suggestions function:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

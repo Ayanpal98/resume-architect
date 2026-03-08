@@ -29,6 +29,8 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    const body = await req.json();
+
     // Validate request body
     if (!body || typeof body !== 'object') {
       return new Response(
@@ -199,7 +201,7 @@ Output the raw extracted text only, maintaining the original document structure 
   } catch (error) {
     console.error("Error in ocr-pdf function:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Failed to perform OCR" }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
