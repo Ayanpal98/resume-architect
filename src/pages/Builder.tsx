@@ -396,6 +396,9 @@ const Builder = () => {
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
+            <Button variant="ghost" size="sm" onClick={signOut} className="px-2 sm:px-3" title="Sign Out">
+              <LogOut className="w-4 h-4" />
+            </Button>
           </div>
         </div>
       </header>
