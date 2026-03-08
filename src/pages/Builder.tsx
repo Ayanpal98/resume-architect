@@ -97,6 +97,7 @@ const Builder = () => {
   const [resumeData, setResumeData] = useState<ResumeData>(incomingState?.resumeData || initialResumeData);
   const [activeSection, setActiveSection] = useState("personal");
   const [newSkill, setNewSkill] = useState("");
+  const [newSkillCategory, setNewSkillCategory] = useState("Technical Skills");
   const [selectedTemplate, setSelectedTemplate] = useState("classic");
   const [jobDescription, setJobDescription] = useState("");
   const [showImport, setShowImport] = useState(searchParams.get("upload") === "true");
