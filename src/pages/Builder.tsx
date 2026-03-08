@@ -21,7 +21,8 @@ import {
   GitCompare,
   Layout,
   Target,
-  BarChart3
+  BarChart3,
+  LogOut
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
@@ -38,6 +39,7 @@ import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { OptimizationReport } from "@/components/OptimizationReport";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog,
   DialogContent,
@@ -90,6 +92,7 @@ const initialResumeData: ResumeData = {
 };
 
 const Builder = () => {
+  const { signOut } = useAuth();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const incomingState = location.state as { resumeData?: ResumeData; atsResult?: ATSCheckResult } | null;
@@ -392,6 +395,9 @@ const Builder = () => {
             <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
+            </Button>
+            <Button variant="ghost" size="sm" onClick={signOut} className="px-2 sm:px-3" title="Sign Out">
+              <LogOut className="w-4 h-4" />
             </Button>
           </div>
         </div>
