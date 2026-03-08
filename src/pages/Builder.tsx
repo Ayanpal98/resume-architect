@@ -1187,17 +1187,25 @@ const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
         </div>
       )}
 
-      {/* Skills */}
+      {/* Skills - Categorized */}
       {skills.length > 0 && (
         <div>
-          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Skills</h2>
-          <div className="flex flex-wrap gap-1">
-            {skills.map((skill) => (
-              <span key={skill} className="px-2 py-0.5 bg-muted text-foreground rounded text-xs">
-                {skill}
-              </span>
-            ))}
-          </div>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Core Skills</h2>
+          {(() => {
+            const catMap = data.skillCategoryMap || {};
+            const grouped: Record<string, string[]> = {};
+            skills.forEach((s) => {
+              const cat = catMap[s] || "Core Skills";
+              if (!grouped[cat]) grouped[cat] = [];
+              grouped[cat].push(s);
+            });
+            return Object.entries(grouped).map(([cat, items]) => (
+              <div key={cat} className="mb-1.5">
+                <span className="text-xs font-semibold text-foreground">{cat}: </span>
+                <span className="text-xs text-muted-foreground">{items.join("  •  ")}</span>
+              </div>
+            ));
+          })()}
         </div>
       )}
     </div>
