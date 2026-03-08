@@ -205,15 +205,27 @@ const Builder = () => {
       setResumeData((prev) => ({
         ...prev,
         skills: [...prev.skills, newSkill.trim()],
+        skillCategoryMap: { ...(prev.skillCategoryMap || {}), [newSkill.trim()]: newSkillCategory },
       }));
       setNewSkill("");
     }
   };
 
   const removeSkill = (skill: string) => {
+    setResumeData((prev) => {
+      const { [skill]: _, ...restCategories } = prev.skillCategoryMap || {};
+      return {
+        ...prev,
+        skills: prev.skills.filter((s) => s !== skill),
+        skillCategoryMap: restCategories,
+      };
+    });
+  };
+
+  const updateSkillCategory = (skill: string, category: string) => {
     setResumeData((prev) => ({
       ...prev,
-      skills: prev.skills.filter((s) => s !== skill),
+      skillCategoryMap: { ...(prev.skillCategoryMap || {}), [skill]: category },
     }));
   };
 
