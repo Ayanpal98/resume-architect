@@ -308,7 +308,7 @@ Return ONLY the JSON object. No markdown, no explanation, no code blocks.`;
   } catch (error) {
     console.error("Error in parse-resume function:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Failed to parse resume" }),
+      JSON.stringify({ error: "Internal server error" }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },

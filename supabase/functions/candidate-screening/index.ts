@@ -348,9 +348,8 @@ Provide a comprehensive analysis following the JSON structure specified. Be thor
     );
   } catch (error: unknown) {
     console.error("Candidate screening error:", error);
-    const errorMessage = error instanceof Error ? error.message : "Failed to analyze candidate";
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
