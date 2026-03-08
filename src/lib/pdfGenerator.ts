@@ -29,6 +29,7 @@ export interface ResumeData {
     gpa: string;
   }[];
   skills: string[];
+  skillCategoryMap?: Record<string, string>;
   projects?: {
     id: string;
     name: string;
@@ -97,6 +98,17 @@ const parseBulletPoints = (description: string): string[] => {
     .split(/(?:\r?\n|•|▪|◦|➤|→|►|■|□|●|○|-\s)/)
     .map(line => line.trim())
     .filter(line => line.length > 0);
+};
+
+// Group skills using manual category assignments
+const groupSkillsByManualCategory = (skills: string[], categoryMap: Record<string, string>): Record<string, string[]> => {
+  const groups: Record<string, string[]> = {};
+  skills.forEach((skill) => {
+    const category = categoryMap[skill] || "Core Skills";
+    if (!groups[category]) groups[category] = [];
+    groups[category].push(skill);
+  });
+  return groups;
 };
 
 // Auto-categorize skills into labeled groups for PDF rendering
@@ -220,8 +232,11 @@ export const generatePDF = (data: ResumeData, templateId: string = "classic"): j
   if (data.skills && data.skills.length > 0) {
     addSectionHeader("CORE SKILLS");
 
-    // Auto-categorize skills into groups
-    const categorized = categorizeSkillsForPDF(data.skills.slice(0, 15));
+    // Use manual categories if available, otherwise auto-categorize
+    const skillsToUse = data.skills.slice(0, 15);
+    const categorized = data.skillCategoryMap && Object.keys(data.skillCategoryMap).length > 0
+      ? groupSkillsByManualCategory(skillsToUse, data.skillCategoryMap)
+      : categorizeSkillsForPDF(skillsToUse);
 
     Object.entries(categorized).forEach(([category, items]) => {
       if (items.length === 0) return;
