@@ -39,6 +39,7 @@ import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { OptimizationReport } from "@/components/OptimizationReport";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
+import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog,
   DialogContent,
