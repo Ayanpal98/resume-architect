@@ -86,6 +86,7 @@ const initialResumeData: ResumeData = {
   experience: [],
   education: [],
   skills: [],
+  skillCategoryMap: {},
 };
 
 const Builder = () => {
