@@ -21,7 +21,8 @@ import {
   GitCompare,
   Layout,
   Target,
-  BarChart3
+  BarChart3,
+  LogOut
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
