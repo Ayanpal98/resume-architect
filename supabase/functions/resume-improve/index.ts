@@ -24,6 +24,9 @@ serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    const body = await req.json();
+    const { resumeData, jobDescription } = body;
+
     if (!resumeData || !jobDescription) {
       return new Response(
         JSON.stringify({ error: "Both resumeData and jobDescription are required" }),
