@@ -1,0 +1,1 @@
+UPDATE public.platform_stats SET resumes_optimized = 65, candidate_screenings = 87, updated_at = now() WHERE id = 'global';
