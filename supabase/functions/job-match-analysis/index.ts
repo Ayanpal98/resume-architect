@@ -134,7 +134,11 @@ serve(async (req) => {
         .join("\n");
     }
 
-    const systemPrompt = `You are an expert ATS and job matching analyst. Analyze how well a resume matches a job description.
+    const systemPrompt = `You are a senior hiring analyst and career strategist. Analyze how well a resume matches a job description.
+
+Write insights in recruiter-grade, industry-standard language. Avoid generic AI-sounding phrasing and vague encouragement.
+
+Your recommendations should highlight strengths, risks, and priorities in a way a candidate could realistically use to improve their positioning.
 
 You MUST respond with ONLY a valid JSON object in this exact format, no other text:
 {
@@ -143,21 +147,21 @@ You MUST respond with ONLY a valid JSON object in this exact format, no other te
     "score": <number 0-100>,
     "matched": ["skill1", "skill2"],
     "missing": ["skill3", "skill4"],
-    "suggestions": ["suggestion1"]
+    "suggestions": ["specific, recruiter-style skills guidance"]
   },
   "experienceMatch": {
     "score": <number 0-100>,
-    "strengths": ["strength1"],
-    "gaps": ["gap1"],
-    "suggestions": ["suggestion1"]
+    "strengths": ["specific strength tied to relevance or scope"],
+    "gaps": ["specific gap tied to the role requirements"],
+    "suggestions": ["specific experience-positioning guidance"]
   },
   "keywordAnalysis": {
     "found": ["keyword1", "keyword2"],
     "missing": ["keyword3"],
     "density": <number 0-100>
   },
-  "recommendations": ["rec1", "rec2", "rec3"],
-  "summary": "Brief 2-3 sentence summary of the match"
+  "recommendations": ["practical career guidance recommendation 1", "recommendation 2", "recommendation 3"],
+  "summary": "Brief 2-3 sentence recruiter-style assessment of the match"
 }`;
 
     const userPrompt = `Analyze how well this resume matches the job description.
@@ -177,7 +181,7 @@ ${educationText}
 JOB DESCRIPTION:
 ${trimmedJobDesc}
 
-Provide a detailed match analysis as JSON.`;
+Provide a detailed match analysis as JSON using professional hiring language, clearer career guidance, and specific recommendations grounded in the resume and role.`;
 
     console.log("Analyzing job match...");
 

@@ -232,18 +232,18 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // PROFESSIONAL SUMMARY ANALYSIS
   // ============================
   if (data.analysis.summary) {
-    addSectionTitle("1. PROFESSIONAL SUMMARY — ANALYSIS & IMPROVEMENT");
+    addSectionTitle("1. PROFESSIONAL SUMMARY — POSITIONING REVIEW");
 
-    addLabel("CURRENT ASSESSMENT", COLORS.destructive);
+    addLabel("CURRENT POSITIONING", COLORS.destructive);
     addBody(data.analysis.summary.current_assessment);
     y += 3;
 
-    addLabel("OPTIMIZED VERSION (TAILORED TO JD)", COLORS.accent);
+    addLabel("RECOMMENDED VERSION", COLORS.accent);
     addBody(data.analysis.summary.improved_version);
     y += 3;
 
     if (data.analysis.summary.key_changes?.length > 0) {
-      addLabel("KEY CHANGES MADE");
+      addLabel("WHY THIS REVISION IS STRONGER");
       data.analysis.summary.key_changes.forEach(change => {
         addBullet(change);
       });
@@ -267,18 +267,18 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // EXPERIENCE ANALYSIS
   // ============================
   if (data.analysis.experience && data.analysis.experience.length > 0) {
-    addSectionTitle("2. WORK EXPERIENCE — BULLET-BY-BULLET IMPROVEMENTS");
+    addSectionTitle("2. WORK EXPERIENCE — IMPACT & RELEVANCE REVIEW");
 
     data.analysis.experience.forEach((exp, i) => {
       checkPage(15);
       addSubTitle(`${i + 1}. ${exp.role}`);
 
-      addLabel("ASSESSMENT", COLORS.muted);
+      addLabel("RECRUITER ASSESSMENT", COLORS.muted);
       addBody(exp.current_assessment, 2);
       y += 2;
 
       if (exp.improved_bullets?.length > 0) {
-        addLabel("IMPROVED BULLETS (XYZ FORMULA)", COLORS.accent);
+        addLabel("RECOMMENDED BULLETS", COLORS.accent);
         exp.improved_bullets.forEach(bullet => {
           const clean = bullet.replace(/^[•\-]\s*/, "");
           addBullet(clean, 4);
@@ -287,7 +287,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
       }
 
       if (exp.missing_keywords_to_add?.length > 0) {
-        addLabel("MISSING KEYWORDS TO INCORPORATE", COLORS.destructive);
+        addLabel("ROLE-RELEVANT TERMS TO INCORPORATE", COLORS.destructive);
         let tagX = ml + 2;
         const maxX = pageWidth - mr;
         checkPage(8);
@@ -320,10 +320,10 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // SKILLS OPTIMIZATION
   // ============================
   if (data.analysis.skills) {
-    addSectionTitle("3. SKILLS OPTIMIZATION");
+    addSectionTitle("3. SKILLS — ALIGNMENT & SIGNAL STRENGTH");
 
     if (data.analysis.skills.keep?.length > 0) {
-      addLabel("✓ KEEP — MATCHES JOB DESCRIPTION", COLORS.accent);
+      addLabel("✓ KEEP — STRONG ROLE ALIGNMENT", COLORS.accent);
       let tagX = ml + 2;
       checkPage(8);
       data.analysis.skills.keep.forEach(s => {
@@ -335,7 +335,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     }
 
     if (data.analysis.skills.add?.length > 0) {
-      addLabel("+ ADD — FROM JOB DESCRIPTION", COLORS.primary);
+      addLabel("+ ADD — SUPPORTING TERMS FROM THE ROLE", COLORS.primary);
       let tagX = ml + 2;
       checkPage(8);
       data.analysis.skills.add.forEach(s => {
@@ -347,7 +347,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     }
 
     if (data.analysis.skills.remove?.length > 0) {
-      addLabel("− REMOVE — NOT RELEVANT TO JD", COLORS.destructive);
+      addLabel("− REMOVE — LOW-RELEVANCE OR DISTRACTING", COLORS.destructive);
       let tagX = ml + 2;
       checkPage(8);
       data.analysis.skills.remove.forEach(s => {
@@ -359,7 +359,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     }
 
     if (data.analysis.skills.reorganized) {
-      addLabel("RECOMMENDED SKILL GROUPING");
+      addLabel("RECOMMENDED SKILLS STRUCTURE");
       addBody(data.analysis.skills.reorganized, 2);
       y += 3;
     }
@@ -380,10 +380,10 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // KEYWORD GAP ANALYSIS
   // ============================
   if (data.analysis.keywords) {
-    addSectionTitle("4. KEYWORD GAP ANALYSIS");
+    addSectionTitle("4. KEYWORD & REQUIREMENT COVERAGE");
 
     if (data.analysis.keywords.found_in_resume?.length > 0) {
-      addLabel("✓ FOUND IN RESUME", COLORS.accent);
+      addLabel("✓ ALREADY SIGNALLED IN THE RESUME", COLORS.accent);
       let tagX = ml + 2;
       checkPage(8);
       data.analysis.keywords.found_in_resume.forEach(kw => {
@@ -395,7 +395,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     }
 
     if (data.analysis.keywords.missing_critical?.length > 0) {
-      addLabel("✗ MISSING — CRITICAL (MUST ADD)", COLORS.destructive);
+      addLabel("✗ MISSING — HIGH-PRIORITY TERMS", COLORS.destructive);
       let tagX = ml + 2;
       checkPage(8);
       data.analysis.keywords.missing_critical.forEach(kw => {
@@ -407,7 +407,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     }
 
     if (data.analysis.keywords.missing_preferred?.length > 0) {
-      addLabel("○ MISSING — PREFERRED (NICE TO HAVE)", COLORS.warning);
+      addLabel("○ MISSING — SUPPORTING TERMS", COLORS.warning);
       let tagX = ml + 2;
       checkPage(8);
       data.analysis.keywords.missing_preferred.forEach(kw => {
@@ -431,11 +431,11 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     doc.setFontSize(9);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(COLORS.dark);
-    doc.text(`Keyword Coverage: ${coverage}%`, ml + 5, y + 5);
+    doc.text(`Requirement Coverage: ${coverage}%`, ml + 5, y + 5);
     doc.setFont("helvetica", "normal");
     doc.setFontSize(8);
     doc.setTextColor(COLORS.muted);
-    doc.text(`${found} matched  |  ${critical} critical missing  |  ${preferred} preferred missing`, ml + 5, y + 9.5);
+    doc.text(`${found} matched  |  ${critical} high-priority gaps  |  ${preferred} supporting gaps`, ml + 5, y + 9.5);
     y += 16;
   }
 
@@ -443,7 +443,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // OVERALL TIPS
   // ============================
   if (data.analysis.overall_tips && data.analysis.overall_tips.length > 0) {
-    addSectionTitle("5. ADDITIONAL RECOMMENDATIONS");
+    addSectionTitle("5. CAREER GUIDANCE & NEXT STEPS");
     data.analysis.overall_tips.forEach((tip, i) => {
       checkPage(6);
       doc.setFontSize(9);
