@@ -156,7 +156,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   doc.setTextColor("#c3cfe2");
-  doc.text("Detailed Analysis & Recommendations", pageWidth / 2, 32, { align: "center" });
+  doc.text("Career-Aligned Review & Positioning Guidance", pageWidth / 2, 32, { align: "center" });
 
   y = 55;
 
@@ -209,10 +209,9 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // Executive Summary
   addSectionTitle("EXECUTIVE SUMMARY");
   addBody(
-    `This report provides a comprehensive analysis of ${data.resumeData.personalInfo.fullName || "the candidate"}'s resume against the target job description. ` +
-    `The analysis covers professional summary optimization, experience bullet improvements using the XYZ impact formula, ` +
-    `skills gap identification, and keyword coverage mapping. Each section includes specific, actionable recommendations ` +
-    `directly tied to the job requirements.`
+    `This report evaluates ${data.resumeData.personalInfo.fullName || "the candidate"}'s resume against the target role with a focus on professional positioning, relevance, and recruiter readability. ` +
+    `It highlights where the resume already supports the opportunity, where language can be strengthened, and where clearer evidence of scope, impact, and role alignment would improve competitiveness. ` +
+    `The recommendations are intended to read like practical career guidance rather than generic AI output.`
   );
   y += 2;
 
