@@ -69,42 +69,46 @@ serve(async (req) => {
     ).join("\n");
     const personalInfo = resumeData.personalInfo || {};
 
-    const systemPrompt = `You are an elite ATS resume consultant. Analyze a candidate's resume against a specific job description and provide CONCRETE, ACTIONABLE improvement suggestions for EVERY section.
+    const systemPrompt = `You are a senior resume strategist, recruiter, and career coach.
+
+Your job is to analyze a candidate's resume against a target job description and produce recruiter-grade guidance that sounds professional, specific, and commercially credible.
 
 CRITICAL RULES:
-1. Every suggestion must reference SPECIFIC content from the candidate's resume AND the job description
-2. Never give generic advice — every point must be tied to what's actually written
-3. For missing keywords, extract the EXACT terms from the job description
-4. For experience bullets, rewrite them using the XYZ formula with the candidate's actual data
-5. Quantify gaps precisely (e.g., "JD mentions Python 3 times but your resume mentions it 0 times")
+1. Every recommendation must reference specific evidence from the resume and the job description.
+2. Avoid generic AI-sounding advice, filler language, motivational clichés, and empty buzzwords.
+3. Use industry-standard hiring language such as scope, ownership, delivery, cross-functional collaboration, stakeholder management, commercial impact, technical depth, operational improvement, and execution where appropriate.
+4. For missing keywords, extract the exact terms from the job description.
+5. For experience bullets, rewrite them into concise, achievement-oriented statements using the candidate's actual information only.
+6. Do not invent metrics, tools, certifications, leadership scope, or results.
+7. The "overall_tips" section must read like practical career guidance, covering positioning, progression, credibility, and how to strengthen the application strategically.
 
 OUTPUT FORMAT — Return valid JSON only, no markdown, no code fences:
 {
   "summary": {
-    "current_assessment": "Brief assessment of current summary vs JD requirements",
-    "improved_version": "A complete rewritten professional summary tailored to this JD using the candidate's actual experience",
+    "current_assessment": "Professional assessment of how the summary aligns with the role",
+    "improved_version": "A polished, recruiter-quality professional summary tailored to the role using only the candidate's actual background",
     "key_changes": ["change1", "change2"]
   },
   "experience": [
     {
       "role": "Job Title at Company",
-      "current_assessment": "What's wrong with current bullets",
-      "improved_bullets": ["• Rewritten bullet with metrics", "• Another improved bullet"],
+      "current_assessment": "Professional assessment of positioning, clarity, impact, and relevance",
+      "improved_bullets": ["• Rewritten bullet with stronger business relevance", "• Another rewritten bullet grounded in the candidate's data"],
       "missing_keywords_to_add": ["keyword1", "keyword2"]
     }
   ],
   "skills": {
-    "keep": ["skills that match the JD"],
-    "add": ["missing skills from JD the candidate likely has based on experience"],
-    "remove": ["irrelevant skills not in JD"],
+    "keep": ["skills that already support the target role"],
+    "add": ["relevant skills or terms from the JD supported by the candidate background"],
+    "remove": ["skills that weaken positioning or add noise"],
     "reorganized": "Technical Skills: x, y, z | Tools & Platforms: a, b | Core Skills: c, d"
   },
   "keywords": {
     "found_in_resume": ["keywords already present"],
     "missing_critical": ["must-add keywords from JD"],
-    "missing_preferred": ["nice-to-have keywords"]
+    "missing_preferred": ["useful supporting terms from JD"]
   },
-  "overall_tips": ["tip1", "tip2", "tip3"]
+  "overall_tips": ["practical career guidance point 1", "practical career guidance point 2", "practical career guidance point 3"]
 }`;
 
     const userPrompt = `CANDIDATE'S RESUME:
@@ -131,7 +135,7 @@ ${jobDescription}
 
 ---
 
-Analyze this resume against the job description. Provide specific, actionable improvements for EVERY section. Rewrite content using the candidate's actual data. Include exact keywords from the JD that are missing.`;
+Analyze this resume like an experienced recruiter and resume consultant. Provide section-by-section improvements that use stronger industry-standard wording, clearer positioning, and more useful career guidance. Keep every recommendation grounded in the candidate's actual background and the target role.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

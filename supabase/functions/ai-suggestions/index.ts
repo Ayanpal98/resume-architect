@@ -102,22 +102,22 @@ serve(async (req) => {
 
     switch (type) {
       case "summary":
-        systemPrompt = `You are an elite resume strategist. Generate a PROFESSIONAL SUMMARY following this exact rule:
+        systemPrompt = `You are a senior resume strategist and career coach writing for competitive hiring markets.
 
-FORMULA: "Who you are + experience + key skills + impact"
+Write in polished, industry-standard language that sounds like an experienced recruiter, hiring manager, or executive resume writer.
 
 STRICT RULES:
-1. Role-specific: Tailor every word to the target role
-2. Keyword-rich: Embed 3-5 exact keywords from the job description naturally
-3. Results-focused: Include at least 1-2 quantified achievements (%, $, #)
-4. Lead with job title + years of experience + core specialization
-5. Use power verbs: Spearheaded, Orchestrated, Architected, Transformed, Accelerated
-6. NO pronouns (I, my), NO buzzwords (passionate, results-driven), NO clichés
-7. 3-4 impactful sentences, 50-80 words
-8. Must read as a compelling elevator pitch that passes ATS keyword matching
+1. Tailor every line to the target role and target level.
+2. Use precise, professional wording instead of generic AI phrases or motivational filler.
+3. Naturally incorporate 3-5 exact keywords from the job description where they genuinely fit.
+4. Lead with role identity, years of experience, domain expertise, and business impact.
+5. Include concrete outcomes, scope, and seniority signals when supported by the candidate data.
+6. Avoid pronouns, clichés, hype, and vague claims such as "results-driven," "hardworking," or "passionate professional."
+7. Keep it concise: 3-4 sentences, 50-80 words.
+8. Make it sound credible, specific, and ready for a real hiring process.
 
 OUTPUT: Return ONLY the summary text. No quotes, no labels, no explanations.`;
-        userPrompt = `Create an ATS-optimized professional summary:
+        userPrompt = `Create a recruiter-quality professional summary.
 
 CANDIDATE:
 Experience: ${sanitizeField(content.experience)}
@@ -125,56 +125,53 @@ Skills: ${sanitizeField(content.skills)}
 Target Role: ${sanitizeField(content.targetRole)}
 ${sanitizedJobDesc ? `\nJOB DESCRIPTION:\n${sanitizedJobDesc}` : ""}
 
-Follow the formula: Who you are + experience + key skills + impact.`;
+Focus on positioning, relevant expertise, and career value. Avoid generic AI wording.`;
         break;
 
       case "experience":
-        systemPrompt = `You are an expert resume writer. Transform job descriptions into ATS-optimized bullet points.
+        systemPrompt = `You are a senior resume writer specializing in recruiter-approved experience bullets.
 
 STRICT RULES FOR EVERY BULLET:
-1. MUST start with a strong action verb (Led, Spearheaded, Architected, Drove, Engineered, Automated, Scaled)
-2. MUST include a measurable result (numbers, %, $, time saved, team size)
-3. NO responsibility-only points — ONLY impact statements
-4. Follow XYZ formula: "Accomplished [X] as measured by [Y], by doing [Z]"
-
-POWER VERB CATEGORIES:
-- Leadership: Spearheaded, Directed, Championed, Orchestrated
-- Achievement: Generated, Delivered, Exceeded, Captured
-- Technical: Engineered, Architected, Deployed, Automated
-- Growth: Scaled, Accelerated, Expanded, Maximized
-- Efficiency: Streamlined, Optimized, Consolidated, Reduced
+1. Start with a strong action verb.
+2. Show business impact, operational scope, or measurable outcome whenever the source information supports it.
+3. Rewrite vague duties into achievement-oriented, industry-standard statements.
+4. Use the XYZ structure when possible: what was achieved, how success was measured, and how it was delivered.
+5. Reflect the language and priorities of the target job description without fabricating facts.
+6. Avoid generic AI phrasing, inflated claims, and empty buzzwords.
+7. Keep bullets concise, credible, and appropriate for a professional resume.
 
 ANTI-PATTERNS TO AVOID:
-- "Responsible for..." → Replace with action + result
-- "Worked on..." → Replace with specific contribution + outcome
-- "Helped with..." → Replace with led/drove + metric
-- Any bullet without a number or measurable outcome
+- "Responsible for..."
+- "Worked on..."
+- "Helped with..."
+- Empty leadership claims without context
+- Metrics or technologies that are not supported by the source content
 
 OUTPUT: Return 4-6 bullet points, each starting with •
 No numbering, no headers, no additional text.`;
-        userPrompt = `Transform this experience into impact-driven bullets:
+        userPrompt = `Rewrite this role into recruiter-quality resume bullets.
 
 ROLE: ${sanitizeField(content.title)} at ${sanitizeField(content.company)}
 CURRENT DESCRIPTION: ${sanitizeField(content.description)}
-${sanitizedJobDesc ? `\nJOB KEYWORDS TO INCORPORATE:\n${sanitizedJobDesc}` : ""}
+${sanitizedJobDesc ? `\nJOB DESCRIPTION / TARGET REQUIREMENTS:\n${sanitizedJobDesc}` : ""}
 
-Every bullet must have: Action verb + Result + Numbers. No responsibility-only points.`;
+Prioritize career relevance, business value, ownership, and concrete outcomes. Avoid generic AI wording.`;
         break;
 
       case "skills":
-        systemPrompt = `You are an ATS skills optimization expert.
+        systemPrompt = `You are a senior resume strategist organizing skills for ATS performance and recruiter readability.
 
 STRICT RULES:
-1. 15-20 relevant skills ONLY — no filler
+1. Include only relevant, defensible skills.
 2. Group into exactly 3 categories:
-   - Technical Skills: Languages, frameworks, databases
-   - Tools & Platforms: Software, cloud services, dev tools
-   - Core Skills: Leadership, problem-solving, communication
-3. NO repetition across categories
-4. NO random buzzwords or generic terms
-5. If a skill is NOT in the job description → DO NOT include it
-6. Include both acronyms AND full terms when relevant (e.g., "AWS (Amazon Web Services)")
-7. Most job-relevant skills listed first within each category
+   - Technical Skills
+   - Tools & Platforms
+   - Core Skills
+3. Remove filler, duplicated terms, and low-value buzzwords.
+4. Prioritize terminology aligned with the target job description and industry conventions.
+5. Keep the list clean, selective, and realistic for the candidate's background.
+6. Include both acronym and expanded term only when that improves clarity.
+7. Order the strongest and most job-relevant skills first within each category.
 
 OUTPUT FORMAT (exact):
 Technical Skills: skill1, skill2, skill3, skill4, skill5, skill6
@@ -182,15 +179,15 @@ Tools & Platforms: tool1, tool2, tool3, tool4, tool5
 Core Skills: skill1, skill2, skill3, skill4
 
 No extra text, no explanations.`;
-        userPrompt = `Generate ATS-optimized skills:
+        userPrompt = `Generate a clean, industry-standard skills section.
 
 CANDIDATE:
 Experience: ${sanitizeField(content.experience)}
 Current Skills: ${sanitizeField(content.currentSkills)}
 Target Role: ${sanitizeField(content.targetRole)}
-${sanitizedJobDesc ? `\nJOB DESCRIPTION (only include skills found here):\n${sanitizedJobDesc}` : ""}
+${sanitizedJobDesc ? `\nJOB DESCRIPTION (prioritize terminology used here):\n${sanitizedJobDesc}` : ""}
 
-15-20 skills grouped into Technical Skills, Tools & Platforms, and Core Skills. Only job-relevant skills.`;
+Make it recruiter-friendly, ATS-compatible, and free of generic AI phrasing.`;
         break;
 
       case "keywords":
