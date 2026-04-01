@@ -29,7 +29,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { resumeData, jobDescription } = body;
+    const { resumeData, jobDescription, industryMode } = body;
 
     if (!resumeData || !jobDescription) {
       return new Response(
@@ -69,9 +69,32 @@ serve(async (req) => {
     ).join("\n");
     const personalInfo = resumeData.personalInfo || {};
 
+    // Industry-specific terminology and framing
+    const industryContextMap: Record<string, string> = {
+      tech: `INDUSTRY CONTEXT — TECHNOLOGY:
+Use terminology natural to tech hiring: system design, architecture decisions, scalability, CI/CD, sprint velocity, technical debt, API design, distributed systems, observability, SLAs, code review culture, agile ceremonies, DevOps maturity, cloud-native, microservices, data pipelines, ML/AI integration where relevant.
+For career guidance, reference tech-specific progression paths (IC track vs. engineering management), relevant certifications (AWS, GCP, Kubernetes, etc.), open-source contributions, tech blog writing, conference speaking, and communities like HackerNews, Dev.to, or specific Slack/Discord communities.
+Frame networking around meetups, hackathons, tech talks, and engineering leadership circles.`,
+
+      finance: `INDUSTRY CONTEXT — FINANCE:
+Use terminology natural to finance hiring: regulatory compliance (SOX, Basel III, MiFID II), risk management, P&L ownership, portfolio optimization, financial modeling, DCF analysis, M&A due diligence, credit risk, market risk, liquidity management, AML/KYC, quantitative analysis, derivatives pricing, audit readiness.
+For career guidance, reference finance-specific credentials (CFA, FRM, CPA, ACCA, Series 7/63), regulatory knowledge, client relationship management, deal flow, and progression from analyst → associate → VP → director → MD.
+Frame networking around industry conferences (SIBOS, Bloomberg events), professional bodies (CFA Institute), alumni networks, and industry-specific LinkedIn groups.`,
+
+      healthcare: `INDUSTRY CONTEXT — HEALTHCARE:
+Use terminology natural to healthcare hiring: patient outcomes, clinical workflows, HIPAA compliance, EHR/EMR systems (Epic, Cerner), population health management, care coordination, quality metrics (HEDIS, CAHPS), value-based care, clinical trial management, FDA regulations, ICD-10 coding, revenue cycle management, telehealth, health informatics.
+For career guidance, reference healthcare credentials (RN, BSN, MPH, FACHE, Six Sigma for Healthcare), board certifications, CME requirements, research publications, and progression paths (clinical → administrative, clinical → informatics, etc.).
+Frame networking around HIMSS, ACHE, specialty associations, hospital system leadership programs, and health-tech communities.`,
+    };
+
+    const industryContext = industryContextMap[industryMode || ""] || `INDUSTRY CONTEXT — GENERAL:
+Adapt your language to whatever industry the job description belongs to. Identify the sector from the JD and use appropriate terminology, career paths, certifications, and networking channels for that field.`;
+
     const systemPrompt = `You are a senior resume strategist, recruiter, and career coach.
 
 Your job is to analyze a candidate's resume against a target job description and produce recruiter-grade guidance that sounds professional, specific, and commercially credible.
+
+${industryContext}
 
 CRITICAL RULES:
 1. Every recommendation must reference specific evidence from the resume and the job description.
@@ -81,7 +104,7 @@ CRITICAL RULES:
 5. For experience bullets, rewrite them into concise, achievement-oriented statements using the candidate's actual information only.
 6. Do not invent metrics, tools, certifications, leadership scope, or results.
 7. The "overall_tips" section must read like practical career guidance, covering positioning, progression, credibility, and how to strengthen the application strategically.
-8. The "career_guidance" section is the most important strategic output. It must provide a concrete roadmap for reaching 90%+ job match — including gap analysis, role positioning, immediate actions, skill development, experience reframing, networking strategy, and a 30/60/90-day plan. Every recommendation must be grounded in the specific resume and job description provided. Do NOT give generic advice.
+8. The "career_guidance" section is the most important strategic output. It must provide a concrete roadmap for reaching 90%+ job match — including gap analysis, role positioning, immediate actions, skill development, experience reframing, networking strategy, and a 30/60/90-day plan. Every recommendation must be grounded in the specific resume and job description provided. Do NOT give generic advice. Tailor all guidance to the industry context above.
 
 OUTPUT FORMAT — Return valid JSON only, no markdown, no code fences:
 {

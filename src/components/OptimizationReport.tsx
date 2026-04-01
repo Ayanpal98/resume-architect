@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target, Compass, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ResumeData } from "@/lib/pdfGenerator";
@@ -63,6 +64,14 @@ export const OptimizationReport = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [industryMode, setIndustryMode] = useState<string>("auto");
+
+  const INDUSTRY_OPTIONS = [
+    { value: "auto", label: "🎯 Auto-Detect from JD", description: "Automatically identifies the industry from the job description" },
+    { value: "tech", label: "💻 Technology", description: "Software, SaaS, cloud, AI/ML, DevOps, data engineering" },
+    { value: "finance", label: "💰 Finance", description: "Banking, investment, insurance, fintech, compliance" },
+    { value: "healthcare", label: "🏥 Healthcare", description: "Clinical, health-tech, pharma, hospital systems" },
+  ];
 
   const handleGenerateReport = async () => {
     if (!jobDescription.trim()) {
@@ -74,7 +83,7 @@ export const OptimizationReport = ({
 
     try {
       const { data, error } = await supabase.functions.invoke("resume-improve", {
-        body: { resumeData, jobDescription },
+        body: { resumeData, jobDescription, industryMode: industryMode === "auto" ? undefined : industryMode },
       });
 
       if (error) throw new Error(error.message || "Failed to analyze");
@@ -146,6 +155,32 @@ export const OptimizationReport = ({
           onChange={(e) => onJobDescriptionChange(e.target.value)}
           className="resize-none"
         />
+      </div>
+
+      {/* Industry Mode Selector */}
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">
+          <Compass className="w-4 h-4 inline mr-2" />
+          Industry Mode
+        </label>
+        <Select value={industryMode} onValueChange={setIndustryMode}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select industry mode" />
+          </SelectTrigger>
+          <SelectContent>
+            {INDUSTRY_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                <div>
+                  <span>{opt.label}</span>
+                  <span className="text-muted-foreground text-xs ml-2">— {opt.description}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground mt-1">
+          Tailors terminology, career paths, certifications, and networking advice to your field
+        </p>
       </div>
 
       <Button
