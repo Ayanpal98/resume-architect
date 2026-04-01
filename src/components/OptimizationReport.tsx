@@ -83,7 +83,7 @@ export const OptimizationReport = ({
 
     try {
       const { data, error } = await supabase.functions.invoke("resume-improve", {
-        body: { resumeData, jobDescription },
+        body: { resumeData, jobDescription, industryMode: industryMode === "auto" ? undefined : industryMode },
       });
 
       if (error) throw new Error(error.message || "Failed to analyze");
