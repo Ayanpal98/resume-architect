@@ -64,6 +64,14 @@ export const OptimizationReport = ({
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<AnalysisData | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [industryMode, setIndustryMode] = useState<string>("auto");
+
+  const INDUSTRY_OPTIONS = [
+    { value: "auto", label: "🎯 Auto-Detect from JD", description: "Automatically identifies the industry from the job description" },
+    { value: "tech", label: "💻 Technology", description: "Software, SaaS, cloud, AI/ML, DevOps, data engineering" },
+    { value: "finance", label: "💰 Finance", description: "Banking, investment, insurance, fintech, compliance" },
+    { value: "healthcare", label: "🏥 Healthcare", description: "Clinical, health-tech, pharma, hospital systems" },
+  ];
 
   const handleGenerateReport = async () => {
     if (!jobDescription.trim()) {
