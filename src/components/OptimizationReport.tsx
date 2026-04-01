@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target, Compass, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ResumeData } from "@/lib/pdfGenerator";
