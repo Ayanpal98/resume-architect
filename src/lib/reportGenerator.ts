@@ -458,7 +458,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // OVERALL TIPS
   // ============================
   if (data.analysis.overall_tips && data.analysis.overall_tips.length > 0) {
-    addSectionTitle("5. CAREER GUIDANCE & NEXT STEPS");
+    addSectionTitle("5. STRATEGIC RECOMMENDATIONS");
     data.analysis.overall_tips.forEach((tip, i) => {
       checkPage(6);
       doc.setFontSize(9);
@@ -470,6 +470,132 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
       addWrapped(tip, ml + 6, cw - 6, 4);
       y += 2;
     });
+  }
+
+  // ============================
+  // CAREER GUIDANCE SECTION
+  // ============================
+  if (data.analysis.career_guidance) {
+    const cg = data.analysis.career_guidance;
+    addSectionTitle("6. CAREER GUIDANCE — ROADMAP TO 90%+ MATCH");
+
+    // Match estimate bar
+    checkPage(20);
+    doc.setFillColor(COLORS.bg);
+    doc.roundedRect(ml, y, cw, 18, 2, 2, "F");
+    doc.setDrawColor(COLORS.light);
+    doc.roundedRect(ml, y, cw, 18, 2, 2, "S");
+
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.setTextColor(COLORS.dark);
+    doc.text("Current Estimated Match", ml + 5, y + 6);
+    doc.text("Target Match", ml + 90, y + 6);
+
+    // Current score
+    const currentScore = cg.current_match_estimate || 50;
+    const targetScore = cg.target_match || 90;
+    const currentColor = currentScore >= 70 ? COLORS.accent : currentScore >= 50 ? COLORS.warning : COLORS.destructive;
+
+    doc.setFontSize(16);
+    doc.setTextColor(currentColor);
+    doc.text(`${currentScore}%`, ml + 5, y + 14);
+
+    doc.setFontSize(10);
+    doc.setTextColor(COLORS.muted);
+    doc.text("→", ml + 75, y + 14);
+
+    doc.setFontSize(16);
+    doc.setTextColor(COLORS.accent);
+    doc.text(`${targetScore}%`, ml + 90, y + 14);
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(COLORS.muted);
+    doc.text(`Gap: ${targetScore - currentScore} points to close`, ml + 120, y + 14);
+    y += 22;
+
+    // Gap Analysis
+    if (cg.gap_analysis) {
+      addLabel("GAP ANALYSIS", COLORS.destructive);
+      addBody(cg.gap_analysis);
+      y += 3;
+    }
+
+    // Role Positioning
+    if (cg.role_positioning) {
+      addLabel("ROLE POSITIONING STRATEGY", COLORS.primary);
+      addBody(cg.role_positioning);
+      y += 3;
+    }
+
+    // Immediate Actions
+    if (cg.immediate_actions?.length > 0) {
+      addLabel("IMMEDIATE ACTIONS — DO THIS NOW", COLORS.accent);
+      cg.immediate_actions.forEach(action => {
+        addBullet(action);
+      });
+      y += 3;
+    }
+
+    // Skill Development Plan
+    if (cg.skill_development_plan?.length > 0) {
+      addLabel("SKILL DEVELOPMENT PLAN (30-60 DAYS)", COLORS.primary);
+      cg.skill_development_plan.forEach(skill => {
+        addBullet(skill);
+      });
+      y += 3;
+    }
+
+    // Experience Reframing
+    if (cg.experience_reframing?.length > 0) {
+      addLabel("EXPERIENCE REFRAMING OPPORTUNITIES", COLORS.warning);
+      cg.experience_reframing.forEach(item => {
+        addBullet(item);
+      });
+      y += 3;
+    }
+
+    // Networking Strategy
+    if (cg.networking_strategy) {
+      addLabel("NETWORKING & VISIBILITY STRATEGY", COLORS.primary);
+      addBody(cg.networking_strategy);
+      y += 3;
+    }
+
+    // 30/60/90 Day Plan
+    const plan = cg["30_60_90_plan"];
+    if (plan) {
+      addLabel("30 / 60 / 90-DAY CAREER ACTION PLAN", COLORS.primary);
+      y += 1;
+
+      const planItems = [
+        { label: "FIRST 30 DAYS", text: plan["30_days"], color: COLORS.accent },
+        { label: "30-60 DAYS", text: plan["60_days"], color: COLORS.primary },
+        { label: "60-90 DAYS", text: plan["90_days"], color: COLORS.warning },
+      ];
+
+      planItems.forEach(item => {
+        if (item.text) {
+          checkPage(12);
+          doc.setFillColor(COLORS.bg);
+          doc.roundedRect(ml + 2, y, cw - 4, 2, 0.5, 0.5, "F");
+          doc.setFillColor(item.color);
+          doc.roundedRect(ml + 2, y, 3, 2, 0.5, 0.5, "F");
+          y += 4;
+          doc.setFontSize(8);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(item.color);
+          doc.text(item.label, ml + 4, y);
+          y += 3.5;
+          doc.setFont("helvetica", "normal");
+          doc.setTextColor(COLORS.dark);
+          doc.setFontSize(9);
+          addWrapped(item.text, ml + 4, cw - 8, 4);
+          y += 3;
+        }
+      });
+    }
   }
 
   // ============================
