@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target } from "lucide-react";
+import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target, Compass, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
@@ -36,6 +36,21 @@ interface AnalysisData {
     found_in_resume: string[];
     missing_critical: string[];
     missing_preferred: string[];
+  };
+  career_guidance?: {
+    current_match_estimate: number;
+    target_match: number;
+    gap_analysis: string;
+    role_positioning: string;
+    immediate_actions: string[];
+    skill_development_plan: string[];
+    experience_reframing: string[];
+    networking_strategy: string;
+    "30_60_90_plan"?: {
+      "30_days": string;
+      "60_days": string;
+      "90_days": string;
+    };
   };
   overall_tips?: string[];
 }
@@ -235,7 +250,7 @@ export const OptimizationReport = ({
             )}
 
             {analysis.overall_tips && analysis.overall_tips.length > 0 && (
-              <ReportSection title="Additional Tips">
+              <ReportSection title="Strategic Recommendations">
                 <ul className="space-y-1">
                   {analysis.overall_tips.slice(0, 3).map((tip, i) => (
                     <li key={i} className="text-xs text-muted-foreground flex items-start gap-2">
@@ -247,6 +262,61 @@ export const OptimizationReport = ({
                     <li className="text-xs text-primary">+ {analysis.overall_tips.length - 3} more in full report</li>
                   )}
                 </ul>
+              </ReportSection>
+            )}
+
+            {/* Career Guidance Preview */}
+            {analysis.career_guidance && (
+              <ReportSection title="Career Guidance — Roadmap to 90%+ Match">
+                <div className="space-y-3">
+                  {/* Match Progress */}
+                  <div className="flex items-center gap-3">
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-destructive">{analysis.career_guidance.current_match_estimate}%</p>
+                      <p className="text-[10px] text-muted-foreground">Current</p>
+                    </div>
+                    <TrendingUp className="w-4 h-4 text-muted-foreground" />
+                    <div className="text-center">
+                      <p className="text-lg font-bold text-accent">{analysis.career_guidance.target_match}%</p>
+                      <p className="text-[10px] text-muted-foreground">Target</p>
+                    </div>
+                    <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-gradient-to-r from-destructive via-primary to-accent rounded-full transition-all"
+                        style={{ width: `${analysis.career_guidance.current_match_estimate}%` }}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Gap Analysis */}
+                  {analysis.career_guidance.gap_analysis && (
+                    <div>
+                      <p className="text-[10px] font-semibold text-destructive uppercase mb-1">Gap Analysis</p>
+                      <p className="text-xs text-foreground line-clamp-2">{analysis.career_guidance.gap_analysis}</p>
+                    </div>
+                  )}
+
+                  {/* Quick counts */}
+                  <div className="flex flex-wrap gap-2 text-[10px]">
+                    {analysis.career_guidance.immediate_actions?.length > 0 && (
+                      <span className="text-accent">✓ {analysis.career_guidance.immediate_actions.length} immediate actions</span>
+                    )}
+                    {analysis.career_guidance.skill_development_plan?.length > 0 && (
+                      <span className="text-primary">+ {analysis.career_guidance.skill_development_plan.length} skills to develop</span>
+                    )}
+                    {analysis.career_guidance.experience_reframing?.length > 0 && (
+                      <span className="text-warning">↻ {analysis.career_guidance.experience_reframing.length} reframing opportunities</span>
+                    )}
+                  </div>
+
+                  {/* 30/60/90 preview */}
+                  {analysis.career_guidance["30_60_90_plan"] && (
+                    <div className="text-[10px] text-muted-foreground">
+                      <Compass className="w-3 h-3 inline mr-1" />
+                      Includes 30/60/90-day career action plan in full report
+                    </div>
+                  )}
+                </div>
               </ReportSection>
             )}
           </div>
@@ -281,6 +351,7 @@ export const OptimizationReport = ({
                 <li>• Experience bullets — XYZ formula rewrites with missing keywords</li>
                 <li>• Skills optimization — keep, add, and remove recommendations</li>
                 <li>• Keyword gap analysis — coverage percentage & critical gaps</li>
+                <li>• Career guidance — roadmap to 90%+ match with 30/60/90-day plan</li>
                 <li>• Overall recommendations & changes summary table</li>
               </ul>
             </div>

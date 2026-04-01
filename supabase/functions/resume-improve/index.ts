@@ -81,6 +81,7 @@ CRITICAL RULES:
 5. For experience bullets, rewrite them into concise, achievement-oriented statements using the candidate's actual information only.
 6. Do not invent metrics, tools, certifications, leadership scope, or results.
 7. The "overall_tips" section must read like practical career guidance, covering positioning, progression, credibility, and how to strengthen the application strategically.
+8. The "career_guidance" section is the most important strategic output. It must provide a concrete roadmap for reaching 90%+ job match — including gap analysis, role positioning, immediate actions, skill development, experience reframing, networking strategy, and a 30/60/90-day plan. Every recommendation must be grounded in the specific resume and job description provided. Do NOT give generic advice.
 
 OUTPUT FORMAT — Return valid JSON only, no markdown, no code fences:
 {
@@ -107,6 +108,21 @@ OUTPUT FORMAT — Return valid JSON only, no markdown, no code fences:
     "found_in_resume": ["keywords already present"],
     "missing_critical": ["must-add keywords from JD"],
     "missing_preferred": ["useful supporting terms from JD"]
+  },
+  "career_guidance": {
+    "current_match_estimate": 55,
+    "target_match": 90,
+    "gap_analysis": "2-3 sentence assessment of why the current resume falls short of 90%+ match and what broad areas need work",
+    "role_positioning": "How the candidate should reframe their narrative to align with this specific role",
+    "immediate_actions": ["Specific action the candidate can take right now to close the gap"],
+    "skill_development_plan": ["Skill or certification to acquire within 30-60 days"],
+    "experience_reframing": ["How to reposition existing experience to better match the target role"],
+    "networking_strategy": "Specific networking advice tied to the target role or industry",
+    "30_60_90_plan": {
+      "30_days": "First 30 days improvement actions",
+      "60_days": "Medium-term certifications, portfolio, informational interviews",
+      "90_days": "Longer-term positioning like thought leadership or career pivots"
+    }
   },
   "overall_tips": ["practical career guidance point 1", "practical career guidance point 2", "practical career guidance point 3"]
 }`;
