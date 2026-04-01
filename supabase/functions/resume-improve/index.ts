@@ -29,7 +29,7 @@ serve(async (req) => {
     }
 
     const body = await req.json();
-    const { resumeData, jobDescription } = body;
+    const { resumeData, jobDescription, industryMode } = body;
 
     if (!resumeData || !jobDescription) {
       return new Response(
