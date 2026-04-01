@@ -81,6 +81,7 @@ CRITICAL RULES:
 5. For experience bullets, rewrite them into concise, achievement-oriented statements using the candidate's actual information only.
 6. Do not invent metrics, tools, certifications, leadership scope, or results.
 7. The "overall_tips" section must read like practical career guidance, covering positioning, progression, credibility, and how to strengthen the application strategically.
+8. The "career_guidance" section is the most important strategic output. It must provide a concrete roadmap for reaching 90%+ job match — including gap analysis, role positioning, immediate actions, skill development, experience reframing, networking strategy, and a 30/60/90-day plan. Every recommendation must be grounded in the specific resume and job description provided. Do NOT give generic advice.
 
 OUTPUT FORMAT — Return valid JSON only, no markdown, no code fences:
 {
