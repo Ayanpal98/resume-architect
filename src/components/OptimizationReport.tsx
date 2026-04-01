@@ -351,6 +351,7 @@ export const OptimizationReport = ({
                 <li>• Experience bullets — XYZ formula rewrites with missing keywords</li>
                 <li>• Skills optimization — keep, add, and remove recommendations</li>
                 <li>• Keyword gap analysis — coverage percentage & critical gaps</li>
+                <li>• Career guidance — roadmap to 90%+ match with 30/60/90-day plan</li>
                 <li>• Overall recommendations & changes summary table</li>
               </ul>
             </div>
