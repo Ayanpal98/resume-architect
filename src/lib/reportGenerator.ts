@@ -27,6 +27,21 @@ export interface OptimizationReportData {
       missing_critical: string[];
       missing_preferred: string[];
     };
+    career_guidance?: {
+      current_match_estimate: number;
+      target_match: number;
+      gap_analysis: string;
+      role_positioning: string;
+      immediate_actions: string[];
+      skill_development_plan: string[];
+      experience_reframing: string[];
+      networking_strategy: string;
+      "30_60_90_plan"?: {
+        "30_days": string;
+        "60_days": string;
+        "90_days": string;
+      };
+    };
     overall_tips?: string[];
   };
   appliedChanges: Set<string>;
