@@ -109,6 +109,21 @@ OUTPUT FORMAT — Return valid JSON only, no markdown, no code fences:
     "missing_critical": ["must-add keywords from JD"],
     "missing_preferred": ["useful supporting terms from JD"]
   },
+  "career_guidance": {
+    "current_match_estimate": 55,
+    "target_match": 90,
+    "gap_analysis": "2-3 sentence assessment of why the current resume falls short of 90%+ match and what broad areas need work",
+    "role_positioning": "How the candidate should reframe their narrative to align with this specific role",
+    "immediate_actions": ["Specific action the candidate can take right now to close the gap"],
+    "skill_development_plan": ["Skill or certification to acquire within 30-60 days"],
+    "experience_reframing": ["How to reposition existing experience to better match the target role"],
+    "networking_strategy": "Specific networking advice tied to the target role or industry",
+    "30_60_90_plan": {
+      "30_days": "First 30 days improvement actions",
+      "60_days": "Medium-term certifications, portfolio, informational interviews",
+      "90_days": "Longer-term positioning like thought leadership or career pivots"
+    }
+  },
   "overall_tips": ["practical career guidance point 1", "practical career guidance point 2", "practical career guidance point 3"]
 }`;
 
