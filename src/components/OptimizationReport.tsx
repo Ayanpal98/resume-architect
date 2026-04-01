@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target } from "lucide-react";
+import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target, Compass, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
