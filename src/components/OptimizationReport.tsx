@@ -157,6 +157,32 @@ export const OptimizationReport = ({
         />
       </div>
 
+      {/* Industry Mode Selector */}
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-2">
+          <Compass className="w-4 h-4 inline mr-2" />
+          Industry Mode
+        </label>
+        <Select value={industryMode} onValueChange={setIndustryMode}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Select industry mode" />
+          </SelectTrigger>
+          <SelectContent>
+            {INDUSTRY_OPTIONS.map((opt) => (
+              <SelectItem key={opt.value} value={opt.value}>
+                <div>
+                  <span>{opt.label}</span>
+                  <span className="text-muted-foreground text-xs ml-2">— {opt.description}</span>
+                </div>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground mt-1">
+          Tailors terminology, career paths, certifications, and networking advice to your field
+        </p>
+      </div>
+
       <Button
         onClick={handleGenerateReport}
         disabled={isAnalyzing || !jobDescription.trim()}
