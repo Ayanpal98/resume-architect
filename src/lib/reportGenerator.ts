@@ -601,7 +601,7 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
   // ============================
   // CHANGES SUMMARY TABLE
   // ============================
-  addSectionTitle("6. CHANGES APPLIED — SUMMARY");
+  addSectionTitle("7. CHANGES APPLIED — SUMMARY");
 
   const rows = [
     { section: "Professional Summary", applied: data.appliedChanges.has("summary"), detail: data.analysis.summary ? "Rewritten to match JD" : "No changes suggested" },
