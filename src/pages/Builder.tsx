@@ -24,6 +24,7 @@ import {
   BarChart3,
   LogOut,
   Compass
+} from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
 import { supabase } from "@/integrations/supabase/client";
