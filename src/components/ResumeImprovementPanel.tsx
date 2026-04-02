@@ -70,7 +70,7 @@ export const ResumeImprovementPanel = ({
   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<ImprovementAnalysis | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    summary: true, experience: true, skills: true, keywords: true, tips: true,
+    summary: true, experience: true, skills: true, keywords: true, career_guidance: true, tips: true,
   });
   const [appliedItems, setAppliedItems] = useState<Set<string>>(new Set());
 
