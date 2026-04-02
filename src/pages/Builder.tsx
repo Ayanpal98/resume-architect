@@ -22,7 +22,8 @@ import {
   Layout,
   Target,
   BarChart3,
-  LogOut
+  LogOut,
+  Compass
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
@@ -38,6 +39,7 @@ import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { OptimizationReport } from "@/components/OptimizationReport";
+import { CareerRoadmap } from "@/components/CareerRoadmap";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import { useAuth } from "@/contexts/AuthContext";
 import {
@@ -287,6 +289,7 @@ const Builder = () => {
     { id: "report", label: "Report", icon: BarChart3 },
     { id: "jobmatch", label: "Job Match", icon: Target },
     { id: "coverletter", label: "Cover Letter", icon: FileText },
+    { id: "roadmap", label: "Career Roadmap", icon: Compass },
   ];
 
   return (
@@ -608,6 +611,13 @@ const Builder = () => {
                   )}
                   {activeSection === "coverletter" && (
                     <CoverLetterGenerator
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
+                    />
+                  )}
+                  {activeSection === "roadmap" && (
+                    <CareerRoadmap
                       resumeData={resumeData}
                       jobDescription={jobDescription}
                       onJobDescriptionChange={setJobDescription}
