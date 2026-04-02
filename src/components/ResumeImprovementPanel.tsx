@@ -7,6 +7,22 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ResumeData } from "@/lib/pdfGenerator";
 
+interface CareerGuidance {
+  current_match_estimate: number;
+  target_match: number;
+  gap_analysis: string;
+  role_positioning: string;
+  immediate_actions: string[];
+  skill_development_plan: string[];
+  experience_reframing: string[];
+  networking_strategy: string;
+  "30_60_90_plan": {
+    "30_days": string;
+    "60_days": string;
+    "90_days": string;
+  };
+}
+
 interface ImprovementAnalysis {
   summary: {
     current_assessment: string;
@@ -30,6 +46,7 @@ interface ImprovementAnalysis {
     missing_critical: string[];
     missing_preferred: string[];
   };
+  career_guidance?: CareerGuidance;
   overall_tips: string[];
 }
 
