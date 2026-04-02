@@ -22,8 +22,8 @@ import {
   Layout,
   Target,
   BarChart3,
-  LogOut
-} from "lucide-react";
+  LogOut,
+  Compass
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
 import { supabase } from "@/integrations/supabase/client";
