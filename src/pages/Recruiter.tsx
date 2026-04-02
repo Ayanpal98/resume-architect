@@ -429,13 +429,6 @@ const Recruiter = () => {
       y += 9;
     };
 
-    const labelValue = (label: string, value: string, x: number, maxW: number) => {
-      doc.setFontSize(7.5); doc.setFont("helvetica", "bold"); doc.setTextColor(C.muted);
-      doc.text(label, x, y);
-      doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
-      const labelW = doc.getTextWidth(label + " ");
-      doc.text(value, x + labelW, y);
-    };
 
     const scoreBar = (x: number, barY: number, w: number, score: number, label: string) => {
       const barH = 4;
