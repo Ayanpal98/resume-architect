@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Sparkles, Loader2, Check, ChevronDown, ChevronRight, AlertTriangle, Plus, Minus, RefreshCw, Copy, Target } from "lucide-react";
+import { Sparkles, Loader2, Check, ChevronDown, ChevronRight, AlertTriangle, Plus, Minus, RefreshCw, Copy, Target, TrendingUp, BookOpen, Users, Calendar, Compass, Award, ArrowUpRight } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
