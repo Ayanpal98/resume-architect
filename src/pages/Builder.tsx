@@ -616,6 +616,13 @@ const Builder = () => {
                       onJobDescriptionChange={setJobDescription}
                     />
                   )}
+                  {activeSection === "roadmap" && (
+                    <CareerRoadmap
+                      resumeData={resumeData}
+                      jobDescription={jobDescription}
+                      onJobDescriptionChange={setJobDescription}
+                    />
+                  )}
                 </div>
 
                 {/* ATS Score Preview with Download */}
