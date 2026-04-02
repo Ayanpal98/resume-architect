@@ -1,10 +1,27 @@
 import { useState } from "react";
-import { Sparkles, Loader2, Check, ChevronDown, ChevronRight, AlertTriangle, Plus, Minus, RefreshCw, Copy, Target } from "lucide-react";
+import { Sparkles, Loader2, Check, ChevronDown, ChevronRight, AlertTriangle, Plus, Minus, RefreshCw, Copy, Target, TrendingUp, BookOpen, Users, Calendar, Compass, Award, ArrowUpRight } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { ResumeData } from "@/lib/pdfGenerator";
+
+interface CareerGuidance {
+  current_match_estimate: number;
+  target_match: number;
+  gap_analysis: string;
+  role_positioning: string;
+  immediate_actions: string[];
+  skill_development_plan: string[];
+  experience_reframing: string[];
+  networking_strategy: string;
+  "30_60_90_plan": {
+    "30_days": string;
+    "60_days": string;
+    "90_days": string;
+  };
+}
 
 interface ImprovementAnalysis {
   summary: {
@@ -29,6 +46,7 @@ interface ImprovementAnalysis {
     missing_critical: string[];
     missing_preferred: string[];
   };
+  career_guidance?: CareerGuidance;
   overall_tips: string[];
 }
 
@@ -52,7 +70,7 @@ export const ResumeImprovementPanel = ({
   const [isLoading, setIsLoading] = useState(false);
   const [analysis, setAnalysis] = useState<ImprovementAnalysis | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    summary: true, experience: true, skills: true, keywords: true, tips: true,
+    summary: true, experience: true, skills: true, keywords: true, career_guidance: true, tips: true,
   });
   const [appliedItems, setAppliedItems] = useState<Set<string>>(new Set());
 
@@ -348,7 +366,136 @@ export const ResumeImprovementPanel = ({
             </div>
           )}
 
-          {/* Overall Tips */}
+          {/* Career Guidance Roadmap */}
+          {analysis.career_guidance && (
+            <div className="border border-border rounded-xl overflow-hidden">
+              <SectionHeader id="career_guidance" title="Career Guidance — Roadmap to 90%+ Match" icon={Compass} />
+              {expandedSections.career_guidance && (
+                <div className="p-4 space-y-4">
+                  {/* Match Progress */}
+                  <div className="p-4 bg-muted/30 rounded-lg border border-border space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-foreground">Current Match</span>
+                      <span className="text-lg font-bold text-primary">{analysis.career_guidance.current_match_estimate}%</span>
+                    </div>
+                    <Progress value={analysis.career_guidance.current_match_estimate} className="h-3" />
+                    <div className="flex items-center justify-between text-xs text-muted-foreground">
+                      <span>Current: {analysis.career_guidance.current_match_estimate}%</span>
+                      <span className="flex items-center gap-1">
+                        <ArrowUpRight className="w-3 h-3 text-accent" />
+                        Target: {analysis.career_guidance.target_match}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Gap Analysis */}
+                  {analysis.career_guidance.gap_analysis && (
+                    <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
+                      <p className="text-xs font-medium text-destructive mb-1 flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3" /> Gap Analysis
+                      </p>
+                      <p className="text-sm text-foreground">{analysis.career_guidance.gap_analysis}</p>
+                    </div>
+                  )}
+
+                  {/* Role Positioning */}
+                  {analysis.career_guidance.role_positioning && (
+                    <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+                      <p className="text-xs font-medium text-primary mb-1 flex items-center gap-1">
+                        <Target className="w-3 h-3" /> Role Positioning
+                      </p>
+                      <p className="text-sm text-foreground">{analysis.career_guidance.role_positioning}</p>
+                    </div>
+                  )}
+
+                  {/* Immediate Actions */}
+                  {analysis.career_guidance.immediate_actions?.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1">
+                        <TrendingUp className="w-3.5 h-3.5 text-accent" /> Immediate Actions
+                      </p>
+                      <ul className="space-y-1.5">
+                        {analysis.career_guidance.immediate_actions.map((action, i) => (
+                          <li key={i} className="text-sm text-foreground flex items-start gap-2 p-2 bg-accent/5 rounded-lg border border-accent/10">
+                            <Check className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                            {action}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Skill Development Plan */}
+                  {analysis.career_guidance.skill_development_plan?.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1">
+                        <Award className="w-3.5 h-3.5 text-primary" /> Skills & Certifications to Acquire
+                      </p>
+                      <ul className="space-y-1.5">
+                        {analysis.career_guidance.skill_development_plan.map((skill, i) => (
+                          <li key={i} className="text-sm text-foreground flex items-start gap-2 p-2 bg-primary/5 rounded-lg border border-primary/10">
+                            <BookOpen className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                            {skill}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Experience Reframing */}
+                  {analysis.career_guidance.experience_reframing?.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1">
+                        <RefreshCw className="w-3.5 h-3.5 text-primary" /> Experience Reframing
+                      </p>
+                      <ul className="space-y-1.5">
+                        {analysis.career_guidance.experience_reframing.map((item, i) => (
+                          <li key={i} className="text-sm text-foreground flex items-start gap-2 p-2 bg-muted/50 rounded-lg border border-border">
+                            <ArrowUpRight className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Networking Strategy */}
+                  {analysis.career_guidance.networking_strategy && (
+                    <div className="p-3 bg-accent/5 border border-accent/20 rounded-lg">
+                      <p className="text-xs font-medium text-accent mb-1 flex items-center gap-1">
+                        <Users className="w-3 h-3" /> Networking Strategy
+                      </p>
+                      <p className="text-sm text-foreground">{analysis.career_guidance.networking_strategy}</p>
+                    </div>
+                  )}
+
+                  {/* 30/60/90 Day Plan */}
+                  {analysis.career_guidance["30_60_90_plan"] && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1">
+                        <Calendar className="w-3.5 h-3.5 text-primary" /> 30 / 60 / 90 Day Action Plan
+                      </p>
+                      <div className="grid gap-2">
+                        <div className="p-3 rounded-lg border-l-4 border-l-accent bg-accent/5">
+                          <p className="text-xs font-bold text-accent mb-1">First 30 Days</p>
+                          <p className="text-sm text-foreground">{analysis.career_guidance["30_60_90_plan"]["30_days"]}</p>
+                        </div>
+                        <div className="p-3 rounded-lg border-l-4 border-l-primary bg-primary/5">
+                          <p className="text-xs font-bold text-primary mb-1">60 Days</p>
+                          <p className="text-sm text-foreground">{analysis.career_guidance["30_60_90_plan"]["60_days"]}</p>
+                        </div>
+                        <div className="p-3 rounded-lg border-l-4 border-l-destructive bg-destructive/5">
+                          <p className="text-xs font-bold text-destructive mb-1">90 Days</p>
+                          <p className="text-sm text-foreground">{analysis.career_guidance["30_60_90_plan"]["90_days"]}</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
           {analysis.overall_tips?.length > 0 && (
             <div className="border border-border rounded-xl overflow-hidden">
               <SectionHeader id="tips" title="Overall Tips" icon={Sparkles} count={analysis.overall_tips.length} />
