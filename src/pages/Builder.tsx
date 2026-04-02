@@ -39,6 +39,7 @@ import { ResumeComparison } from "@/components/ResumeComparison";
 import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { OptimizationReport } from "@/components/OptimizationReport";
+import { CareerRoadmap } from "@/components/CareerRoadmap";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
 import { useAuth } from "@/contexts/AuthContext";
 import {
