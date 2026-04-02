@@ -287,6 +287,7 @@ const Builder = () => {
     { id: "report", label: "Report", icon: BarChart3 },
     { id: "jobmatch", label: "Job Match", icon: Target },
     { id: "coverletter", label: "Cover Letter", icon: FileText },
+    { id: "roadmap", label: "Career Roadmap", icon: Compass },
   ];
 
   return (
