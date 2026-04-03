@@ -394,6 +394,8 @@ export const OptimizationReport = ({
           </div>
         </div>
       )}
+      {/* Compliance Footer (mandatory, cannot be skipped) */}
+      <ComplianceFooter />
     </div>
   );
 };
