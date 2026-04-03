@@ -1395,8 +1395,7 @@ export const generateATSReadinessReport = (data: ATSReadinessReportData): jsPDF 
     doc.setFont("helvetica", "bold");
     doc.setTextColor(COLORS.white);
     doc.text("Category", ml + 3, y + 5);
-    doc.text("Score", ml + 80, y + 5);
-    doc.text("Weight", ml + 105, y + 5);
+    doc.text("Score", ml + 85, y + 5);
     doc.text("Status", ml + 130, y + 5);
     y += 7;
 
@@ -1409,14 +1408,21 @@ export const generateATSReadinessReport = (data: ATSReadinessReportData): jsPDF 
       doc.setFont("helvetica", "normal");
       doc.setTextColor(COLORS.dark);
       doc.text(cat.name, ml + 3, y + 5);
-      doc.text(`${cat.score}/${cat.maxScore} (${pct}%)`, ml + 80, y + 5);
-      doc.text(`${cat.weight}x`, ml + 105, y + 5);
+      doc.text(`${cat.score}/${cat.maxScore} (${pct}%)`, ml + 85, y + 5);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(cat.passed ? COLORS.accent : COLORS.warning);
       doc.text(cat.passed ? "✓ Passed" : "○ Needs Work", ml + 130, y + 5);
       y += 7;
     });
-    y += 5;
+    y += 2;
+
+    // Proprietary scoring footnote (replaces weight column)
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(COLORS.muted);
+    const fnLines = doc.splitTextToSize(SCORING_ENGINE_FOOTNOTE, cw - 4);
+    fnLines.forEach((line: string) => { checkPage(3.5); doc.text(line, ml + 2, y); y += 3.5; });
+    y += 3;
 
     // Issues per category
     sorted.forEach(cat => {
