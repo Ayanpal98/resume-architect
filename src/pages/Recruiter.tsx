@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import jsPDF from "jspdf";
-import { addComplianceFooterBlock, SCORING_ENGINE_FOOTNOTE, needsPatternDisclaimer, PATTERN_OBSERVATION_DISCLAIMER } from "@/lib/complianceFooter";
+import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import { Link } from "react-router-dom";
 import { 
   FileText, Upload, Users, Target, CheckCircle2, XCircle, 
