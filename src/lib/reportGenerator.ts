@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import { ResumeData } from "./pdfGenerator";
+import { addComplianceFooterBlock, SCORING_ENGINE_FOOTNOTE, needsPatternDisclaimer, PATTERN_OBSERVATION_DISCLAIMER, ZERO_CHANGE_NOTE } from "./complianceFooter";
 
 export interface OptimizationReportData {
   resumeData: ResumeData;
