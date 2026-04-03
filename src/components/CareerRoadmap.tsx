@@ -287,6 +287,13 @@ export const CareerRoadmap = ({
 
       {guidance && (
         <div className="space-y-4">
+          {/* Export Button */}
+          <div className="flex justify-end">
+            <Button onClick={exportRoadmapPDF} variant="outline" size="sm">
+              <Download className="w-4 h-4 mr-2" />
+              Export Roadmap PDF
+            </Button>
+          </div>
           {/* Match Progress */}
           <div className="p-5 bg-card rounded-xl border border-border shadow-sm space-y-3">
             <div className="flex items-center justify-between">
