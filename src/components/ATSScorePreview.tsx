@@ -165,7 +165,7 @@ export const ATSScorePreview = ({ result, onDownload, hasContent }: ATSScorePrev
                   {getCategoryIcon(cat.score, 100)}
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-medium text-foreground truncate">{cat.name}</p>
-                    <p className="text-[10px] text-muted-foreground">{cat.score}% • {cat.weight}</p>
+                    <p className="text-[10px] text-muted-foreground">{cat.score}%</p>
                   </div>
                 </div>
               ))}

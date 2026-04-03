@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ComplianceFooter } from "@/components/ComplianceFooter";
 import jsPDF from "jspdf";
 import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import {
