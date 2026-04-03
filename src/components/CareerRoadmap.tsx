@@ -121,7 +121,7 @@ export const CareerRoadmap = ({
     doc.setFontSize(22); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
     doc.text("Career Guidance Roadmap", pw / 2, 22, { align: "center" });
     doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor("#a0b4cc");
-    doc.text(`${resumeData.name || "Candidate"} \u2014 ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, pw / 2, 34, { align: "center" });
+    doc.text(`${resumeData.personalInfo?.fullName || "Candidate"} \u2014 ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, pw / 2, 34, { align: "center" });
     y = 58;
 
     // Match Score
