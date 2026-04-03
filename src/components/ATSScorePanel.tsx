@@ -792,7 +792,6 @@ export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }:
                 <div className="bg-muted/50 rounded-lg p-3 space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 pb-2 border-b border-border">
                     <span>Score: {category.score}/{category.maxScore} points</span>
-                    <span>Weight: {category.weight}x</span>
                   </div>
                   {category.issues.length > 0 ? (
                     category.issues.map((issue, idx) => (
