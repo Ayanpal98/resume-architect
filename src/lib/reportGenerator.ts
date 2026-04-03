@@ -1520,6 +1520,33 @@ export const generateATSReadinessReport = (data: ATSReadinessReportData): jsPDF 
     });
   }
 
+  // 0% change note
+  if (hasComparison && original && displayScore === displayOriginal) {
+    checkPage(8);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(COLORS.muted);
+    addWrapped(ZERO_CHANGE_NOTE, ml, cw, 3.5);
+    y += 3;
+  }
+
+  // Add pattern-based disclaimers to recommendations
+  if (current.recommendations.length > 0) {
+    current.recommendations.forEach(rec => {
+      if (needsPatternDisclaimer(rec)) {
+        checkPage(5);
+        doc.setFontSize(7);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(COLORS.warning);
+        addWrapped(PATTERN_OBSERVATION_DISCLAIMER, ml + 6, cw - 6, 3.5);
+        y += 1;
+      }
+    });
+  }
+
+  // Compliance footer block (mandatory)
+  addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
   addFooter();
   return doc;
 };
