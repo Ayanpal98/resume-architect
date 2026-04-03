@@ -1,7 +1,8 @@
 import { useState } from "react";
+import jsPDF from "jspdf";
 import {
   Compass, Loader2, Target, TrendingUp, BookOpen, Users,
-  Calendar, Award, ArrowUpRight, RefreshCw, AlertTriangle, Check, Sparkles
+  Calendar, Award, ArrowUpRight, RefreshCw, AlertTriangle, Check, Sparkles, Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -81,6 +82,156 @@ export const CareerRoadmap = ({
     }
   };
 
+  const exportRoadmapPDF = () => {
+    if (!guidance) return;
+    const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+    const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
+    const ml = 15, mr = 15, cw = pw - ml - mr, bm = 18;
+    let y = 15;
+    let pn = 1;
+
+    const C = {
+      primary: "#1e3a5f", accent: "#0ea573", destructive: "#c53030",
+      warning: "#b7791f", dark: "#1a202c", muted: "#718096",
+      light: "#edf2f7", white: "#ffffff", divider: "#cbd5e0", sectionBg: "#f0f4f8",
+    };
+
+    const checkPage = (n: number) => { if (y + n > ph - bm) { footerFn(); doc.addPage(); y = 15; } };
+    const footerFn = () => {
+      doc.setDrawColor(C.divider); doc.setLineWidth(0.3); doc.line(ml, ph - 12, pw - mr, ph - 12);
+      doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
+      doc.text("ATSFy Technologies\u2122 \u2014 Career Guidance Roadmap", ml, ph - 8);
+      doc.text(`Page ${pn}`, pw - mr, ph - 8, { align: "right" });
+      pn++;
+    };
+    const wrap = (text: string, x: number, maxW: number, lh = 4) => {
+      doc.splitTextToSize(text, maxW).forEach((line: string) => { checkPage(lh); doc.text(line, x, y); y += lh; });
+    };
+    const sectionTitle = (title: string) => {
+      checkPage(12); y += 4;
+      doc.setFillColor(C.sectionBg); doc.roundedRect(ml, y - 4, cw, 9, 2, 2, "F");
+      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(C.primary);
+      doc.text(title, ml + 4, y + 2); y += 9;
+    };
+
+    // Cover
+    doc.setFillColor(C.primary); doc.rect(0, 0, pw, 48, "F");
+    doc.setFillColor(C.accent); doc.rect(0, 48, pw, 2, "F");
+    doc.setFontSize(22); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+    doc.text("Career Guidance Roadmap", pw / 2, 22, { align: "center" });
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor("#a0b4cc");
+    doc.text(`${resumeData.personalInfo?.fullName || "Candidate"} \u2014 ${new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}`, pw / 2, 34, { align: "center" });
+    y = 58;
+
+    // Match Score
+    doc.setFillColor(C.white); doc.setDrawColor(C.divider);
+    doc.roundedRect(ml, y, cw, 20, 3, 3, "FD");
+    doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(C.primary);
+    doc.text("Job Match Score", ml + 5, y + 7);
+    const matchPct = guidance.current_match_estimate;
+    const matchColor = matchPct >= 80 ? C.accent : matchPct >= 60 ? C.warning : C.destructive;
+    doc.setFontSize(18); doc.setFont("helvetica", "bold"); doc.setTextColor(matchColor);
+    doc.text(`${matchPct}%`, pw - mr - 5, y + 10, { align: "right" });
+    // Bar
+    const barY = y + 13; const barW = cw - 10;
+    doc.setFillColor(C.light); doc.roundedRect(ml + 5, barY, barW, 3.5, 1.5, 1.5, "F");
+    doc.setFillColor(matchColor); doc.roundedRect(ml + 5, barY, Math.max((matchPct / 100) * barW, 3), 3.5, 1.5, 1.5, "F");
+    doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
+    doc.text(`Current: ${matchPct}%`, ml + 5, barY + 7);
+    doc.text(`Target: ${guidance.target_match}%`, ml + 5 + barW, barY + 7, { align: "right" });
+    y += 28;
+
+    // Gap Analysis
+    if (guidance.gap_analysis) {
+      sectionTitle("GAP ANALYSIS");
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      wrap(guidance.gap_analysis, ml + 2, cw - 4, 4);
+      y += 3;
+    }
+
+    // Role Positioning
+    if (guidance.role_positioning) {
+      sectionTitle("ROLE POSITIONING STRATEGY");
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      wrap(guidance.role_positioning, ml + 2, cw - 4, 4);
+      y += 3;
+    }
+
+    // Immediate Actions
+    if (guidance.immediate_actions?.length > 0) {
+      sectionTitle("IMMEDIATE ACTIONS");
+      guidance.immediate_actions.forEach((action, i) => {
+        checkPage(6);
+        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.accent);
+        doc.text(`${i + 1}.`, ml + 2, y);
+        doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        const lines = doc.splitTextToSize(action, cw - 14);
+        lines.forEach((line: string) => { checkPage(4); doc.text(line, ml + 10, y); y += 4; });
+        y += 1;
+      });
+    }
+
+    // Skills & Certifications
+    if (guidance.skill_development_plan?.length > 0) {
+      sectionTitle("SKILLS & CERTIFICATIONS TO ACQUIRE");
+      guidance.skill_development_plan.forEach((skill) => {
+        checkPage(5);
+        doc.setFillColor(C.accent); doc.circle(ml + 3, y - 1, 0.8, "F");
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        const lines = doc.splitTextToSize(skill, cw - 10);
+        lines.forEach((line: string) => { checkPage(4); doc.text(line, ml + 6, y); y += 4; });
+        y += 1;
+      });
+    }
+
+    // Experience Reframing
+    if (guidance.experience_reframing?.length > 0) {
+      sectionTitle("EXPERIENCE REFRAMING");
+      guidance.experience_reframing.forEach((item) => {
+        checkPage(5);
+        doc.setFillColor(C.primary); doc.circle(ml + 3, y - 1, 0.8, "F");
+        doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+        const lines = doc.splitTextToSize(item, cw - 10);
+        lines.forEach((line: string) => { checkPage(4); doc.text(line, ml + 6, y); y += 4; });
+        y += 1;
+      });
+    }
+
+    // Networking Strategy
+    if (guidance.networking_strategy) {
+      sectionTitle("NETWORKING STRATEGY");
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      wrap(guidance.networking_strategy, ml + 2, cw - 4, 4);
+      y += 3;
+    }
+
+    // 30/60/90 Plan
+    if (guidance["30_60_90_plan"]) {
+      sectionTitle("30 / 60 / 90 DAY ACTION PLAN");
+      const plans = [
+        { label: "First 30 Days \u2014 Quick Wins", text: guidance["30_60_90_plan"]["30_days"], color: C.accent },
+        { label: "60 Days \u2014 Build Momentum", text: guidance["30_60_90_plan"]["60_days"], color: C.primary },
+        { label: "90 Days \u2014 Strategic Positioning", text: guidance["30_60_90_plan"]["90_days"], color: C.destructive },
+      ];
+      plans.forEach((p) => {
+        checkPage(16);
+        doc.setFillColor(p.color); doc.rect(ml, y, 3, 12, "F");
+        doc.setFontSize(8.5); doc.setFont("helvetica", "bold"); doc.setTextColor(p.color);
+        doc.text(p.label, ml + 6, y + 4);
+        doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark); doc.setFontSize(8);
+        const pLines = doc.splitTextToSize(p.text, cw - 12);
+        let py = y + 8;
+        pLines.forEach((line: string) => { checkPage(4); doc.text(line, ml + 6, py); py += 4; });
+        y = py + 3;
+      });
+    }
+
+    footerFn();
+    doc.save(`career-roadmap-${(resumeData.personalInfo?.fullName || "candidate").replace(/\s+/g, "-").toLowerCase()}.pdf`);
+    toast.success("Career Roadmap PDF exported!");
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -136,6 +287,13 @@ export const CareerRoadmap = ({
 
       {guidance && (
         <div className="space-y-4">
+          {/* Export Button */}
+          <div className="flex justify-end">
+            <Button onClick={exportRoadmapPDF} variant="outline" size="sm">
+              <Download className="w-4 h-4 mr-2" />
+              Export Roadmap PDF
+            </Button>
+          </div>
           {/* Match Progress */}
           <div className="p-5 bg-card rounded-xl border border-border shadow-sm space-y-3">
             <div className="flex items-center justify-between">
