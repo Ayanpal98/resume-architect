@@ -416,8 +416,9 @@ export const CareerRoadmap = ({
                   <p className="text-sm text-foreground leading-relaxed">{guidance["30_60_90_plan"]["90_days"]}</p>
                 </div>
               </div>
-            </div>
-          )}
+        <ComplianceFooter />
+        </div>
+      )}
         </div>
       )}
 
