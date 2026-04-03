@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo } from "react";
 import jsPDF from "jspdf";
+import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import { Link } from "react-router-dom";
 import { 
   FileText, Upload, Users, Target, CheckCircle2, XCircle, 
@@ -823,6 +824,9 @@ const Recruiter = () => {
       doc.text(`CURRENT STATUS: ${c.status.toUpperCase()}`, ml + 7, y + 5.5);
       y += 12;
     });
+
+    // Compliance footer block (mandatory, on final page)
+    addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
 
     footer();
     const dateStr = new Date().toISOString().split("T")[0];

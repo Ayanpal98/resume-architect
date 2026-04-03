@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import { ResumeData } from "./pdfGenerator";
+import { addComplianceFooterBlock, SCORING_ENGINE_FOOTNOTE, needsPatternDisclaimer, PATTERN_OBSERVATION_DISCLAIMER, ZERO_CHANGE_NOTE } from "./complianceFooter";
 
 export interface OptimizationReportData {
   resumeData: ResumeData;
@@ -648,6 +649,9 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     y += 7;
   });
 
+  // Compliance footer block (mandatory)
+  addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
   // Final footer
   addFooter();
 
@@ -1101,6 +1105,19 @@ export const generateJobMatchReport = (data: JobMatchReportData): jsPDF => {
     });
   }
 
+  // 0% change note for before/after
+  if (hasAfter && after && before.overallMatch === after.overallMatch) {
+    checkPage(8);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(COLORS.muted);
+    addWrapped(ZERO_CHANGE_NOTE, ml, cw, 3.5);
+    y += 3;
+  }
+
+  // Compliance footer block (mandatory)
+  addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
   addFooter();
   return doc;
 };
@@ -1378,8 +1395,7 @@ export const generateATSReadinessReport = (data: ATSReadinessReportData): jsPDF 
     doc.setFont("helvetica", "bold");
     doc.setTextColor(COLORS.white);
     doc.text("Category", ml + 3, y + 5);
-    doc.text("Score", ml + 80, y + 5);
-    doc.text("Weight", ml + 105, y + 5);
+    doc.text("Score", ml + 85, y + 5);
     doc.text("Status", ml + 130, y + 5);
     y += 7;
 
@@ -1392,14 +1408,21 @@ export const generateATSReadinessReport = (data: ATSReadinessReportData): jsPDF 
       doc.setFont("helvetica", "normal");
       doc.setTextColor(COLORS.dark);
       doc.text(cat.name, ml + 3, y + 5);
-      doc.text(`${cat.score}/${cat.maxScore} (${pct}%)`, ml + 80, y + 5);
-      doc.text(`${cat.weight}x`, ml + 105, y + 5);
+      doc.text(`${cat.score}/${cat.maxScore} (${pct}%)`, ml + 85, y + 5);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(cat.passed ? COLORS.accent : COLORS.warning);
       doc.text(cat.passed ? "✓ Passed" : "○ Needs Work", ml + 130, y + 5);
       y += 7;
     });
-    y += 5;
+    y += 2;
+
+    // Proprietary scoring footnote (replaces weight column)
+    doc.setFontSize(7);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(COLORS.muted);
+    const fnLines = doc.splitTextToSize(SCORING_ENGINE_FOOTNOTE, cw - 4);
+    fnLines.forEach((line: string) => { checkPage(3.5); doc.text(line, ml + 2, y); y += 3.5; });
+    y += 3;
 
     // Issues per category
     sorted.forEach(cat => {
@@ -1496,6 +1519,33 @@ export const generateATSReadinessReport = (data: ATSReadinessReportData): jsPDF 
       y += 2;
     });
   }
+
+  // 0% change note
+  if (hasComparison && original && displayScore === displayOriginal) {
+    checkPage(8);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(COLORS.muted);
+    addWrapped(ZERO_CHANGE_NOTE, ml, cw, 3.5);
+    y += 3;
+  }
+
+  // Add pattern-based disclaimers to recommendations
+  if (current.recommendations.length > 0) {
+    current.recommendations.forEach(rec => {
+      if (needsPatternDisclaimer(rec)) {
+        checkPage(5);
+        doc.setFontSize(7);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(COLORS.warning);
+        addWrapped(PATTERN_OBSERVATION_DISCLAIMER, ml + 6, cw - 6, 3.5);
+        y += 1;
+      }
+    });
+  }
+
+  // Compliance footer block (mandatory)
+  addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
 
   addFooter();
   return doc;

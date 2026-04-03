@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ComplianceFooter } from "@/components/ComplianceFooter";
 import { FileText, Download, Loader2, Sparkles, CheckCircle2, AlertCircle, BarChart3, Target, Compass, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -393,6 +394,8 @@ export const OptimizationReport = ({
           </div>
         </div>
       )}
+      {/* Compliance Footer (mandatory, cannot be skipped) */}
+      <ComplianceFooter />
     </div>
   );
 };

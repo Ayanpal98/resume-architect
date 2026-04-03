@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { ComplianceFooter } from "@/components/ComplianceFooter";
 import jsPDF from "jspdf";
+import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import {
   Compass, Loader2, Target, TrendingUp, BookOpen, Users,
   Calendar, Award, ArrowUpRight, RefreshCw, AlertTriangle, Check, Sparkles, Download
@@ -227,6 +229,9 @@ export const CareerRoadmap = ({
       });
     }
 
+    // Compliance footer block (mandatory)
+    addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
     footerFn();
     doc.save(`career-roadmap-${(resumeData.personalInfo?.fullName || "candidate").replace(/\s+/g, "-").toLowerCase()}.pdf`);
     toast.success("Career Roadmap PDF exported!");
@@ -411,8 +416,9 @@ export const CareerRoadmap = ({
                   <p className="text-sm text-foreground leading-relaxed">{guidance["30_60_90_plan"]["90_days"]}</p>
                 </div>
               </div>
-            </div>
-          )}
+        <ComplianceFooter />
+        </div>
+      )}
         </div>
       )}
 

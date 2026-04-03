@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { ComplianceFooter } from "@/components/ComplianceFooter";
+import { SCORING_ENGINE_FOOTNOTE } from "@/lib/complianceFooter";
 import { downloadATSReadinessReport, ATSReadinessReportData } from "@/lib/reportGenerator";
 import { 
   CheckCircle2, 
@@ -790,7 +792,6 @@ export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }:
                 <div className="bg-muted/50 rounded-lg p-3 space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted-foreground mb-2 pb-2 border-b border-border">
                     <span>Score: {category.score}/{category.maxScore} points</span>
-                    <span>Weight: {category.weight}x</span>
                   </div>
                   {category.issues.length > 0 ? (
                     category.issues.map((issue, idx) => (
@@ -1005,6 +1006,16 @@ export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }:
         <p className="text-xs text-muted-foreground text-center">
           Your readiness score is based on how well recruiters and ATS systems can understand your resume. Keep improving! 🚀
         </p>
+      </div>
+
+      {/* Scoring engine footnote */}
+      <div className="px-4 pb-2">
+        <p className="text-[10px] text-muted-foreground italic text-center">{SCORING_ENGINE_FOOTNOTE}</p>
+      </div>
+
+      {/* Compliance Footer (mandatory) */}
+      <div className="px-4 pb-4">
+        <ComplianceFooter />
       </div>
     </div>
   );
