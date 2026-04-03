@@ -228,7 +228,7 @@ export const CareerRoadmap = ({
     }
 
     footerFn();
-    doc.save(`career-roadmap-${(resumeData.name || "candidate").replace(/\s+/g, "-").toLowerCase()}.pdf`);
+    doc.save(`career-roadmap-${(resumeData.personalInfo?.fullName || "candidate").replace(/\s+/g, "-").toLowerCase()}.pdf`);
     toast.success("Career Roadmap PDF exported!");
   };
 
