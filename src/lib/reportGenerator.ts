@@ -649,6 +649,9 @@ export const generateOptimizationReport = (data: OptimizationReportData): jsPDF 
     y += 7;
   });
 
+  // Compliance footer block (mandatory)
+  addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
   // Final footer
   addFooter();
 
