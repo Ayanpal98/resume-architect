@@ -1007,6 +1007,16 @@ export const ATSScorePanel = ({ result, originalResult, resumeData, onDismiss }:
           Your readiness score is based on how well recruiters and ATS systems can understand your resume. Keep improving! 🚀
         </p>
       </div>
+
+      {/* Scoring engine footnote */}
+      <div className="px-4 pb-2">
+        <p className="text-[10px] text-muted-foreground italic text-center">{SCORING_ENGINE_FOOTNOTE}</p>
+      </div>
+
+      {/* Compliance Footer (mandatory) */}
+      <div className="px-4 pb-4">
+        <ComplianceFooter />
+      </div>
     </div>
   );
 };
