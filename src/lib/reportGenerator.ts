@@ -1105,6 +1105,19 @@ export const generateJobMatchReport = (data: JobMatchReportData): jsPDF => {
     });
   }
 
+  // 0% change note for before/after
+  if (hasAfter && after && before.overallMatch === after.overallMatch) {
+    checkPage(8);
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "italic");
+    doc.setTextColor(COLORS.muted);
+    addWrapped(ZERO_CHANGE_NOTE, ml, cw, 3.5);
+    y += 3;
+  }
+
+  // Compliance footer block (mandatory)
+  addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
   addFooter();
   return doc;
 };
