@@ -228,6 +228,9 @@ export const CareerRoadmap = ({
       });
     }
 
+    // Compliance footer block (mandatory)
+    addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
     footerFn();
     doc.save(`career-roadmap-${(resumeData.personalInfo?.fullName || "candidate").replace(/\s+/g, "-").toLowerCase()}.pdf`);
     toast.success("Career Roadmap PDF exported!");

@@ -825,6 +825,9 @@ const Recruiter = () => {
       y += 12;
     });
 
+    // Compliance footer block (mandatory, on final page)
+    addComplianceFooterBlock(doc, ml, mr, checkPage, () => y, (v) => { y = v; });
+
     footer();
     const dateStr = new Date().toISOString().split("T")[0];
     doc.save(`candidate-screening-report-${dateStr}.pdf`);
