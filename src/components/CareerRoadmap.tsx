@@ -1,5 +1,6 @@
 import { useState } from "react";
 import jsPDF from "jspdf";
+import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import {
   Compass, Loader2, Target, TrendingUp, BookOpen, Users,
   Calendar, Award, ArrowUpRight, RefreshCw, AlertTriangle, Check, Sparkles, Download
