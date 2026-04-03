@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { ComplianceFooter } from "@/components/ComplianceFooter";
+import { SCORING_ENGINE_FOOTNOTE } from "@/lib/complianceFooter";
 import { downloadATSReadinessReport, ATSReadinessReportData } from "@/lib/reportGenerator";
 import { 
   CheckCircle2, 
