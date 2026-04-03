@@ -582,26 +582,37 @@ const Recruiter = () => {
 
       // Fit Assessment
       if (c.fitScore) {
-        checkPage(16);
-        doc.setFillColor(C.sectionBg); doc.roundedRect(ml, y, cw, 14, 2, 2, "F");
-        doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(C.primary);
-        doc.text("FIT ASSESSMENT", ml + 4, y + 5.5);
+        sectionHeader("FIT ASSESSMENT");
         const fitItems = [
-          { label: "Technical", score: c.fitScore.technical },
-          { label: "Cultural", score: c.fitScore.cultural },
-          { label: "Growth", score: c.fitScore.growth },
+          { label: "Technical Fit", score: c.fitScore.technical, desc: "Measures alignment of technical skills, tools, and domain expertise with role requirements." },
+          { label: "Cultural Fit", score: c.fitScore.cultural, desc: "Evaluates alignment with team dynamics, communication style, and organizational values." },
+          { label: "Growth Potential", score: c.fitScore.growth, desc: "Assesses learning agility, career trajectory, and potential to grow within the role." },
         ];
-        const fitStartX = ml + 45;
-        fitItems.forEach((f, fi) => {
-          const fx = fitStartX + fi * 35;
-          doc.setFontSize(12); doc.setFont("helvetica", "bold");
-          const fitColor = f.score >= 8 ? C.accent : f.score >= 6 ? C.warning : C.destructive;
-          doc.setTextColor(fitColor);
-          doc.text(`${f.score}/10`, fx, y + 6);
-          doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
-          doc.text(f.label, fx, y + 11);
+        fitItems.forEach((f) => {
+          checkPage(18);
+          const pct = f.score * 10;
+          const fitColor = pct >= 80 ? C.accent : pct >= 60 ? C.warning : C.destructive;
+          
+          // Score header line
+          doc.setFontSize(8.5); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+          doc.text(f.label, ml + 2, y);
+          doc.setTextColor(fitColor); doc.setFont("helvetica", "bold");
+          doc.text(`${pct}%`, ml + cw - 12, y);
+          y += 3;
+          
+          // Progress bar
+          const barW = cw - 4;
+          doc.setFillColor(C.light); doc.roundedRect(ml + 2, y, barW, 3.5, 1.5, 1.5, "F");
+          doc.setFillColor(fitColor); doc.roundedRect(ml + 2, y, Math.max((pct / 100) * barW, 3), 3.5, 1.5, 1.5, "F");
+          y += 5.5;
+          
+          // Explanation
+          doc.setFontSize(7); doc.setFont("helvetica", "italic"); doc.setTextColor(C.muted);
+          const descLines = doc.splitTextToSize(f.desc, cw - 8);
+          descLines.forEach((line: string) => { checkPage(3.5); doc.text(line, ml + 4, y); y += 3.5; });
+          y += 2;
         });
-        y += 18;
+        y += 2;
       }
 
       // Recommendation

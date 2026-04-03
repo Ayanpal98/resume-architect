@@ -1,7 +1,8 @@
 import { useState } from "react";
+import jsPDF from "jspdf";
 import {
   Compass, Loader2, Target, TrendingUp, BookOpen, Users,
-  Calendar, Award, ArrowUpRight, RefreshCw, AlertTriangle, Check, Sparkles
+  Calendar, Award, ArrowUpRight, RefreshCw, AlertTriangle, Check, Sparkles, Download
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
