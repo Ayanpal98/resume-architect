@@ -2,6 +2,7 @@ import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, User
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
+import { PricingSection } from "@/components/PricingSection";
 import { useAuth } from "@/contexts/AuthContext";
 const Index = () => {
   const { user, signOut } = useAuth();
