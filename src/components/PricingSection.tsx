@@ -239,6 +239,61 @@ export const PricingSection = () => {
             </div>
           </TabsContent>
         </Tabs>
+
+        {/* Trust Builder */}
+        <div className="mt-12 sm:mt-16 bg-card rounded-2xl border border-border p-6 sm:p-8">
+          <div className="grid sm:grid-cols-2 gap-8 items-center">
+            <div>
+              <h3 className="text-lg sm:text-xl font-display font-bold text-foreground mb-4 flex items-center gap-2">
+                🔥 Why Teams & Candidates Trust ATSFy
+              </h3>
+              <div className="space-y-3">
+                {[
+                  "AI-powered candidate evaluation",
+                  "Used for both job seekers & recruiters",
+                  "Data-driven insights, not guesswork",
+                  "Built for real hiring outcomes",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2.5 text-sm text-foreground">
+                    <CheckCircle2 className="w-4.5 h-4.5 text-accent shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Add-on Upsell */}
+            <div className="relative bg-gradient-to-br from-primary/5 to-accent/5 rounded-xl border border-primary/20 p-5 sm:p-6">
+              <Badge className="absolute -top-2.5 left-4 bg-accent text-accent-foreground text-xs px-2.5 py-0.5 shadow-sm">
+                Add-on
+              </Badge>
+              <div className="flex items-center gap-2 mb-3 mt-1">
+                <Zap className="w-5 h-5 text-primary" />
+                <h4 className="font-display font-bold text-foreground">
+                  Resume Boost
+                </h4>
+                <span className="ml-auto text-lg font-display font-extrabold text-foreground">
+                  ₹499
+                </span>
+              </div>
+              <div className="space-y-2 mb-4">
+                {[
+                  "Instant resume rewriting suggestions",
+                  "Improved ATS compatibility",
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-accent shrink-0" />
+                    <span>{item}</span>
+                  </div>
+                ))}
+              </div>
+              <Button variant="outline" size="sm" className="w-full">
+                Add to any plan
+                <ArrowRight className="w-3.5 h-3.5" />
+              </Button>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
