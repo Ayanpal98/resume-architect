@@ -99,6 +99,21 @@ interface CandidateAnalysis {
   status: "pending" | "shortlisted" | "rejected";
 }
 
+const normalizePercentage = (value: unknown, fallback = 50) => {
+  const numeric = typeof value === "number" ? value : Number(value);
+
+  if (!Number.isFinite(numeric)) return fallback;
+  if (numeric >= 0 && numeric <= 10) return Math.round(numeric * 10);
+
+  return Math.max(0, Math.min(100, Math.round(numeric)));
+};
+
+const normalizeFitScore = (fitScore?: Partial<FitScore> | null): FitScore => ({
+  technical: normalizePercentage(fitScore?.technical, 50),
+  cultural: normalizePercentage(fitScore?.cultural, 50),
+  growth: normalizePercentage(fitScore?.growth, 50),
+});
+
 const Recruiter = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -236,6 +251,7 @@ const Recruiter = () => {
       status: "pending",
       extractedText: text,
       ...data.analysis,
+      fitScore: normalizeFitScore(data.analysis?.fitScore),
     };
   };
 
@@ -591,7 +607,7 @@ const Recruiter = () => {
         ];
         fitItems.forEach((f) => {
           checkPage(18);
-          const pct = f.score * 10;
+          const pct = normalizePercentage(f.score);
           const fitColor = pct >= 80 ? C.accent : pct >= 60 ? C.warning : C.destructive;
           
           // Score header line
@@ -1384,29 +1400,35 @@ const CandidateCard = ({
                 {/* Fit Score */}
                 <div>
                   <h5 className="text-sm font-medium text-foreground mb-3">Fit Analysis</h5>
-                  <div className="grid sm:grid-cols-3 gap-4">
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">Technical Fit</span>
-                        <span className={getScoreColor(candidate.fitScore.technical)}>{candidate.fitScore.technical}%</span>
+                  {(() => {
+                    const fitScore = normalizeFitScore(candidate.fitScore);
+
+                    return (
+                      <div className="grid sm:grid-cols-3 gap-4">
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-muted-foreground">Technical Fit</span>
+                            <span className={getScoreColor(fitScore.technical)}>{fitScore.technical}%</span>
+                          </div>
+                          <Progress value={fitScore.technical} className="h-2" />
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-muted-foreground">Cultural Fit</span>
+                            <span className={getScoreColor(fitScore.cultural)}>{fitScore.cultural}%</span>
+                          </div>
+                          <Progress value={fitScore.cultural} className="h-2" />
+                        </div>
+                        <div>
+                          <div className="flex justify-between text-sm mb-1">
+                            <span className="text-muted-foreground">Growth Potential</span>
+                            <span className={getScoreColor(fitScore.growth)}>{fitScore.growth}%</span>
+                          </div>
+                          <Progress value={fitScore.growth} className="h-2" />
+                        </div>
                       </div>
-                      <Progress value={candidate.fitScore.technical} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">Cultural Fit</span>
-                        <span className={getScoreColor(candidate.fitScore.cultural)}>{candidate.fitScore.cultural}%</span>
-                      </div>
-                      <Progress value={candidate.fitScore.cultural} className="h-2" />
-                    </div>
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">Growth Potential</span>
-                        <span className={getScoreColor(candidate.fitScore.growth)}>{candidate.fitScore.growth}%</span>
-                      </div>
-                      <Progress value={candidate.fitScore.growth} className="h-2" />
-                    </div>
-                  </div>
+                    );
+                  })()}
                 </div>
 
                 {/* Recommendation */}
