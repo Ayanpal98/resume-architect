@@ -114,6 +114,20 @@ const normalizeFitScore = (fitScore?: Partial<FitScore> | null): FitScore => ({
   growth: normalizePercentage(fitScore?.growth, 50),
 });
 
+const computeHiringConfidence = (c: { overallScore: number; fitScore: FitScore; technicalSkillsScore: number; experienceScore: number }) => {
+  const fit = normalizeFitScore(c.fitScore);
+  const raw = (c.overallScore * 0.35) + (fit.technical * 0.25) + (c.experienceScore * 0.2) + (fit.cultural * 0.1) + (fit.growth * 0.1);
+  return Math.max(0, Math.min(100, Math.round(raw)));
+};
+
+const getConfidenceLabel = (score: number) => {
+  if (score >= 85) return { label: "Very High", desc: "Strong hire signal — candidate exceeds most role requirements with minimal risk.", color: "text-green-600" };
+  if (score >= 70) return { label: "High", desc: "Candidate is well-suited for the role. Proceed with confidence to final evaluation rounds.", color: "text-blue-600" };
+  if (score >= 55) return { label: "Moderate", desc: "Candidate meets core requirements but has gaps. Targeted interview probing recommended.", color: "text-amber-600" };
+  if (score >= 40) return { label: "Low", desc: "Significant gaps identified. Consider only if talent pool is limited or role requirements are flexible.", color: "text-orange-600" };
+  return { label: "Very Low", desc: "Candidate does not meet minimum hiring criteria for this role.", color: "text-red-600" };
+};
+
 const Recruiter = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
