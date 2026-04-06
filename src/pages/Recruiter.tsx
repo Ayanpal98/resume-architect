@@ -128,6 +128,48 @@ const getConfidenceLabel = (score: number) => {
   return { label: "Very Low", desc: "Candidate does not meet minimum hiring criteria for this role.", color: "text-red-600" };
 };
 
+const getFinalHiringDecision = (c: CandidateAnalysis) => {
+  const hcScore = computeHiringConfidence(c);
+  const rec = c.recommendation;
+
+  if (hcScore >= 75 && (rec === "highly_recommended" || rec === "recommended")) {
+    return {
+      decision: "HIRE" as const,
+      icon: "✅",
+      color: "text-green-600",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      pdfColor: "#0ea573",
+      pdfBg: "#f0fdf4",
+      justification: `Candidate demonstrates strong alignment with role requirements (Confidence: ${hcScore}%). Technical competencies, experience depth, and cultural indicators collectively support a positive hiring decision. Recommended to proceed with offer stage.`,
+    };
+  }
+
+  if (hcScore >= 45 && (rec !== "not_recommended")) {
+    return {
+      decision: "HOLD" as const,
+      icon: "⏸️",
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      pdfColor: "#b7791f",
+      pdfBg: "#fffaf0",
+      justification: `Candidate shows potential but has identifiable gaps (Confidence: ${hcScore}%). Recommend additional evaluation rounds to assess fit in areas of concern before making a final commitment. Consider targeted skill assessments or panel interviews.`,
+    };
+  }
+
+  return {
+    decision: "REJECT" as const,
+    icon: "❌",
+    color: "text-red-600",
+    bg: "bg-red-50",
+    border: "border-red-200",
+    pdfColor: "#c53030",
+    pdfBg: "#fff5f5",
+    justification: `Candidate does not meet the minimum threshold for this role (Confidence: ${hcScore}%). Critical gaps in required competencies and/or experience make this candidate unsuitable for the position at this time. Recommend archiving for potential future roles if applicable.`,
+  };
+};
+
 const Recruiter = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -873,6 +915,33 @@ const Recruiter = () => {
         y += 2;
       }
 
+      // ===== FINAL HIRING DECISION =====
+      const decision = getFinalHiringDecision(c);
+      checkPage(34);
+      y += 4;
+
+      // Decision block
+      doc.setFillColor(decision.pdfBg); doc.setDrawColor(decision.pdfColor); doc.setLineWidth(1.2);
+      doc.roundedRect(ml, y, cw, 30, 3, 3, "FD");
+      doc.setFillColor(decision.pdfColor); doc.rect(ml, y, 4, 30, "F");
+
+      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+      doc.text("FINAL HIRING DECISION", ml + 8, y + 7);
+
+      // Decision badge
+      const decBadgeX = pw - mr - 30;
+      doc.setFillColor(decision.pdfColor); doc.roundedRect(decBadgeX, y + 2, 26, 8, 2, 2, "F");
+      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+      doc.text(decision.decision, decBadgeX + 13, y + 7.5, { align: "center" });
+
+      // Justification
+      doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      const justLines = doc.splitTextToSize(decision.justification, cw - 16);
+      justLines.forEach((line: string, i: number) => {
+        doc.text(line, ml + 8, y + 14 + (i * 3.5));
+      });
+      y += 34;
+
       // Status bar at bottom
       checkPage(12);
       const statusColor = c.status === "shortlisted" ? C.accent : c.status === "rejected" ? C.destructive : C.muted;
@@ -1494,6 +1563,31 @@ const CandidateCard = ({
                       </div>
                       <Progress value={hcScore} className="h-3 mb-2" />
                       <p className="text-xs text-muted-foreground">{hcInfo.desc}</p>
+                    </div>
+                  );
+                })()}
+
+                <Separator />
+
+                {/* Final Hiring Decision */}
+                {(() => {
+                  const decision = getFinalHiringDecision(candidate);
+                  return (
+                    <div className={`p-5 rounded-xl border-2 ${decision.border} ${decision.bg}`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{decision.icon}</span>
+                          <h5 className="font-bold text-foreground text-base">Final Hiring Decision</h5>
+                        </div>
+                        <Badge className={`text-sm px-3 py-1 font-bold ${
+                          decision.decision === "HIRE" ? "bg-green-600 text-white" :
+                          decision.decision === "HOLD" ? "bg-amber-500 text-white" :
+                          "bg-red-600 text-white"
+                        }`}>
+                          {decision.decision}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{decision.justification}</p>
                     </div>
                   );
                 })()}
