@@ -114,6 +114,20 @@ const normalizeFitScore = (fitScore?: Partial<FitScore> | null): FitScore => ({
   growth: normalizePercentage(fitScore?.growth, 50),
 });
 
+const computeHiringConfidence = (c: { overallScore: number; fitScore: FitScore; technicalSkillsScore: number; experienceScore: number }) => {
+  const fit = normalizeFitScore(c.fitScore);
+  const raw = (c.overallScore * 0.35) + (fit.technical * 0.25) + (c.experienceScore * 0.2) + (fit.cultural * 0.1) + (fit.growth * 0.1);
+  return Math.max(0, Math.min(100, Math.round(raw)));
+};
+
+const getConfidenceLabel = (score: number) => {
+  if (score >= 85) return { label: "Very High", desc: "Strong hire signal — candidate exceeds most role requirements with minimal risk.", color: "text-green-600" };
+  if (score >= 70) return { label: "High", desc: "Candidate is well-suited for the role. Proceed with confidence to final evaluation rounds.", color: "text-blue-600" };
+  if (score >= 55) return { label: "Moderate", desc: "Candidate meets core requirements but has gaps. Targeted interview probing recommended.", color: "text-amber-600" };
+  if (score >= 40) return { label: "Low", desc: "Significant gaps identified. Consider only if talent pool is limited or role requirements are flexible.", color: "text-orange-600" };
+  return { label: "Very Low", desc: "Candidate does not meet minimum hiring criteria for this role.", color: "text-red-600" };
+};
+
 const Recruiter = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
@@ -630,6 +644,35 @@ const Recruiter = () => {
           y += 2;
         });
         y += 2;
+
+        // Hiring Confidence Score
+        checkPage(28);
+        const hcScore = computeHiringConfidence(c);
+        const hcInfo = getConfidenceLabel(hcScore);
+        const hcColor = hcScore >= 85 ? C.accent : hcScore >= 70 ? C.primary : hcScore >= 55 ? C.warning : C.destructive;
+        
+        doc.setFillColor("#F0F4FF"); doc.setDrawColor(hcColor); doc.setLineWidth(1);
+        doc.roundedRect(ml, y, cw, 24, 3, 3, "FD");
+        doc.setFillColor(hcColor); doc.rect(ml, y, 4, 24, "F");
+        
+        doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+        doc.text("HIRING CONFIDENCE SCORE", ml + 8, y + 6);
+        
+        // Score circle
+        const circleX = pw - mr - 18;
+        doc.setFillColor(hcColor); doc.circle(circleX, y + 12, 8, "F");
+        doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+        doc.text(`${hcScore}%`, circleX, y + 13, { align: "center" });
+        
+        doc.setFontSize(8.5); doc.setFont("helvetica", "bold"); doc.setTextColor(hcColor);
+        doc.text(hcInfo.label, ml + 8, y + 12);
+        
+        doc.setFontSize(7); doc.setFont("helvetica", "normal"); doc.setTextColor(C.muted);
+        const hcDescLines = doc.splitTextToSize(hcInfo.desc, cw - 40);
+        hcDescLines.forEach((line: string, i: number) => {
+          doc.text(line, ml + 8, y + 17 + (i * 3.5));
+        });
+        y += 28;
       }
 
       // Recommendation
@@ -1430,6 +1473,32 @@ const CandidateCard = ({
                     );
                   })()}
                 </div>
+
+                <Separator />
+
+                {/* Hiring Confidence Score */}
+                {(() => {
+                  const hcScore = computeHiringConfidence(candidate);
+                  const hcInfo = getConfidenceLabel(hcScore);
+                  return (
+                    <div className="p-4 rounded-lg border-2 bg-gradient-to-r from-primary/5 to-accent/5">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <Sparkles className="w-5 h-5 text-primary" />
+                          <h5 className="font-semibold text-foreground">Hiring Confidence Score</h5>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-2xl font-extrabold ${hcInfo.color}`}>{hcScore}%</span>
+                          <Badge variant={hcScore >= 70 ? "default" : "secondary"} className="text-xs">{hcInfo.label}</Badge>
+                        </div>
+                      </div>
+                      <Progress value={hcScore} className="h-3 mb-2" />
+                      <p className="text-xs text-muted-foreground">{hcInfo.desc}</p>
+                    </div>
+                  );
+                })()}
+
+                <Separator />
 
                 {/* Recommendation */}
                 <div className="p-4 rounded-lg bg-card border">
