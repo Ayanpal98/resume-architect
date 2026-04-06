@@ -128,6 +128,48 @@ const getConfidenceLabel = (score: number) => {
   return { label: "Very Low", desc: "Candidate does not meet minimum hiring criteria for this role.", color: "text-red-600" };
 };
 
+const getFinalHiringDecision = (c: CandidateAnalysis) => {
+  const hcScore = computeHiringConfidence(c);
+  const rec = c.recommendation;
+
+  if (hcScore >= 75 && (rec === "highly_recommended" || rec === "recommended")) {
+    return {
+      decision: "HIRE" as const,
+      icon: "✅",
+      color: "text-green-600",
+      bg: "bg-green-50",
+      border: "border-green-200",
+      pdfColor: "#0ea573",
+      pdfBg: "#f0fdf4",
+      justification: `Candidate demonstrates strong alignment with role requirements (Confidence: ${hcScore}%). Technical competencies, experience depth, and cultural indicators collectively support a positive hiring decision. Recommended to proceed with offer stage.`,
+    };
+  }
+
+  if (hcScore >= 45 && (rec !== "not_recommended")) {
+    return {
+      decision: "HOLD" as const,
+      icon: "⏸️",
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      pdfColor: "#b7791f",
+      pdfBg: "#fffaf0",
+      justification: `Candidate shows potential but has identifiable gaps (Confidence: ${hcScore}%). Recommend additional evaluation rounds to assess fit in areas of concern before making a final commitment. Consider targeted skill assessments or panel interviews.`,
+    };
+  }
+
+  return {
+    decision: "REJECT" as const,
+    icon: "❌",
+    color: "text-red-600",
+    bg: "bg-red-50",
+    border: "border-red-200",
+    pdfColor: "#c53030",
+    pdfBg: "#fff5f5",
+    justification: `Candidate does not meet the minimum threshold for this role (Confidence: ${hcScore}%). Critical gaps in required competencies and/or experience make this candidate unsuitable for the position at this time. Recommend archiving for potential future roles if applicable.`,
+  };
+};
+
 const Recruiter = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
