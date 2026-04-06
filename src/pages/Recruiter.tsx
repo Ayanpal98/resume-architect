@@ -915,6 +915,33 @@ const Recruiter = () => {
         y += 2;
       }
 
+      // ===== FINAL HIRING DECISION =====
+      const decision = getFinalHiringDecision(c);
+      checkPage(34);
+      y += 4;
+
+      // Decision block
+      doc.setFillColor(decision.pdfBg); doc.setDrawColor(decision.pdfColor); doc.setLineWidth(1.2);
+      doc.roundedRect(ml, y, cw, 30, 3, 3, "FD");
+      doc.setFillColor(decision.pdfColor); doc.rect(ml, y, 4, 30, "F");
+
+      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(C.dark);
+      doc.text("FINAL HIRING DECISION", ml + 8, y + 7);
+
+      // Decision badge
+      const decBadgeX = pw - mr - 30;
+      doc.setFillColor(decision.pdfColor); doc.roundedRect(decBadgeX, y + 2, 26, 8, 2, 2, "F");
+      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(C.white);
+      doc.text(decision.decision, decBadgeX + 13, y + 7.5, { align: "center" });
+
+      // Justification
+      doc.setFontSize(7.5); doc.setFont("helvetica", "normal"); doc.setTextColor(C.dark);
+      const justLines = doc.splitTextToSize(decision.justification, cw - 16);
+      justLines.forEach((line: string, i: number) => {
+        doc.text(line, ml + 8, y + 14 + (i * 3.5));
+      });
+      y += 34;
+
       // Status bar at bottom
       checkPage(12);
       const statusColor = c.status === "shortlisted" ? C.accent : c.status === "rejected" ? C.destructive : C.muted;
@@ -1536,6 +1563,31 @@ const CandidateCard = ({
                       </div>
                       <Progress value={hcScore} className="h-3 mb-2" />
                       <p className="text-xs text-muted-foreground">{hcInfo.desc}</p>
+                    </div>
+                  );
+                })()}
+
+                <Separator />
+
+                {/* Final Hiring Decision */}
+                {(() => {
+                  const decision = getFinalHiringDecision(candidate);
+                  return (
+                    <div className={`p-5 rounded-xl border-2 ${decision.border} ${decision.bg}`}>
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xl">{decision.icon}</span>
+                          <h5 className="font-bold text-foreground text-base">Final Hiring Decision</h5>
+                        </div>
+                        <Badge className={`text-sm px-3 py-1 font-bold ${
+                          decision.decision === "HIRE" ? "bg-green-600 text-white" :
+                          decision.decision === "HOLD" ? "bg-amber-500 text-white" :
+                          "bg-red-600 text-white"
+                        }`}>
+                          {decision.decision}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{decision.justification}</p>
                     </div>
                   );
                 })()}
