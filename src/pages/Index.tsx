@@ -219,8 +219,13 @@ const Index = () => {
               </div>
               <span className="text-lg font-display font-bold text-foreground">ATSFy</span>
             </div>
-            <div className="text-xs sm:text-sm text-muted-foreground">
-              © 2026 ATSFy. All rights reserved.
+            <div className="text-center sm:text-right space-y-1">
+              <p className="text-xs sm:text-sm font-medium text-foreground">
+                Built by <span className="text-primary font-bold">ATSFy Technologies™</span>
+              </p>
+              <p className="text-xs text-muted-foreground">
+                © 2026 ATSFy Technologies. All rights reserved.
+              </p>
             </div>
           </div>
         </div>
