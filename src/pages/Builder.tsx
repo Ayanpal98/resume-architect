@@ -1271,7 +1271,8 @@ interface ResumePreviewProps {
 
 const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
   const { personalInfo, summary, experience, education, skills } = data;
-  const hasContent = personalInfo.fullName || summary || experience.length > 0 || education.length > 0 || skills.length > 0;
+  const projects = (data.projects || []).filter((p) => p.name?.trim() || p.description?.trim() || p.tools?.trim());
+  const hasContent = personalInfo.fullName || summary || experience.length > 0 || education.length > 0 || skills.length > 0 || projects.length > 0;
 
   const templateColors = {
     classic: { primary: "text-blue-900", accent: "text-blue-600", bg: "bg-blue-900" },
