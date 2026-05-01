@@ -347,6 +347,7 @@ const Builder = () => {
     { id: "experience", label: "Experience", icon: Briefcase },
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "skills", label: "Skills", icon: Wrench },
+    { id: "projects", label: "Projects", icon: FolderGit2 },
     { id: "optimize", label: "AI Optimize", icon: Sparkles },
     { id: "report", label: "Report", icon: BarChart3 },
     { id: "jobmatch", label: "Job Match", icon: Target },
