@@ -78,6 +78,13 @@ interface Education {
   gpa: string;
 }
 
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  tools: string;
+}
+
 const initialResumeData: ResumeData = {
   personalInfo: {
     fullName: "",
@@ -92,6 +99,7 @@ const initialResumeData: ResumeData = {
   education: [],
   skills: [],
   skillCategoryMap: {},
+  projects: [],
 };
 
 const Builder = () => {
