@@ -640,6 +640,14 @@ const Builder = () => {
                       jobDescription={jobDescription}
                     />
                   )}
+                  {activeSection === "projects" && (
+                    <ProjectsForm
+                      projects={resumeData.projects || []}
+                      onAdd={addProject}
+                      onUpdate={updateProject}
+                      onRemove={removeProject}
+                    />
+                  )}
                   {activeSection === "optimize" && (
                     <ResumeImprovementPanel
                       resumeData={resumeData}
