@@ -55,7 +55,7 @@ const Index = () => {
               <h1 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6 lg:text-2xl text-primary">Build Resumes Machines can read and Humans wants to hire .<span className="text-gradient"></span>
               </h1>
               <p className="text-lg text-muted-foreground mb-8 max-w-lg">
-                Create ATS-friendly resumes that get past automated screening systems and land you more interviews. Start from scratch or upload your existing resume.
+                Create ATS-friendly resumes that get past automated screening systems and land you more interviews. Upload yours or start from scratch — know&nbsp;exactly&nbsp;why you pass or fail
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link to="/welcome">
