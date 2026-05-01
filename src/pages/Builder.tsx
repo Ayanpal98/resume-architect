@@ -244,6 +244,7 @@ const Builder = () => {
     }));
   };
 
+  const addSkill = () => {
     if (newSkill.trim() && !resumeData.skills.includes(newSkill.trim())) {
       setResumeData((prev) => ({
         ...prev,
