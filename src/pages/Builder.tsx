@@ -1351,6 +1351,32 @@ const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
         </div>
       )}
 
+      {/* Projects (premium) — only when present */}
+      {projects.length > 0 && (
+        <div>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Projects</h2>
+          <div className="space-y-3">
+            {projects.map((proj) => (
+              <div key={proj.id} className="border-l-2 border-border pl-3">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="font-semibold text-foreground">{proj.name || "Project"}</div>
+                  {proj.tools && (
+                    <div className={`text-[10px] italic ${colors.accent} text-right max-w-[55%]`}>{proj.tools}</div>
+                  )}
+                </div>
+                {proj.description && (
+                  <ul className="text-xs text-muted-foreground mt-1 leading-relaxed list-disc list-inside space-y-0.5">
+                    {proj.description.split(/\r?\n/).filter((l) => l.trim()).map((line, i) => (
+                      <li key={i}>{line.trim().replace(/^[-•▪◦➤→►■□●○]\s*/, "")}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Education */}
       {education.length > 0 && (
         <div>
