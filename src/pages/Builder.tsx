@@ -23,7 +23,8 @@ import {
   Target,
   BarChart3,
   LogOut,
-  Compass
+  Compass,
+  FolderGit2
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
