@@ -23,7 +23,8 @@ import {
   Target,
   BarChart3,
   LogOut,
-  Compass
+  Compass,
+  FolderGit2
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
@@ -77,6 +78,13 @@ interface Education {
   gpa: string;
 }
 
+interface Project {
+  id: string;
+  name: string;
+  description: string;
+  tools: string;
+}
+
 const initialResumeData: ResumeData = {
   personalInfo: {
     fullName: "",
@@ -91,6 +99,7 @@ const initialResumeData: ResumeData = {
   education: [],
   skills: [],
   skillCategoryMap: {},
+  projects: [],
 };
 
 const Builder = () => {
@@ -205,6 +214,36 @@ const Builder = () => {
     }));
   };
 
+  // ===== Projects CRUD =====
+  const addProject = () => {
+    const newProj: Project = {
+      id: crypto.randomUUID(),
+      name: "",
+      description: "",
+      tools: "",
+    };
+    setResumeData((prev) => ({
+      ...prev,
+      projects: [...(prev.projects || []), newProj],
+    }));
+  };
+
+  const updateProject = (id: string, field: keyof Project, value: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: (prev.projects || []).map((p) =>
+        p.id === id ? { ...p, [field]: value } : p
+      ),
+    }));
+  };
+
+  const removeProject = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: (prev.projects || []).filter((p) => p.id !== id),
+    }));
+  };
+
   const addSkill = () => {
     if (newSkill.trim() && !resumeData.skills.includes(newSkill.trim())) {
       setResumeData((prev) => ({
@@ -246,6 +285,27 @@ const Builder = () => {
   };
 
   const handleImport = (data: any, importAtsResult?: ATSCheckResult) => {
+    // Normalize parsed projects from upload (parser returns {title, description, technologies, outcomes})
+    // into the builder's shape ({id, name, description, tools}).
+    const normalizedProjects: Project[] = Array.isArray(data.projects)
+      ? data.projects
+          .map((p: any) => {
+            const name = (p?.name ?? p?.title ?? "").toString().trim();
+            const descParts = [p?.description, p?.outcomes].filter(Boolean).map((s: any) => s.toString().trim());
+            const description = descParts.join("\n");
+            const tools = Array.isArray(p?.technologies)
+              ? p.technologies.filter(Boolean).join(", ")
+              : (p?.tools ?? p?.technologies ?? "").toString();
+            return {
+              id: p?.id || crypto.randomUUID(),
+              name,
+              description,
+              tools,
+            };
+          })
+          .filter((p: Project) => p.name || p.description || p.tools)
+      : [];
+
     // Store original data for comparison (deep clone)
     const importedData = {
       ...data,
@@ -253,16 +313,18 @@ const Builder = () => {
       experience: data.experience?.map((exp: any) => ({ ...exp })) || [],
       education: data.education?.map((edu: any) => ({ ...edu })) || [],
       skills: [...(data.skills || [])],
+      projects: normalizedProjects,
     };
     setOriginalResumeData(importedData);
-    
+
     setResumeData((prev) => ({
       ...prev,
       ...data,
       personalInfo: { ...prev.personalInfo, ...data.personalInfo },
+      projects: normalizedProjects,
     }));
     setShowImport(false);
-    
+
     if (importAtsResult) {
       setShowATSDetails(true);
     }
@@ -285,6 +347,7 @@ const Builder = () => {
     { id: "experience", label: "Experience", icon: Briefcase },
     { id: "education", label: "Education", icon: GraduationCap },
     { id: "skills", label: "Skills", icon: Wrench },
+    { id: "projects", label: "Projects", icon: FolderGit2 },
     { id: "optimize", label: "AI Optimize", icon: Sparkles },
     { id: "report", label: "Report", icon: BarChart3 },
     { id: "jobmatch", label: "Job Match", icon: Target },
@@ -575,6 +638,14 @@ const Builder = () => {
                       onApplySuggestion={handleApplySuggestion}
                       resumeData={resumeData}
                       jobDescription={jobDescription}
+                    />
+                  )}
+                  {activeSection === "projects" && (
+                    <ProjectsForm
+                      projects={resumeData.projects || []}
+                      onAdd={addProject}
+                      onUpdate={updateProject}
+                      onRemove={removeProject}
                     />
                   )}
                   {activeSection === "optimize" && (
@@ -1094,6 +1165,103 @@ const SkillsForm = ({ skills, skillCategoryMap, newSkill, newSkillCategory, onNe
   );
 };
 
+// =================== Projects Form ===================
+interface ProjectsFormProps {
+  projects: Project[];
+  onAdd: () => void;
+  onUpdate: (id: string, field: keyof Project, value: string) => void;
+  onRemove: (id: string) => void;
+}
+
+const ProjectsForm = ({ projects, onAdd, onUpdate, onRemove }: ProjectsFormProps) => (
+  <div className="space-y-6">
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <h2 className="text-2xl font-display font-bold text-foreground mb-1">Projects</h2>
+        <p className="text-muted-foreground text-sm">
+          Showcase notable projects with measurable impact. Leave empty to omit this section from your final resume.
+        </p>
+      </div>
+      <Button onClick={onAdd} variant="default" className="shrink-0">
+        <Plus className="w-4 h-4" /> Add Project
+      </Button>
+    </div>
+
+    {projects.length === 0 ? (
+      <div className="text-center py-12 bg-muted/40 rounded-2xl border-2 border-dashed border-border">
+        <FolderGit2 className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground mb-1">No projects added yet</p>
+        <p className="text-xs text-muted-foreground/80">
+          The Projects section will be hidden from your downloaded resume until you add at least one.
+        </p>
+      </div>
+    ) : (
+      <div className="space-y-4">
+        {projects.map((proj, index) => (
+          <div
+            key={proj.id}
+            className="relative p-5 bg-gradient-to-br from-card to-muted/30 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow">
+              {index + 1}
+            </div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">Project Entry</span>
+              <Button variant="ghost" size="sm" onClick={() => onRemove(proj.id)} className="text-destructive hover:text-destructive">
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1 block">Project Name *</label>
+                <Input
+                  value={proj.name}
+                  onChange={(e) => onUpdate(proj.id, "name", e.target.value)}
+                  placeholder="e.g., Real-Time Analytics Dashboard"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1 block">
+                  Description & Impact
+                </label>
+                <Textarea
+                  value={proj.description}
+                  onChange={(e) => onUpdate(proj.id, "description", e.target.value)}
+                  placeholder={"Built a data visualization platform that reduced reporting time by 60%.\nServed 10K+ daily active users with sub-200ms latency."}
+                  rows={4}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Use new lines to create multiple bullet points. Quantify impact when possible.
+                </p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1 block">Tools / Technologies</label>
+                <Input
+                  value={proj.tools}
+                  onChange={(e) => onUpdate(proj.id, "tools", e.target.value)}
+                  placeholder="e.g., React, Node.js, PostgreSQL, AWS"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
+      <div className="flex items-start gap-3">
+        <Sparkles className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+        <div className="text-sm">
+          <p className="font-medium text-foreground mb-1">Premium Projects Section</p>
+          <p className="text-muted-foreground">
+            Projects appear as a dedicated, professionally formatted section in your downloaded PDF — including project name, impact bullets, and a tools tag. The section is automatically omitted if you don't add any projects.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 // OptimizeSection removed — replaced by ResumeImprovementPanel component
 
 interface ResumePreviewProps {
@@ -1103,7 +1271,8 @@ interface ResumePreviewProps {
 
 const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
   const { personalInfo, summary, experience, education, skills } = data;
-  const hasContent = personalInfo.fullName || summary || experience.length > 0 || education.length > 0 || skills.length > 0;
+  const projects = (data.projects || []).filter((p) => p.name?.trim() || p.description?.trim() || p.tools?.trim());
+  const hasContent = personalInfo.fullName || summary || experience.length > 0 || education.length > 0 || skills.length > 0 || projects.length > 0;
 
   const templateColors = {
     classic: { primary: "text-blue-900", accent: "text-blue-600", bg: "bg-blue-900" },
@@ -1175,6 +1344,32 @@ const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
                 </div>
                 {exp.description && (
                   <p className="text-xs text-muted-foreground mt-1 leading-relaxed">{exp.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Projects (premium) — only when present */}
+      {projects.length > 0 && (
+        <div>
+          <h2 className={`text-xs font-bold uppercase tracking-wider mb-2 ${colors.primary}`}>Projects</h2>
+          <div className="space-y-3">
+            {projects.map((proj) => (
+              <div key={proj.id} className="border-l-2 border-border pl-3">
+                <div className="flex justify-between items-start gap-2">
+                  <div className="font-semibold text-foreground">{proj.name || "Project"}</div>
+                  {proj.tools && (
+                    <div className={`text-[10px] italic ${colors.accent} text-right max-w-[55%]`}>{proj.tools}</div>
+                  )}
+                </div>
+                {proj.description && (
+                  <ul className="text-xs text-muted-foreground mt-1 leading-relaxed list-disc list-inside space-y-0.5">
+                    {proj.description.split(/\r?\n/).filter((l) => l.trim()).map((line, i) => (
+                      <li key={i}>{line.trim().replace(/^[-•▪◦➤→►■□●○]\s*/, "")}</li>
+                    ))}
+                  </ul>
                 )}
               </div>
             ))}
