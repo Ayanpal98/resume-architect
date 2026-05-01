@@ -321,48 +321,75 @@ export const generatePDF = (data: ResumeData, templateId: string = "classic"): j
     yPos += 2;
   }
 
-  // ========== PROJECTS / CERTIFICATIONS ==========
-  const hasProjects = data.projects && data.projects.length > 0;
-  const hasCerts = data.certifications && data.certifications.length > 0;
+  // ========== PROJECTS (premium, dedicated section — omit when empty) ==========
+  const validProjects = (data.projects || []).filter(
+    (p) => (p?.name && p.name.trim()) || (p?.description && p.description.trim()) || (p?.tools && p.tools.trim())
+  );
 
-  if (hasProjects || hasCerts) {
-    addSectionHeader("PROJECTS / CERTIFICATIONS");
-    doc.setFontSize(config.bodySize);
+  if (validProjects.length > 0) {
+    addSectionHeader("PROJECTS");
+
+    validProjects.forEach((proj, idx) => {
+      checkPage(14);
+
+      // Project title (bold, primary color)
+      doc.setFontSize(config.bodySize);
+      doc.setFont("helvetica", "bold");
+      doc.setTextColor(config.colors.primary);
+      const projName = proj.name?.trim() || "Project";
+      doc.text(projName, marginLeft, yPos);
+
+      // Inline tools tag on the right (italic accent)
+      if (proj.tools && proj.tools.trim()) {
+        doc.setFontSize(config.smallSize);
+        doc.setFont("helvetica", "italic");
+        doc.setTextColor(config.colors.accent);
+        const toolsLabel = proj.tools.trim();
+        const toolsLines = doc.splitTextToSize(toolsLabel, contentWidth * 0.55);
+        doc.text(toolsLines[0], pageWidth - marginRight, yPos, { align: "right" });
+      }
+      yPos += 4.5;
+
+      // Description bullet(s) — supports multi-line / multi-bullet input
+      if (proj.description && proj.description.trim()) {
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(config.colors.secondary);
+        doc.setFontSize(config.smallSize);
+        const bullets = parseBulletPoints(proj.description);
+        const lineList = bullets.length > 0 ? bullets : [proj.description.trim()];
+
+        lineList.forEach((bullet) => {
+          const bulletText = `•  ${bullet}`;
+          const lines = doc.splitTextToSize(bulletText, contentWidth - 4);
+          lines.forEach((line: string) => {
+            checkPage(4.5);
+            doc.text(line, marginLeft + 2, yPos);
+            yPos += 4;
+          });
+        });
+      }
+
+      if (idx < validProjects.length - 1) {
+        yPos += 2.5;
+      }
+    });
+    yPos += 2;
+  }
+
+  // ========== CERTIFICATIONS (separate, omit when empty) ==========
+  const validCerts = (data.certifications || []).filter((c) => c && c.trim());
+  if (validCerts.length > 0) {
+    addSectionHeader("CERTIFICATIONS");
+    doc.setFontSize(config.smallSize);
     doc.setFont("helvetica", "normal");
     doc.setTextColor(config.colors.secondary);
 
-    if (hasProjects) {
-      data.projects!.forEach((proj) => {
-        checkPage(8);
-        doc.setFont("helvetica", "bold");
-        doc.setTextColor(config.colors.primary);
-        doc.text(proj.name || "Project", marginLeft, yPos);
-        yPos += 4.5;
-
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(config.colors.secondary);
-        if (proj.description) {
-          const descText = `•  ${proj.description}`;
-          addWrappedText(descText, marginLeft + 2, yPos, contentWidth - 4);
-        }
-        if (proj.tools) {
-          checkPage(4.5);
-          doc.setFont("helvetica", "italic");
-          doc.text(`Tools: ${proj.tools}`, marginLeft + 2, yPos);
-          yPos += 4.5;
-        }
-        yPos += 2;
-      });
-    }
-
-    if (hasCerts) {
-      data.certifications!.forEach((cert) => {
-        checkPage(4.5);
-        const certText = `•  ${cert}`;
-        addWrappedText(certText, marginLeft + 2, yPos, contentWidth - 4);
-      });
-      yPos += 2;
-    }
+    validCerts.forEach((cert) => {
+      checkPage(4.5);
+      const certText = `•  ${cert.trim()}`;
+      addWrappedText(certText, marginLeft + 2, yPos, contentWidth - 4);
+    });
+    yPos += 2;
   }
 
   // ========== EDUCATION ==========
