@@ -214,7 +214,36 @@ const Builder = () => {
     }));
   };
 
-  const addSkill = () => {
+  // ===== Projects CRUD =====
+  const addProject = () => {
+    const newProj: Project = {
+      id: crypto.randomUUID(),
+      name: "",
+      description: "",
+      tools: "",
+    };
+    setResumeData((prev) => ({
+      ...prev,
+      projects: [...(prev.projects || []), newProj],
+    }));
+  };
+
+  const updateProject = (id: string, field: keyof Project, value: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: (prev.projects || []).map((p) =>
+        p.id === id ? { ...p, [field]: value } : p
+      ),
+    }));
+  };
+
+  const removeProject = (id: string) => {
+    setResumeData((prev) => ({
+      ...prev,
+      projects: (prev.projects || []).filter((p) => p.id !== id),
+    }));
+  };
+
     if (newSkill.trim() && !resumeData.skills.includes(newSkill.trim())) {
       setResumeData((prev) => ({
         ...prev,
