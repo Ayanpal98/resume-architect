@@ -1165,6 +1165,103 @@ const SkillsForm = ({ skills, skillCategoryMap, newSkill, newSkillCategory, onNe
   );
 };
 
+// =================== Projects Form ===================
+interface ProjectsFormProps {
+  projects: Project[];
+  onAdd: () => void;
+  onUpdate: (id: string, field: keyof Project, value: string) => void;
+  onRemove: (id: string) => void;
+}
+
+const ProjectsForm = ({ projects, onAdd, onUpdate, onRemove }: ProjectsFormProps) => (
+  <div className="space-y-6">
+    <div className="flex items-start justify-between gap-4">
+      <div>
+        <h2 className="text-2xl font-display font-bold text-foreground mb-1">Projects</h2>
+        <p className="text-muted-foreground text-sm">
+          Showcase notable projects with measurable impact. Leave empty to omit this section from your final resume.
+        </p>
+      </div>
+      <Button onClick={onAdd} variant="default" className="shrink-0">
+        <Plus className="w-4 h-4" /> Add Project
+      </Button>
+    </div>
+
+    {projects.length === 0 ? (
+      <div className="text-center py-12 bg-muted/40 rounded-2xl border-2 border-dashed border-border">
+        <FolderGit2 className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+        <p className="text-muted-foreground mb-1">No projects added yet</p>
+        <p className="text-xs text-muted-foreground/80">
+          The Projects section will be hidden from your downloaded resume until you add at least one.
+        </p>
+      </div>
+    ) : (
+      <div className="space-y-4">
+        {projects.map((proj, index) => (
+          <div
+            key={proj.id}
+            className="relative p-5 bg-gradient-to-br from-card to-muted/30 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="absolute -top-2 -left-2 w-7 h-7 rounded-full bg-primary text-primary-foreground text-xs font-bold flex items-center justify-center shadow">
+              {index + 1}
+            </div>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-semibold uppercase tracking-wider text-primary">Project Entry</span>
+              <Button variant="ghost" size="sm" onClick={() => onRemove(proj.id)} className="text-destructive hover:text-destructive">
+                <Trash2 className="w-4 h-4" />
+              </Button>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1 block">Project Name *</label>
+                <Input
+                  value={proj.name}
+                  onChange={(e) => onUpdate(proj.id, "name", e.target.value)}
+                  placeholder="e.g., Real-Time Analytics Dashboard"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1 block">
+                  Description & Impact
+                </label>
+                <Textarea
+                  value={proj.description}
+                  onChange={(e) => onUpdate(proj.id, "description", e.target.value)}
+                  placeholder={"Built a data visualization platform that reduced reporting time by 60%.\nServed 10K+ daily active users with sub-200ms latency."}
+                  rows={4}
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Use new lines to create multiple bullet points. Quantify impact when possible.
+                </p>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-foreground mb-1 block">Tools / Technologies</label>
+                <Input
+                  value={proj.tools}
+                  onChange={(e) => onUpdate(proj.id, "tools", e.target.value)}
+                  placeholder="e.g., React, Node.js, PostgreSQL, AWS"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    )}
+
+    <div className="p-4 bg-accent/10 rounded-xl border border-accent/20">
+      <div className="flex items-start gap-3">
+        <Sparkles className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+        <div className="text-sm">
+          <p className="font-medium text-foreground mb-1">Premium Projects Section</p>
+          <p className="text-muted-foreground">
+            Projects appear as a dedicated, professionally formatted section in your downloaded PDF — including project name, impact bullets, and a tools tag. The section is automatically omitted if you don't add any projects.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 // OptimizeSection removed — replaced by ResumeImprovementPanel component
 
 interface ResumePreviewProps {
