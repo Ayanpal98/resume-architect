@@ -10,6 +10,7 @@ import Welcome from "./pages/Welcome";
 import Builder from "./pages/Builder";
 import ATSAnalysis from "./pages/ATSAnalysis";
 import Recruiter from "./pages/Recruiter";
+import CareerIntelligence from "./pages/CareerIntelligence";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
@@ -29,6 +30,7 @@ const App = () => (
             <Route path="/builder" element={<ProtectedRoute><Builder /></ProtectedRoute>} />
             <Route path="/ats-analysis" element={<ProtectedRoute><ATSAnalysis /></ProtectedRoute>} />
             <Route path="/recruiter" element={<ProtectedRoute><Recruiter /></ProtectedRoute>} />
+            <Route path="/career-intelligence" element={<ProtectedRoute><CareerIntelligence /></ProtectedRoute>} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
