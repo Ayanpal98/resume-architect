@@ -12,8 +12,10 @@ const Welcome = () => {
 
   const handleContinue = () => {
     if (selectedType === "jobseeker") {
+      localStorage.setItem("atsfy_user_type", "jobseeker");
       navigate("/builder");
     } else if (selectedType === "institution") {
+      localStorage.setItem("atsfy_user_type", "institution");
       navigate("/recruiter");
     }
   };

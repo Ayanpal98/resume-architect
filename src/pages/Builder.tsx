@@ -458,6 +458,12 @@ const Builder = () => {
               </Dialog>
             )}
 
+            <Link to="/career-intelligence" className="hidden md:inline-flex">
+              <Button variant="outline" size="sm" className="px-2 sm:px-3 border-accent/40 text-accent-foreground bg-accent/10 hover:bg-accent/20">
+                <Compass className="w-4 h-4 sm:mr-2" />
+                <span className="hidden lg:inline">Career Intelligence</span>
+              </Button>
+            </Link>
             <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
