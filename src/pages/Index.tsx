@@ -1,25 +1,30 @@
-import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut } from "lucide-react";
+import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut, TrendingUp, ShieldCheck, Activity, Signal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
 import { useAuth } from "@/contexts/AuthContext";
+
 const Index = () => {
   const { user, signOut } = useAuth();
-  return <div className="min-h-screen bg-background">
+  return (
+    <div className="min-h-screen bg-background">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
               <FileText className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
             </div>
-            <span className="text-lg sm:text-xl font-display font-bold text-accent">ATSFY</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-lg sm:text-xl font-display font-bold text-accent tracking-tight">ATSFY</span>
+              <span className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground font-sans">Career Intelligence</span>
+            </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors">Features</a>
-            <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors">How it Works</a>
-            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors">Pricing</a>
+            <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Intelligence</a>
+            <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors text-sm">How it Works</a>
+            <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Pricing</a>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
@@ -45,22 +50,24 @@ const Index = () => {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
+      <section className="pt-32 pb-20 px-6 border-b border-border/60">
         <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-12 items-center border-0">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-up">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-accent/10 rounded-full text-accent text-sm font-medium mb-6">Built for Humans. Ready For Machine​<Sparkles className="w-4 h-4" />
-                ​
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-border rounded-full text-xs font-medium text-muted-foreground mb-8 uppercase tracking-[0.15em]">
+                <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                Built on real recruiter logic
               </div>
-              <h1 className="text-4xl md:text-5xl font-display font-bold leading-tight mb-6 lg:text-2xl text-primary">Build Resumes Machines can read and Humans wants to hire .<span className="text-gradient"></span>
+              <h1 className="font-display text-5xl md:text-6xl lg:text-7xl font-medium leading-[1.05] tracking-tight text-foreground mb-6">
+                Career <em className="italic font-normal text-primary">Intelligence</em> for the modern job market.
               </h1>
-              <p className="text-lg text-muted-foreground mb-8 max-w-lg">
-                Create ATS-friendly resumes that get past automated screening systems and land you more interviews. Upload yours or start from scratch — know&nbsp;exactly&nbsp;why you pass or fail
+              <p className="text-base md:text-lg text-muted-foreground mb-8 max-w-xl leading-relaxed font-sans">
+                ATSFY doesn't just score your resume — it decodes how hiring systems read, parse, and rank you. Get the visibility machines see, before you apply.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Link to="/welcome">
                   <Button variant="hero" size="xl" className="w-full sm:w-auto">
-                    Create Your Resume
+                    Analyze My Profile
                     <ArrowRight className="w-5 h-5" />
                   </Button>
                 </Link>
@@ -71,15 +78,19 @@ const Index = () => {
                   </Button>
                 </Link>
               </div>
-              
             </div>
-            <div className="animate-fade-up" style={{
-            animationDelay: "0.2s"
-          }}>
+            <div className="animate-fade-up" style={{ animationDelay: "0.2s" }}>
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-hero opacity-10 rounded-3xl blur-2xl"></div>
                 <div className="relative bg-card rounded-2xl shadow-xl border border-border p-6">
                   <ResumePreviewCard />
+                </div>
+                {/* Metric cards */}
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  <MetricCard icon={Target} label="Keyword Match" value="87%" sub="↑ 12% from last version" />
+                  <MetricCard icon={Activity} label="Parse Accuracy" value="94%" sub="sections detected" />
+                  <MetricCard icon={ShieldCheck} label="Format Score" value="A+" sub="No structure issues" />
+                  <MetricCard icon={Signal} label="Signal Strength" value="Strong" sub="Top 8% in field" />
                 </div>
               </div>
             </div>
@@ -95,87 +106,70 @@ const Index = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6">
+      <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-3 sm:mb-4">
-              Everything You Need to Land Your Dream Job
+          <div className="max-w-3xl mb-12 sm:mb-16">
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— Intelligence</div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
+              Intelligence infrastructure, <em className="italic font-normal text-primary">not another resume builder.</em>
             </h2>
-            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
-              Built using real recruiter logic - not guesswork or black-box scores          
+            <p className="text-muted-foreground text-base sm:text-lg font-sans">
+              Every layer of ATSFY is engineered around how hiring systems actually work — not keyword stuffing or black-box scores.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {[{
-            icon: Target,
-            title: "ATS Optimization",
-            description: "Analyzes your resume against real ATS parsing behavior — not just keywords."
-          }, {
-            icon: Zap,
-            title: "Instant Analysis",
-            description: "See exactly how parsers read each section — headers, dates, and formatting issues flagged in real time."
-          }, {
-            icon: FileText,
-            title: "Clean Formatting",
-            description: "Uses parser-safe layouts that preserve structure when converted to plain text by ATS software."
-          }, {
-            icon: Sparkles,
-            title: "AI Content Suggestions",
-            description: "Recommends action verbs and quantified achievements that match how recruiters actually search."
-          }, {
-            icon: Upload,
-            title: "Resume Import",
-            description: "Extracts and restructures your existing content to fix common parsing failures automatically."
-          }, {
-            icon: Users,
-            title: "Industry-Specific Tips",
-            description: "Adapts language and section order based on what top-performing resumes in your field include."
-          }].map((feature, index) => <div key={index} className="group p-4 sm:p-6 bg-card rounded-2xl border border-border hover:border-primary/30 hover:shadow-lg transition-all duration-300">
-                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:bg-primary/20 transition-colors">
-                  <feature.icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 border border-border rounded-2xl overflow-hidden bg-card">
+            {[
+              { icon: Target, title: "ATS Parsing Engine", description: "Analyzes your resume against real ATS parsing behavior — not just keywords.", tag: "Intelligence layer" },
+              { icon: Zap, title: "Real-time Signal Analysis", description: "See exactly how parsers read each section — headers, dates, and formatting issues flagged in real time.", tag: "Analysis" },
+              { icon: FileText, title: "Parser-safe Formatting", description: "Uses parser-safe layouts that preserve structure when converted to plain text by ATS software.", tag: "Parsing" },
+              { icon: Sparkles, title: "AI Content Intelligence", description: "Recommends action verbs and quantified achievements that match how recruiters actually search.", tag: "Intelligence layer" },
+              { icon: Upload, title: "Career Data Extraction", description: "Extracts and restructures your existing content to fix common parsing failures automatically.", tag: "Parsing" },
+              { icon: Users, title: "Industry Signal Mapping", description: "Adapts language and section order based on what top-performing resumes in your field include.", tag: "Analysis" },
+            ].map((feature, index) => (
+              <div key={index} className="group p-6 sm:p-8 border-b border-r border-border/60 last:border-r-0 hover:bg-background/50 transition-colors">
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-5">
+                  <feature.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-base sm:text-lg font-display font-semibold text-foreground mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">{feature.description}</p>
-              </div>)}
+                <h3 className="font-display text-xl font-medium text-foreground mb-2 tracking-tight">{feature.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed mb-4 font-sans">{feature.description}</p>
+                <span className="inline-block text-[10px] uppercase tracking-[0.15em] text-muted-foreground border border-border rounded-full px-2.5 py-1">
+                  {feature.tag}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-6 bg-card">
+      <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-6 bg-card border-t border-border/60">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-10 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-3 sm:mb-4">
-              Build Your Perfect Resume in 3 Steps
+          <div className="max-w-3xl mb-12 sm:mb-16">
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— Pipeline</div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
+              Three stages. <em className="italic font-normal text-primary">One outcome.</em>
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-lg max-w-2xl mx-auto">
-              Our streamlined process makes creating an ATS-friendly resume quick and easy.
+            <p className="text-muted-foreground text-base sm:text-lg font-sans">
+              A streamlined intelligence pipeline that transforms your career data into machine-readable signal.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
-            {[{
-            step: "01",
-            title: "Enter Your Information",
-            description: "Fill in your details or upload an existing resume to get started quickly."
-          }, {
-            step: "02",
-            title: "Get ATS Optimization",
-            description: "Our AI analyzes and suggests improvements for maximum ATS compatibility."
-          }, {
-            step: "03",
-            title: "Download & Apply",
-            description: "Export your polished, ATS-friendly resume and start landing interviews."
-          }].map((step, index) => <div key={index} className="relative text-center sm:text-left">
-                <div className="text-4xl sm:text-5xl md:text-6xl font-display font-bold text-primary/10 mb-3 sm:mb-4">{step.step}</div>
-                <h3 className="text-lg sm:text-xl font-display font-semibold text-foreground mb-2">{step.title}</h3>
-                <p className="text-sm sm:text-base text-muted-foreground">{step.description}</p>
-                {index < 2 && <div className="hidden md:block absolute top-8 right-0 w-1/2 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>}
-              </div>)}
+          <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-2xl overflow-hidden">
+            {[
+              { step: "01", title: "Ingest your career data", description: "Fill in your profile or upload an existing resume. Our extraction layer handles restructuring automatically." },
+              { step: "02", title: "Run intelligence analysis", description: "ATSFY's parsing engine analyzes and optimizes every signal — formatting, keywords, structure, and ranking potential." },
+              { step: "03", title: "Deploy and get seen", description: "Export a polished, ATS-certified profile. Know your score before you apply. Land interviews that matter." },
+            ].map((step, index) => (
+              <div key={index} className="bg-card p-8 sm:p-10">
+                <div className="font-display text-7xl sm:text-8xl font-medium text-muted-foreground/15 mb-6 leading-none">{step.step}</div>
+                <h3 className="font-display text-xl sm:text-2xl font-medium text-foreground mb-3 tracking-tight">{step.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground font-sans leading-relaxed">{step.description}</p>
+              </div>
+            ))}
           </div>
-          <div className="text-center mt-8 sm:mt-12">
+          <div className="text-left mt-10">
             <Link to="/welcome">
               <Button variant="hero" size="lg">
-                Start Building Now
+                Start the Pipeline
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
@@ -187,24 +181,46 @@ const Index = () => {
       <PricingSection />
 
       {/* CTA Section */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
         <div className="container mx-auto max-w-4xl">
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-hero opacity-10 rounded-3xl blur-2xl"></div>
-            <div className="relative bg-gradient-hero rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-12 text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-3 sm:mb-4">
-                Ready to Land More Interviews?
+            <div className="relative bg-gradient-hero rounded-2xl sm:rounded-3xl p-8 sm:p-12 md:p-16 text-center">
+              <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-primary-foreground mb-4 tracking-tight leading-tight">
+                Be visible to machines. <em className="italic font-normal">Be chosen by humans.</em>
               </h2>
-              <p className="text-primary-foreground/80 text-sm sm:text-base md:text-lg mb-6 sm:mb-8 max-w-2xl mx-auto">
-                ATSfy explains how ATS systems read resumes. We don't promise jobs - we help you become visible
+              <p className="text-primary-foreground/80 text-sm sm:text-base md:text-lg mb-8 max-w-2xl mx-auto font-sans">
+                ATSFY decodes how ATS systems read resumes. We don't promise jobs — we guarantee you become visible to the systems that gate them.
               </p>
-              <Link to="/welcome">
-                <Button size="lg" className="bg-background text-primary hover:bg-background/90 shadow-xl">
-                  Create Your Free Resume
-                  <ArrowRight className="w-5 h-5" />
-                </Button>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Link to="/welcome">
+                  <Button size="lg" className="bg-background text-primary hover:bg-background/90 shadow-xl">
+                    Analyze My Profile
+                    <ArrowRight className="w-5 h-5" />
+                  </Button>
+                </Link>
+                <Link to="/welcome">
+                  <Button size="lg" variant="outline" className="bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+                    Create Free Resume
+                  </Button>
+                </Link>
+              </div>
             </div>
+          </div>
+
+          {/* Trust bar */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border/60 border border-border/60 rounded-xl overflow-hidden mt-12">
+            {[
+              "AI-powered candidate evaluation",
+              "Used by job seekers & recruiters",
+              "Data-driven insights, not guesswork",
+              "Built for real hiring outcomes",
+            ].map((point, i) => (
+              <div key={i} className="bg-background p-5 flex items-center gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-accent flex-shrink-0" />
+                <span className="text-xs sm:text-sm text-foreground font-sans">{point}</span>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -217,7 +233,10 @@ const Index = () => {
               <div className="w-8 h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
                 <FileText className="w-4 h-4 text-primary-foreground" />
               </div>
-              <span className="text-lg font-display font-bold text-foreground">ATSFy</span>
+              <div className="flex flex-col leading-none">
+                <span className="text-lg font-display font-bold text-foreground">ATSFy</span>
+                <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Career Intelligence</span>
+              </div>
             </div>
             <div className="text-center sm:text-right space-y-1">
               <p className="text-xs sm:text-sm font-medium text-foreground">
@@ -230,8 +249,21 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>;
+    </div>
+  );
 };
+
+const MetricCard = ({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub: string }) => (
+  <div className="bg-card border border-border rounded-xl p-3.5">
+    <div className="flex items-center justify-between mb-2">
+      <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground font-sans">{label}</span>
+      <Icon className="w-3.5 h-3.5 text-primary" />
+    </div>
+    <div className="font-display text-2xl font-medium text-foreground leading-none mb-1.5 tracking-tight">{value}</div>
+    <div className="text-[10px] text-muted-foreground font-sans">{sub}</div>
+  </div>
+);
+
 const ResumePreviewCard = () => {
   return <div className="space-y-4">
       {/* Header */}
@@ -278,29 +310,7 @@ const ResumePreviewCard = () => {
           </div>
         </div>
       </div>
-
-      {/* Sections */}
-      <div className="space-y-3">
-        <div>
-          <div className="h-4 bg-primary/20 rounded w-24 mb-2"></div>
-          <div className="h-3 bg-muted rounded w-full mb-1"></div>
-          <div className="h-3 bg-muted rounded w-5/6"></div>
-        </div>
-        <div>
-          <div className="h-4 bg-primary/20 rounded w-28 mb-2"></div>
-          <div className="h-3 bg-muted rounded w-full mb-1"></div>
-          <div className="h-3 bg-muted rounded w-4/5 mb-1"></div>
-          <div className="h-3 bg-muted rounded w-3/4"></div>
-        </div>
-        <div>
-          <div className="h-4 bg-primary/20 rounded w-20 mb-2"></div>
-          <div className="flex gap-2 flex-wrap">
-            {["React", "TypeScript", "Node.js", "Python"].map(skill => <span key={skill} className="px-2 py-1 bg-primary/10 rounded text-xs text-primary">
-                {skill}
-              </span>)}
-          </div>
-        </div>
-      </div>
     </div>;
 };
+
 export default Index;
