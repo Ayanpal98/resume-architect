@@ -1291,15 +1291,7 @@ const Recruiter = () => {
                 </CardHeader>
                 <CardContent>
                   {candidates.length === 0 && !isAnalyzing ? (
-                    <div className="text-center py-16">
-                      <BarChart3 className="w-16 h-16 text-muted-foreground/30 mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-foreground mb-2">
-                        No Candidates Analyzed Yet
-                      </h3>
-                      <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                        Upload resumes and configure job requirements to start AI-powered screening
-                      </p>
-                    </div>
+                    <GhostScreeningPreview />
                   ) : isAnalyzing && candidates.length === 0 ? (
                     <div className="text-center py-16">
                       <Sparkles className="w-16 h-16 text-primary animate-pulse mx-auto mb-4" />
