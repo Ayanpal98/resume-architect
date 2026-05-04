@@ -179,6 +179,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Sample Reports Showcase */}
+      <SampleReportsShowcase />
+
       {/* Pricing Section */}
       <PricingSection />
 
