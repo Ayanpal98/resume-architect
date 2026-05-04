@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
+import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
