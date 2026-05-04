@@ -34,6 +34,7 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
+import { GhostScreeningPreview } from "@/components/GhostScreeningPreview";
 
 interface EducationDetails {
   degree: string;
