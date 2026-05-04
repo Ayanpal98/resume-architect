@@ -1,7 +1,55 @@
 import { useState } from "react";
-import { FileText, TrendingUp, Target, Briefcase, Map, GitCompare, ArrowRight, CheckCircle2, Sparkles, Lock } from "lucide-react";
+import { FileText, Target, Briefcase, Map, GitCompare, ArrowRight, CheckCircle2, Sparkles, Lock, User, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Built-in sample: a single consistent candidate + target job
+// All report visuals below derive their data from this fixture so users see a
+// coherent "this is what your output looks like" story.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const SAMPLE = {
+  candidate: {
+    name: "Priya Sharma",
+    currentRole: "Senior Backend Engineer",
+    company: "Acme Cloud",
+    yearsExp: 6,
+    skills: ["JavaScript", "React", "Node.js", "PostgreSQL", "REST APIs", "Git", "HTML/CSS", "Jest"],
+    summary:
+      "Backend engineer with 6 years of experience building web applications. Worked on backend systems and helped the team with deployments and code reviews. Familiar with cloud and modern JavaScript.",
+    bulletBefore:
+      "Responsible for working on backend systems and helping the team with deployments.",
+  },
+  job: {
+    title: "Senior Platform Engineer",
+    company: "Northwind FinTech",
+    mustHave: ["Kubernetes", "Terraform", "AWS", "CI/CD", "Python", "GraphQL", "Datadog", "Helm"],
+    niceToHave: ["Go", "gRPC"],
+  },
+  optimized: {
+    skills: [
+      "TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL", "AWS",
+      "Docker", "Kubernetes", "Redis", "CI/CD", "Jest", "Tailwind",
+      "Terraform", "Datadog", "REST APIs",
+    ],
+    summary:
+      "Senior backend engineer with 6 years building distributed payment systems. Led platform migrations on AWS + Kubernetes serving 18M+ daily transactions and reduced release cycles 95% through Terraform-driven CI/CD. Mentored 4 engineers across infrastructure, observability, and reliability practices.",
+    bulletAfter:
+      "Engineered a Kubernetes-based deployment pipeline on AWS that reduced release cycles from 4 hours to 12 minutes, enabling 8 weekly releases across 3 payment services and cutting cloud spend 38%.",
+  },
+  scoring: {
+    before: { readiness: 58, match: 52 },
+    after: { readiness: 91, match: 89 },
+    sections: [
+      { label: "Contact & Header", v: 100 },
+      { label: "Work Experience", v: 92 },
+      { label: "Skills Coverage", v: 88 },
+      { label: "Education", v: 95 },
+      { label: "Format & Structure", v: 90 },
+    ],
+  },
+};
 
 type ReportKey = "ats" | "optimization" | "jobMatch" | "coverLetter" | "roadmap" | "comparison";
 
@@ -103,7 +151,7 @@ export const SampleReportsShowcase = () => {
   return (
     <section id="reports" className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60 bg-background">
       <div className="container mx-auto max-w-6xl">
-        <div className="max-w-3xl mb-12 sm:mb-16">
+        <div className="max-w-3xl mb-8 sm:mb-12">
           <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— Deliverables</div>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
             See what you actually <em className="italic font-normal text-primary">get back.</em>
@@ -111,6 +159,32 @@ export const SampleReportsShowcase = () => {
           <p className="text-muted-foreground text-base sm:text-lg font-sans">
             Every plan ships real, exportable intelligence reports — not vanity scores. Preview the deliverables before you pay.
           </p>
+        </div>
+
+        {/* Sample fixture banner */}
+        <div className="mb-6 rounded-xl border border-border bg-card p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-primary/10 flex items-center justify-center">
+              <User className="w-4 h-4 text-primary" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Sample resume</div>
+              <div className="text-sm font-medium text-foreground font-sans">{SAMPLE.candidate.name} — {SAMPLE.candidate.currentRole}</div>
+            </div>
+          </div>
+          <div className="hidden sm:block w-px h-8 bg-border" />
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-md bg-accent/10 flex items-center justify-center">
+              <Building2 className="w-4 h-4 text-accent" />
+            </div>
+            <div>
+              <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground">Target job</div>
+              <div className="text-sm font-medium text-foreground font-sans">{SAMPLE.job.title} @ {SAMPLE.job.company}</div>
+            </div>
+          </div>
+          <div className="sm:ml-auto text-[11px] text-muted-foreground font-sans">
+            All visuals below are generated from this sample.
+          </div>
         </div>
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-px bg-border/60 border border-border/60 rounded-2xl overflow-hidden">
@@ -154,7 +228,6 @@ export const SampleReportsShowcase = () => {
               </span>
             </div>
 
-            {/* Visual mock */}
             <div className="mb-6">
               <ReportVisual reportKey={active} />
             </div>
@@ -176,7 +249,7 @@ export const SampleReportsShowcase = () => {
                 </Button>
               </Link>
               <span className="text-xs text-muted-foreground font-sans">
-                Sample shown for illustration. Your report is generated from your actual data.
+                Generated from a built-in sample resume. Yours will use your real data.
               </span>
             </div>
           </div>
@@ -186,47 +259,40 @@ export const SampleReportsShowcase = () => {
   );
 };
 
-const ReportVisual = ({ reportKey }: { reportKey: ReportKey }) => {
-  // Browser-style frame
-  return (
-    <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm">
-      <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-muted/40">
-        <span className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
-        <span className="w-2.5 h-2.5 rounded-full bg-warning/60" />
-        <span className="w-2.5 h-2.5 rounded-full bg-accent/60" />
-        <span className="ml-3 text-[10px] text-muted-foreground font-sans">atsfy.report / preview</span>
-      </div>
-      <div className="p-5 sm:p-6">
-        {reportKey === "ats" && <ATSVisual />}
-        {reportKey === "optimization" && <OptimizationVisual />}
-        {reportKey === "jobMatch" && <JobMatchVisual />}
-        {reportKey === "coverLetter" && <CoverLetterVisual />}
-        {reportKey === "roadmap" && <RoadmapVisual />}
-        {reportKey === "comparison" && <ComparisonVisual />}
-      </div>
+const ReportVisual = ({ reportKey }: { reportKey: ReportKey }) => (
+  <div className="rounded-xl border border-border bg-background overflow-hidden shadow-sm">
+    <div className="flex items-center gap-1.5 px-3 py-2 border-b border-border bg-muted/40">
+      <span className="w-2.5 h-2.5 rounded-full bg-destructive/60" />
+      <span className="w-2.5 h-2.5 rounded-full bg-warning/60" />
+      <span className="w-2.5 h-2.5 rounded-full bg-accent/60" />
+      <span className="ml-3 text-[10px] text-muted-foreground font-sans">
+        atsfy.report / {SAMPLE.candidate.name.toLowerCase().replace(" ", "-")} / {reportKey}
+      </span>
     </div>
-  );
-};
+    <div className="p-5 sm:p-6">
+      {reportKey === "ats" && <ATSVisual />}
+      {reportKey === "optimization" && <OptimizationVisual />}
+      {reportKey === "jobMatch" && <JobMatchVisual />}
+      {reportKey === "coverLetter" && <CoverLetterVisual />}
+      {reportKey === "roadmap" && <RoadmapVisual />}
+      {reportKey === "comparison" && <ComparisonVisual />}
+    </div>
+  </div>
+);
 
 const ATSVisual = () => (
   <div className="space-y-4">
     <div className="flex items-center gap-4">
       <div className="w-16 h-16 rounded-full bg-accent flex items-center justify-center">
-        <span className="text-accent-foreground font-display text-2xl font-bold">87</span>
+        <span className="text-accent-foreground font-display text-2xl font-bold">{SAMPLE.scoring.after.readiness}</span>
       </div>
       <div>
-        <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Hiring Readiness</div>
-        <div className="font-display text-xl font-medium text-foreground">Strong — Top 12%</div>
+        <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground">Hiring Readiness — {SAMPLE.candidate.name}</div>
+        <div className="font-display text-xl font-medium text-foreground">Strong — Top 9% for {SAMPLE.job.title}</div>
       </div>
     </div>
     <div className="space-y-2">
-      {[
-        { label: "Contact & Header", v: 100 },
-        { label: "Work Experience", v: 92 },
-        { label: "Skills Coverage", v: 78 },
-        { label: "Education", v: 95 },
-        { label: "Format & Structure", v: 88 },
-      ].map((row) => (
+      {SAMPLE.scoring.sections.map((row) => (
         <div key={row.label} className="flex items-center gap-3">
           <span className="text-xs text-muted-foreground w-32 font-sans">{row.label}</span>
           <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
@@ -246,64 +312,71 @@ const ATSVisual = () => (
 
 const OptimizationVisual = () => (
   <div className="space-y-3">
-    <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-1">Bullet Rewrite — Senior Engineer</div>
+    <div className="text-xs uppercase tracking-[0.15em] text-muted-foreground mb-1">
+      Bullet rewrite — {SAMPLE.candidate.currentRole} @ {SAMPLE.candidate.company}
+    </div>
     <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
       <div className="text-[10px] uppercase tracking-wider text-destructive mb-1.5">Before</div>
-      <p className="text-xs text-foreground/80 font-sans">Responsible for working on backend systems and helping the team with deployments.</p>
+      <p className="text-xs text-foreground/80 font-sans">{SAMPLE.candidate.bulletBefore}</p>
     </div>
     <div className="rounded-lg border border-accent/40 bg-accent/5 p-3">
       <div className="text-[10px] uppercase tracking-wider text-accent mb-1.5">After — STAR-Impact</div>
-      <p className="text-xs text-foreground font-sans">Engineered a Kubernetes-based deployment pipeline that reduced release cycles from 4 hours to 12 minutes, enabling 8 weekly releases across 3 services.</p>
+      <p className="text-xs text-foreground font-sans">{SAMPLE.optimized.bulletAfter}</p>
     </div>
-    <div className="flex gap-2 pt-1">
+    <div className="flex flex-wrap gap-2 pt-1">
       <Pill>+ Quantified impact</Pill>
       <Pill>+ Action verb</Pill>
       <Pill>+ Tech specificity</Pill>
+      <Pill>+ Cost outcome</Pill>
     </div>
   </div>
 );
 
-const JobMatchVisual = () => (
-  <div className="space-y-4">
-    <div className="grid grid-cols-2 gap-3">
-      <div className="rounded-lg border border-border p-4">
-        <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Before</div>
-        <div className="font-display text-3xl font-medium text-foreground">52%</div>
-        <div className="text-[10px] text-muted-foreground">match score</div>
+const JobMatchVisual = () => {
+  const matched = SAMPLE.job.mustHave.filter((k) => SAMPLE.optimized.skills.some((s) => s.toLowerCase().includes(k.toLowerCase())));
+  const missing = SAMPLE.job.mustHave.filter((k) => !matched.includes(k));
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-3">
+        <div className="rounded-lg border border-border p-4">
+          <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Before</div>
+          <div className="font-display text-3xl font-medium text-foreground">{SAMPLE.scoring.before.match}%</div>
+          <div className="text-[10px] text-muted-foreground">vs {SAMPLE.job.title}</div>
+        </div>
+        <div className="rounded-lg border border-accent bg-accent/5 p-4">
+          <div className="text-[10px] uppercase tracking-wider text-accent mb-1">After</div>
+          <div className="font-display text-3xl font-medium text-foreground">{SAMPLE.scoring.after.match}%</div>
+          <div className="text-[10px] text-muted-foreground">+{SAMPLE.scoring.after.match - SAMPLE.scoring.before.match} points</div>
+        </div>
       </div>
-      <div className="rounded-lg border border-accent bg-accent/5 p-4">
-        <div className="text-[10px] uppercase tracking-wider text-accent mb-1">After</div>
-        <div className="font-display text-3xl font-medium text-foreground">89%</div>
-        <div className="text-[10px] text-muted-foreground">+37 points</div>
+      <div>
+        <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-2">JD keyword coverage</div>
+        <div className="flex flex-wrap gap-1.5">
+          {matched.map((k) => (
+            <span key={k} className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">{k} ✓</span>
+          ))}
+          {missing.map((k) => (
+            <span key={k} className="text-[10px] px-2 py-1 rounded-full bg-muted text-muted-foreground border border-border">{k} +</span>
+          ))}
+        </div>
       </div>
     </div>
-    <div>
-      <div className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground mb-2">Keyword Coverage</div>
-      <div className="flex flex-wrap gap-1.5">
-        {["Kubernetes", "Terraform", "AWS", "CI/CD", "Python", "GraphQL"].map((k) => (
-          <span key={k} className="text-[10px] px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">{k} ✓</span>
-        ))}
-        {["Datadog", "Helm"].map((k) => (
-          <span key={k} className="text-[10px] px-2 py-1 rounded-full bg-muted text-muted-foreground border border-border">{k} +</span>
-        ))}
-      </div>
-    </div>
-  </div>
-);
+  );
+};
 
 const CoverLetterVisual = () => (
   <div className="space-y-2 font-sans">
-    <div className="text-xs text-muted-foreground">Dear Hiring Manager,</div>
+    <div className="text-xs text-muted-foreground">Dear {SAMPLE.job.company} Hiring Team,</div>
     <p className="text-xs text-foreground/85 leading-relaxed">
-      Your team's mission to scale developer velocity through internal platforms maps directly to my last three years engineering deployment infrastructure at Series-B startups...
+      Your team's mission to scale developer velocity through internal payment platforms maps directly to my last three years engineering deployment infrastructure at {SAMPLE.candidate.company}.
     </p>
     <p className="text-xs text-foreground/85 leading-relaxed">
-      Most recently, I led a migration that reduced cloud spend by <span className="text-primary font-medium">38%</span> while doubling release throughput — the exact tradeoff space your platform team is navigating.
+      Most recently, I led an AWS + Kubernetes migration that reduced cloud spend by <span className="text-primary font-medium">38%</span> while doubling release throughput across 3 payment services — the exact tradeoff space your platform team is navigating for the {SAMPLE.job.title} role.
     </p>
-    <div className="flex gap-2 pt-2">
+    <div className="flex flex-wrap gap-2 pt-2">
       <Pill>Role-specific hook</Pill>
       <Pill>Quantified proof</Pill>
-      <Pill>Tone matched</Pill>
+      <Pill>Tone matched to FinTech</Pill>
     </div>
   </div>
 );
@@ -311,9 +384,9 @@ const CoverLetterVisual = () => (
 const RoadmapVisual = () => (
   <div className="space-y-3">
     {[
-      { period: "30 days", title: "Close keyword gap", items: ["Earn AWS SAA cert", "Contribute to 1 open-source repo"] },
-      { period: "60 days", title: "Build signal", items: ["Publish 2 case studies", "Lead 1 cross-team initiative"] },
-      { period: "90 days", title: "Position for senior roles", items: ["Apply to 8 target companies", "Refresh resume + LinkedIn"] },
+      { period: "30 days", title: "Close keyword gap", items: ["Earn AWS Solutions Architect Associate", "Ship 1 Terraform module to internal registry"] },
+      { period: "60 days", title: "Build platform signal", items: ["Publish 2 case studies on K8s deployment wins", "Lead 1 cross-team observability initiative with Datadog"] },
+      { period: "90 days", title: `Position for ${SAMPLE.job.title}`, items: [`Apply to 8 FinTech platform roles`, "Refresh resume + LinkedIn with platform vocabulary"] },
     ].map((p, i) => (
       <div key={i} className="flex gap-3 items-start">
         <div className="font-display text-xs uppercase tracking-wider text-muted-foreground/60 w-16 flex-shrink-0 pt-0.5">{p.period}</div>
@@ -335,20 +408,24 @@ const RoadmapVisual = () => (
 const ComparisonVisual = () => (
   <div className="grid sm:grid-cols-2 gap-3">
     <div className="rounded-lg border border-border p-3">
-      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Original Skills (8)</div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mb-2">Original skills ({SAMPLE.candidate.skills.length})</div>
       <div className="flex flex-wrap gap-1">
-        {["JavaScript", "React", "Node", "SQL", "HTML", "CSS", "Git", "REST"].map((s) => (
+        {SAMPLE.candidate.skills.map((s) => (
           <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-muted text-foreground/70 border border-border">{s}</span>
         ))}
       </div>
+      <div className="text-[10px] uppercase tracking-wider text-muted-foreground mt-3 mb-1">Original summary</div>
+      <p className="text-[11px] text-foreground/70 font-sans leading-snug">{SAMPLE.candidate.summary}</p>
     </div>
     <div className="rounded-lg border border-accent/40 bg-accent/5 p-3">
-      <div className="text-[10px] uppercase tracking-wider text-accent mb-2">Optimized Skills (15)</div>
+      <div className="text-[10px] uppercase tracking-wider text-accent mb-2">Optimized skills ({SAMPLE.optimized.skills.length})</div>
       <div className="flex flex-wrap gap-1">
-        {["TypeScript", "React", "Node.js", "PostgreSQL", "GraphQL", "AWS", "Docker", "Kubernetes", "Redis", "CI/CD", "Jest", "Tailwind", "Next.js", "Terraform", "REST"].map((s) => (
+        {SAMPLE.optimized.skills.map((s) => (
           <span key={s} className="text-[10px] px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20">{s}</span>
         ))}
       </div>
+      <div className="text-[10px] uppercase tracking-wider text-accent mt-3 mb-1">Optimized summary</div>
+      <p className="text-[11px] text-foreground font-sans leading-snug">{SAMPLE.optimized.summary}</p>
     </div>
   </div>
 );
