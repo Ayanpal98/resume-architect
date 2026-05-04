@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
+import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
 import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
@@ -24,6 +25,7 @@ const Index = () => {
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Intelligence</a>
             <a href="#how-it-works" className="text-muted-foreground hover:text-foreground transition-colors text-sm">How it Works</a>
+            <a href="#reports" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Reports</a>
             <a href="#pricing" className="text-muted-foreground hover:text-foreground transition-colors text-sm">Pricing</a>
           </div>
           <div className="flex items-center gap-2 sm:gap-3">
@@ -176,6 +178,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* Sample Reports Showcase */}
+      <SampleReportsShowcase />
 
       {/* Pricing Section */}
       <PricingSection />
