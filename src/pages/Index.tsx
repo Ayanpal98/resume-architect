@@ -11,7 +11,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
@@ -84,7 +84,7 @@ const Index = () => {
             <div className="animate-fade-up" style={{ animationDelay: "0.2s" }}>
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-hero opacity-10 rounded-3xl blur-2xl"></div>
-                <div className="relative bg-card rounded-2xl shadow-xl border border-border p-6">
+                <div className="relative glass-strong rounded-2xl p-6">
                   <ResumePreviewCard />
                 </div>
                 {/* Metric cards */}
@@ -119,7 +119,7 @@ const Index = () => {
               Every layer of ATSFY is engineered around how hiring systems actually work — not keyword stuffing or black-box scores.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 border border-border rounded-2xl overflow-hidden bg-card">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 glass rounded-2xl overflow-hidden">
             {[
               { icon: Target, title: "ATS Parsing Engine", description: "Analyzes your resume against real ATS parsing behavior — not just keywords.", tag: "Intelligence layer" },
               { icon: Zap, title: "Real-time Signal Analysis", description: "See exactly how parsers read each section — headers, dates, and formatting issues flagged in real time.", tag: "Analysis" },
@@ -259,7 +259,7 @@ const Index = () => {
 };
 
 const MetricCard = ({ icon: Icon, label, value, sub }: { icon: any; label: string; value: string; sub: string }) => (
-  <div className="bg-card border border-border rounded-xl p-3.5">
+  <div className="glass rounded-xl p-3.5">
     <div className="flex items-center justify-between mb-2">
       <span className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground font-sans">{label}</span>
       <Icon className="w-3.5 h-3.5 text-primary" />
