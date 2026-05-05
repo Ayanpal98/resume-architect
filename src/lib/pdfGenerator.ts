@@ -45,96 +45,39 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 };
 
-// Template color configurations
-const templateConfigs = {
-  classic: {
-    colors: { primary: "#1a365d", secondary: "#2d3748", accent: "#4a5568", divider: "#1a365d" },
-    headerSize: 18,
-    sectionSize: 11,
-    bodySize: 10,
-    smallSize: 9,
-  },
-  modern: {
-    colors: { primary: "#1e40af", secondary: "#374151", accent: "#3b82f6", divider: "#1e40af" },
-    headerSize: 18,
-    sectionSize: 11,
-    bodySize: 10,
-    smallSize: 9,
-  },
-  professional: {
-    colors: { primary: "#0f172a", secondary: "#334155", accent: "#475569", divider: "#0f172a" },
-    headerSize: 18,
-    sectionSize: 11,
-    bodySize: 10,
-    smallSize: 9,
-  },
-  tech: {
-    colors: { primary: "#0e7490", secondary: "#334155", accent: "#06b6d4", divider: "#0e7490" },
-    headerSize: 18,
-    sectionSize: 11,
-    bodySize: 10,
-    smallSize: 9,
-  },
-  finance: {
-    colors: { primary: "#065f46", secondary: "#1f2937", accent: "#059669", divider: "#065f46" },
-    headerSize: 18,
-    sectionSize: 11,
-    bodySize: 10,
-    smallSize: 9,
-  },
-  healthcare: {
-    colors: { primary: "#0369a1", secondary: "#374151", accent: "#0284c7", divider: "#0369a1" },
-    headerSize: 18,
-    sectionSize: 11,
-    bodySize: 10,
-    smallSize: 9,
-  },
-};
-
-// Parse description into bullet points — NO limits
+// Parse description into bullet points — one per line, never merged
 const parseBulletPoints = (description: string): string[] => {
   if (!description) return [];
   return description
-    .split(/(?:\r?\n|•|▪|◦|➤|→|►|■|□|●|○|-\s)/)
-    .map(line => line.trim())
-    .filter(line => line.length > 0);
+    .split(/(?:\r?\n|•|▪|◦|➤|→|►|■|□|●|○|(?:^|\s)-\s)/)
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0);
 };
 
-// Group skills using manual category assignments
-const groupSkillsByManualCategory = (skills: string[], categoryMap: Record<string, string>): Record<string, string[]> => {
-  const groups: Record<string, string[]> = {};
-  skills.forEach((skill) => {
-    const category = categoryMap[skill] || "Core Skills";
-    if (!groups[category]) groups[category] = [];
-    groups[category].push(skill);
-  });
-  return groups;
-};
-
-// Auto-categorize skills into labeled groups for PDF rendering
+// Categorize skills into Languages / Frameworks / Tools / Databases
 const categorizeSkillsForPDF = (skills: string[]): Record<string, string[]> => {
-  const toolPatterns = /^(jira|confluence|git|github|gitlab|docker|kubernetes|k8s|jenkins|terraform|ansible|aws|azure|gcp|figma|sketch|adobe|photoshop|illustrator|tableau|power\s?bi|looker|excel|google\s?sheets|slack|notion|trello|asana|postman|vs\s?code|intellij|xcode|salesforce|hubspot|sap|servicenow|snowflake|databricks|airflow|kafka|redis|elasticsearch|mongodb|postgresql|mysql|bigquery|redshift|datadog|grafana|prometheus|splunk|new\s?relic|heroku|vercel|netlify|circleci|travis)$/i;
-  const technicalPatterns = /^(javascript|typescript|python|java|c\+\+|c#|ruby|php|swift|kotlin|go|golang|rust|sql|html|css|sass|tailwind|react|angular|vue|next\.?js|node\.?js|express|django|flask|fastapi|spring|graphql|rest\s?api|grpc|machine\s?learning|ml|ai|llm|deep\s?learning|pytorch|tensorflow|r|scala|perl|dart|flutter|objective-c|assembly|matlab|solidity|elixir|haskell|clojure|webpack|vite|microservices|serverless|devops|ci\/cd|agile|scrum|tdd|oop|data\s?structures|algorithms|system\s?design)$/i;
+  const languages = /^(javascript|typescript|python|java|c\+\+|c#|c|ruby|php|swift|kotlin|go|golang|rust|sql|html|css|sass|scss|r|scala|perl|dart|objective-c|assembly|matlab|solidity|elixir|haskell|clojure|bash|shell|lua)$/i;
+  const frameworks = /^(react|reactjs|angular|vue|vuejs|next\.?js|nuxt|svelte|express|expressjs|nest\.?js|django|flask|fastapi|spring|spring\s?boot|rails|laravel|\.net|asp\.net|flutter|react\s?native|ember|backbone|jquery|tailwind|bootstrap|material\s?ui|chakra|redux|graphql|node\.?js|nodejs)$/i;
+  const databases = /^(mysql|postgresql|postgres|mongodb|redis|elasticsearch|cassandra|dynamodb|sqlite|oracle|mariadb|firebase|firestore|supabase|snowflake|bigquery|redshift|neo4j|couchdb|influxdb|cockroachdb)$/i;
+  const tools = /^(jira|confluence|git|github|gitlab|bitbucket|docker|kubernetes|k8s|jenkins|terraform|ansible|aws|azure|gcp|figma|sketch|adobe|photoshop|illustrator|tableau|power\s?bi|looker|excel|slack|notion|trello|asana|postman|vs\s?code|intellij|xcode|salesforce|hubspot|sap|servicenow|datadog|grafana|prometheus|splunk|heroku|vercel|netlify|circleci|travis|webpack|vite|babel|npm|yarn|linux|unix|windows|macos)$/i;
 
   const groups: Record<string, string[]> = {
-    "Technical Skills": [],
-    "Tools & Platforms": [],
-    "Core Skills": [],
+    Languages: [],
+    Frameworks: [],
+    Tools: [],
+    Databases: [],
   };
 
   skills.forEach((skill) => {
     const s = skill.trim();
     if (!s) return;
-    if (toolPatterns.test(s)) {
-      groups["Tools & Platforms"].push(s);
-    } else if (technicalPatterns.test(s)) {
-      groups["Technical Skills"].push(s);
-    } else {
-      groups["Core Skills"].push(s);
-    }
+    if (languages.test(s)) groups.Languages.push(s);
+    else if (frameworks.test(s)) groups.Frameworks.push(s);
+    else if (databases.test(s)) groups.Databases.push(s);
+    else if (tools.test(s)) groups.Tools.push(s);
+    else groups.Tools.push(s);
   });
 
-  // Remove empty groups
   Object.keys(groups).forEach((k) => {
     if (groups[k].length === 0) delete groups[k];
   });
@@ -142,310 +85,332 @@ const categorizeSkillsForPDF = (skills: string[]): Record<string, string[]> => {
   return groups;
 };
 
-export const generatePDF = (data: ResumeData, templateId: string = "classic"): jsPDF => {
-  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
-  const config = templateConfigs[templateId as keyof typeof templateConfigs] || templateConfigs.classic;
+export const generatePDF = (data: ResumeData, _templateId: string = "classic"): jsPDF => {
+  const doc = new jsPDF({ orientation: "portrait", unit: "in", format: "letter" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
-  const marginLeft = 15;
-  const marginRight = 15;
-  const contentWidth = pageWidth - marginLeft - marginRight;
-  const bottomMargin = 15;
+  const margin = 0.6;
+  const contentWidth = pageWidth - margin * 2;
+  const bottomMargin = 0.6;
 
-  let yPos = 15;
+  // Color palette
+  const colorName = "#1a1a2e";
+  const colorBody = "#2d2d2d";
+  const colorBorder = "#4a4a8a";
+  const colorAccent = "#4a4a8a";
 
-  // Helper: check page break and add new page if needed
+  // Sizes (pt → in handled by jsPDF font size in pt while unit is "in")
+  // jsPDF uses pt for font sizes regardless of unit
+  const SIZE_NAME = 22;
+  const SIZE_SECTION = 11;
+  const SIZE_BODY = 10.5;
+  const SIZE_SMALL = 9.5;
+
+  // Line height: 1.6 of body size in inches
+  const ptToIn = (pt: number) => pt / 72;
+  const LH_BODY = ptToIn(SIZE_BODY) * 1.6;
+  const LH_SMALL = ptToIn(SIZE_SMALL) * 1.5;
+
+  // Use helvetica as Inter fallback (jsPDF doesn't ship Inter; helvetica is the cleanest sans built-in)
+  const FONT = "helvetica";
+
+  let yPos = margin;
+
   const checkPage = (needed: number) => {
     if (yPos + needed > pageHeight - bottomMargin) {
       doc.addPage();
-      yPos = 15;
+      yPos = margin;
     }
   };
 
-  // Helper: wrapped text, returns new yPos
-  const addWrappedText = (text: string, x: number, y: number, maxWidth: number, lineHeight: number = 4.5): number => {
+  const addWrappedText = (text: string, x: number, maxWidth: number, lineHeight: number) => {
     const lines = doc.splitTextToSize(text, maxWidth);
-    lines.forEach((line: string, i: number) => {
+    lines.forEach((line: string) => {
       checkPage(lineHeight);
       doc.text(line, x, yPos);
       yPos += lineHeight;
     });
-    return yPos;
   };
 
-  // Helper: section header with underline
+  // Letter-spaced uppercase header (manually space chars for 0.12em tracking)
+  const drawTrackedHeader = (title: string, x: number, y: number, sizePt: number) => {
+    const upper = title.toUpperCase();
+    const trackEm = 0.12;
+    const trackIn = ptToIn(sizePt) * trackEm;
+    let cursor = x;
+    doc.setFontSize(sizePt);
+    doc.setFont(FONT, "bold");
+    for (const ch of upper) {
+      doc.text(ch, cursor, y);
+      cursor += doc.getTextWidth(ch) + trackIn;
+    }
+    return cursor;
+  };
+
   const addSectionHeader = (title: string) => {
-    checkPage(10);
-    yPos += 3;
-    doc.setFontSize(config.sectionSize);
-    doc.setFont("helvetica", "bold");
-    doc.setTextColor(config.colors.primary);
-    doc.text(title.toUpperCase(), marginLeft, yPos);
-    yPos += 1.5;
-    doc.setDrawColor(config.colors.divider);
-    doc.setLineWidth(0.5);
-    doc.line(marginLeft, yPos, pageWidth - marginRight, yPos);
-    yPos += 4;
+    checkPage(0.45);
+    yPos += 0.1;
+    doc.setTextColor(colorName);
+    drawTrackedHeader(title, margin, yPos, SIZE_SECTION);
+    yPos += 0.06;
+    doc.setDrawColor(colorBorder);
+    doc.setLineWidth(0.008);
+    doc.line(margin, yPos, pageWidth - margin, yPos);
+    yPos += 0.14;
   };
 
-  // ========== NAME (centered) ==========
-  doc.setFontSize(config.headerSize);
-  doc.setFont("helvetica", "bold");
-  doc.setTextColor(config.colors.primary);
+  // ========== NAME (largest, 22pt bold, #1a1a2e, centered) ==========
+  doc.setFontSize(SIZE_NAME);
+  doc.setFont(FONT, "bold");
+  doc.setTextColor(colorName);
   const name = data.personalInfo.fullName || "Your Name";
-  doc.text(name, pageWidth / 2, yPos, { align: "center" });
-  yPos += 6;
+  doc.text(name, pageWidth / 2, yPos + ptToIn(SIZE_NAME) * 0.8, { align: "center" });
+  yPos += ptToIn(SIZE_NAME) * 1.2;
 
-  // ========== CONTACT LINE (centered) ==========
+  // ========== CONTACT LINE (single line: phone | email | city | LinkedIn | GitHub) ==========
   const contactParts = [
     data.personalInfo.phone,
     data.personalInfo.email,
     data.personalInfo.location,
     data.personalInfo.linkedin,
     data.personalInfo.portfolio,
-  ].filter(Boolean);
+  ]
+    .map((p) => (p || "").trim())
+    .filter(Boolean);
 
   if (contactParts.length > 0) {
-    doc.setFontSize(config.smallSize);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(config.colors.secondary);
-    const contactLine = contactParts.join("  |  ");
-    const contactLines = doc.splitTextToSize(contactLine, contentWidth);
-    contactLines.forEach((line: string) => {
-      doc.text(line, pageWidth / 2, yPos, { align: "center" });
-      yPos += 4;
-    });
+    doc.setFontSize(SIZE_SMALL);
+    doc.setFont(FONT, "normal");
+    doc.setTextColor(colorBody);
+    let contactLine = contactParts.join("  |  ");
+    // Force single line: shrink if needed
+    let fittedSize = SIZE_SMALL;
+    while (doc.getTextWidth(contactLine) > contentWidth && fittedSize > 7) {
+      fittedSize -= 0.5;
+      doc.setFontSize(fittedSize);
+    }
+    doc.text(contactLine, pageWidth / 2, yPos + ptToIn(fittedSize) * 0.8, { align: "center" });
+    yPos += ptToIn(fittedSize) * 1.6;
   }
-  yPos += 2;
+
+  yPos += 0.05;
 
   // ========== PROFESSIONAL SUMMARY ==========
   if (data.summary && data.summary.trim()) {
-    addSectionHeader("PROFESSIONAL SUMMARY");
-    doc.setFontSize(config.bodySize);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(config.colors.secondary);
-    addWrappedText(data.summary, marginLeft, yPos, contentWidth);
-    yPos += 2;
+    addSectionHeader("Professional Summary");
+    doc.setFontSize(SIZE_BODY);
+    doc.setFont(FONT, "normal");
+    doc.setTextColor(colorBody);
+    addWrappedText(data.summary.trim(), margin, contentWidth, LH_BODY);
+    yPos += 0.05;
   }
 
-// ========== CORE SKILLS (Categorized, max 15) ==========
+  // ========== SKILLS ==========
   if (data.skills && data.skills.length > 0) {
-    addSectionHeader("CORE SKILLS");
+    addSectionHeader("Skills");
+    const skillsToUse = data.skills.slice(0, 20);
+    const grouped = categorizeSkillsForPDF(skillsToUse);
+    const order = ["Languages", "Frameworks", "Tools", "Databases"];
 
-    // Use manual categories if available, otherwise auto-categorize
-    const skillsToUse = data.skills.slice(0, 15);
-    const categorized = data.skillCategoryMap && Object.keys(data.skillCategoryMap).length > 0
-      ? groupSkillsByManualCategory(skillsToUse, data.skillCategoryMap)
-      : categorizeSkillsForPDF(skillsToUse);
+    doc.setFontSize(SIZE_BODY);
+    order.forEach((cat) => {
+      const items = grouped[cat];
+      if (!items || items.length === 0) return;
+      checkPage(LH_BODY);
+      doc.setFont(FONT, "bold");
+      doc.setTextColor(colorName);
+      const label = `${cat}: `;
+      doc.text(label, margin, yPos);
+      const labelWidth = doc.getTextWidth(label);
 
-    Object.entries(categorized).forEach(([category, items]) => {
-      if (items.length === 0) return;
-      checkPage(8);
-
-      // Category label (bold)
-      doc.setFontSize(config.smallSize);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(config.colors.primary);
-      const labelWidth = doc.getTextWidth(category + ":  ");
-      doc.text(category + ":", marginLeft, yPos);
-
-      // Skills inline (normal)
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(config.colors.secondary);
-      const skillsLine = items.join("  •  ");
-      const availableWidth = contentWidth - labelWidth;
-      const lines = doc.splitTextToSize(skillsLine, availableWidth);
+      doc.setFont(FONT, "normal");
+      doc.setTextColor(colorBody);
+      const valueText = items.join(", ");
+      const lines = doc.splitTextToSize(valueText, contentWidth - labelWidth);
       lines.forEach((line: string, i: number) => {
-        checkPage(4.5);
-        doc.text(line, marginLeft + labelWidth, yPos);
-        if (i < lines.length - 1) yPos += 4;
+        if (i > 0) {
+          yPos += LH_BODY;
+          checkPage(LH_BODY);
+        }
+        doc.text(line, margin + labelWidth, yPos);
       });
-      yPos += 5;
+      yPos += LH_BODY;
     });
-    yPos += 1;
+    yPos += 0.05;
   }
 
   // ========== WORK EXPERIENCE ==========
   if (data.experience && data.experience.length > 0) {
-    addSectionHeader("WORK EXPERIENCE");
+    addSectionHeader("Work Experience");
 
     data.experience.forEach((exp, index) => {
-      checkPage(12);
+      checkPage(LH_BODY * 3);
 
-      // Role – Company – Date on one line
-      doc.setFontSize(config.bodySize);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(config.colors.primary);
-      const rolePart = exp.title || "Role";
-      const companyPart = [exp.company, exp.location].filter(Boolean).join(", ");
-      doc.text(rolePart, marginLeft, yPos);
+      doc.setFontSize(SIZE_BODY);
+      doc.setFont(FONT, "bold");
+      doc.setTextColor(colorName);
+      doc.text(exp.title || "Role", margin, yPos);
 
       const dateStr = `${formatDate(exp.startDate)} – ${exp.current ? "Present" : formatDate(exp.endDate)}`;
-      doc.setFontSize(config.smallSize);
-      doc.setFont("helvetica", "normal");
-      doc.setTextColor(config.colors.accent);
-      doc.text(dateStr, pageWidth - marginRight, yPos, { align: "right" });
-      yPos += 4.5;
+      doc.setFontSize(SIZE_SMALL);
+      doc.setFont(FONT, "normal");
+      doc.setTextColor(colorAccent);
+      doc.text(dateStr, pageWidth - margin, yPos, { align: "right" });
+      yPos += LH_BODY;
 
-      // Company line
+      const companyPart = [exp.company, exp.location].filter(Boolean).join(", ");
       if (companyPart) {
-        doc.setFontSize(config.smallSize);
-        doc.setFont("helvetica", "italic");
-        doc.setTextColor(config.colors.accent);
-        doc.text(companyPart, marginLeft, yPos);
-        yPos += 4.5;
+        doc.setFontSize(SIZE_SMALL);
+        doc.setFont(FONT, "italic");
+        doc.setTextColor(colorAccent);
+        doc.text(companyPart, margin, yPos);
+        yPos += LH_SMALL;
       }
 
-      // Bullet points — NO limits on count or length
       if (exp.description) {
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(config.colors.secondary);
-        doc.setFontSize(config.smallSize);
+        doc.setFontSize(SIZE_BODY);
+        doc.setFont(FONT, "normal");
+        doc.setTextColor(colorBody);
         const bullets = parseBulletPoints(exp.description);
-
+        const bulletIndent = 0.18;
         bullets.forEach((bullet) => {
-          const bulletText = `•  ${bullet}`;
-          const lines = doc.splitTextToSize(bulletText, contentWidth - 4);
-          lines.forEach((line: string) => {
-            checkPage(4.5);
-            doc.text(line, marginLeft + 2, yPos);
-            yPos += 4;
+          // Each bullet on its own line — wrap with hanging indent
+          const lines = doc.splitTextToSize(bullet, contentWidth - bulletIndent);
+          lines.forEach((line: string, i: number) => {
+            checkPage(LH_BODY);
+            if (i === 0) {
+              doc.text("•", margin + 0.04, yPos);
+              doc.text(line, margin + bulletIndent, yPos);
+            } else {
+              doc.text(line, margin + bulletIndent, yPos);
+            }
+            yPos += LH_BODY;
           });
         });
       }
 
-      if (index < data.experience.length - 1) {
-        yPos += 3;
-      }
+      if (index < data.experience.length - 1) yPos += 0.08;
     });
-    yPos += 2;
+    yPos += 0.05;
   }
 
-  // ========== PROJECTS (premium, dedicated section — omit when empty) ==========
+  // ========== PROJECTS ==========
   const validProjects = (data.projects || []).filter(
     (p) => (p?.name && p.name.trim()) || (p?.description && p.description.trim()) || (p?.tools && p.tools.trim())
   );
 
   if (validProjects.length > 0) {
-    addSectionHeader("PROJECTS");
+    addSectionHeader("Projects");
 
     validProjects.forEach((proj, idx) => {
-      checkPage(14);
+      checkPage(LH_BODY * 2);
 
-      // Project title (bold, primary color)
-      doc.setFontSize(config.bodySize);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(config.colors.primary);
-      const projName = proj.name?.trim() || "Project";
-      doc.text(projName, marginLeft, yPos);
+      doc.setFontSize(SIZE_BODY);
+      doc.setFont(FONT, "bold");
+      doc.setTextColor(colorName);
+      doc.text(proj.name?.trim() || "Project", margin, yPos);
 
-      // Inline tools tag on the right (italic accent)
       if (proj.tools && proj.tools.trim()) {
-        doc.setFontSize(config.smallSize);
-        doc.setFont("helvetica", "italic");
-        doc.setTextColor(config.colors.accent);
-        const toolsLabel = proj.tools.trim();
-        const toolsLines = doc.splitTextToSize(toolsLabel, contentWidth * 0.55);
-        doc.text(toolsLines[0], pageWidth - marginRight, yPos, { align: "right" });
+        doc.setFontSize(SIZE_SMALL);
+        doc.setFont(FONT, "italic");
+        doc.setTextColor(colorAccent);
+        doc.text(proj.tools.trim(), pageWidth - margin, yPos, { align: "right" });
       }
-      yPos += 4.5;
+      yPos += LH_BODY;
 
-      // Description bullet(s) — supports multi-line / multi-bullet input
       if (proj.description && proj.description.trim()) {
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(config.colors.secondary);
-        doc.setFontSize(config.smallSize);
+        doc.setFontSize(SIZE_BODY);
+        doc.setFont(FONT, "normal");
+        doc.setTextColor(colorBody);
         const bullets = parseBulletPoints(proj.description);
-        const lineList = bullets.length > 0 ? bullets : [proj.description.trim()];
-
-        lineList.forEach((bullet) => {
-          const bulletText = `•  ${bullet}`;
-          const lines = doc.splitTextToSize(bulletText, contentWidth - 4);
-          lines.forEach((line: string) => {
-            checkPage(4.5);
-            doc.text(line, marginLeft + 2, yPos);
-            yPos += 4;
+        const list = bullets.length > 0 ? bullets : [proj.description.trim()];
+        const bulletIndent = 0.18;
+        list.forEach((bullet) => {
+          const lines = doc.splitTextToSize(bullet, contentWidth - bulletIndent);
+          lines.forEach((line: string, i: number) => {
+            checkPage(LH_BODY);
+            if (i === 0) {
+              doc.text("•", margin + 0.04, yPos);
+              doc.text(line, margin + bulletIndent, yPos);
+            } else {
+              doc.text(line, margin + bulletIndent, yPos);
+            }
+            yPos += LH_BODY;
           });
         });
       }
 
-      if (idx < validProjects.length - 1) {
-        yPos += 2.5;
-      }
+      if (idx < validProjects.length - 1) yPos += 0.06;
     });
-    yPos += 2;
+    yPos += 0.05;
   }
 
-  // ========== CERTIFICATIONS (separate, omit when empty) ==========
+  // ========== CERTIFICATIONS ==========
   const validCerts = (data.certifications || []).filter((c) => c && c.trim());
   if (validCerts.length > 0) {
-    addSectionHeader("CERTIFICATIONS");
-    doc.setFontSize(config.smallSize);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor(config.colors.secondary);
-
+    addSectionHeader("Certifications");
+    doc.setFontSize(SIZE_BODY);
+    doc.setFont(FONT, "normal");
+    doc.setTextColor(colorBody);
+    const bulletIndent = 0.18;
     validCerts.forEach((cert) => {
-      checkPage(4.5);
-      const certText = `•  ${cert.trim()}`;
-      addWrappedText(certText, marginLeft + 2, yPos, contentWidth - 4);
+      const lines = doc.splitTextToSize(cert.trim(), contentWidth - bulletIndent);
+      lines.forEach((line: string, i: number) => {
+        checkPage(LH_BODY);
+        if (i === 0) {
+          doc.text("•", margin + 0.04, yPos);
+          doc.text(line, margin + bulletIndent, yPos);
+        } else {
+          doc.text(line, margin + bulletIndent, yPos);
+        }
+        yPos += LH_BODY;
+      });
     });
-    yPos += 2;
+    yPos += 0.05;
   }
 
   // ========== EDUCATION ==========
   if (data.education && data.education.length > 0) {
-    addSectionHeader("EDUCATION");
+    addSectionHeader("Education");
 
     data.education.forEach((edu, index) => {
-      checkPage(10);
+      checkPage(LH_BODY * 2);
 
-      // Degree – University
-      doc.setFontSize(config.bodySize);
-      doc.setFont("helvetica", "bold");
-      doc.setTextColor(config.colors.primary);
-      const degreePart = edu.degree || "Degree";
-      const schoolPart = [edu.school, edu.location].filter(Boolean).join(", ");
-      doc.text(degreePart, marginLeft, yPos);
+      doc.setFontSize(SIZE_BODY);
+      doc.setFont(FONT, "bold");
+      doc.setTextColor(colorName);
+      doc.text(edu.degree || "Degree", margin, yPos);
 
       if (edu.graduationDate) {
-        doc.setFontSize(config.smallSize);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(config.colors.accent);
-        doc.text(formatDate(edu.graduationDate), pageWidth - marginRight, yPos, { align: "right" });
+        doc.setFontSize(SIZE_SMALL);
+        doc.setFont(FONT, "normal");
+        doc.setTextColor(colorAccent);
+        doc.text(formatDate(edu.graduationDate), pageWidth - margin, yPos, { align: "right" });
       }
-      yPos += 4.5;
+      yPos += LH_BODY;
 
+      const schoolPart = [edu.school, edu.location].filter(Boolean).join(", ");
       if (schoolPart) {
-        doc.setFontSize(config.smallSize);
-        doc.setFont("helvetica", "italic");
-        doc.setTextColor(config.colors.accent);
-        doc.text(schoolPart, marginLeft, yPos);
-        yPos += 4.5;
+        doc.setFontSize(SIZE_SMALL);
+        doc.setFont(FONT, "italic");
+        doc.setTextColor(colorAccent);
+        doc.text(schoolPart, margin, yPos);
+        yPos += LH_SMALL;
       }
 
       if (edu.gpa) {
-        doc.setFontSize(config.smallSize);
-        doc.setFont("helvetica", "normal");
-        doc.setTextColor(config.colors.secondary);
-        doc.text(`GPA: ${edu.gpa}`, marginLeft, yPos);
-        yPos += 4.5;
+        doc.setFontSize(SIZE_SMALL);
+        doc.setFont(FONT, "normal");
+        doc.setTextColor(colorBody);
+        doc.text(`GPA: ${edu.gpa}`, margin, yPos);
+        yPos += LH_SMALL;
       }
 
-      if (index < data.education.length - 1) {
-        yPos += 2;
-      }
+      if (index < data.education.length - 1) yPos += 0.05;
     });
   }
 
-  // ATSFy Technologies™ trademark footer on every page
-  const totalPages = doc.getNumberOfPages();
-  for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i);
-    doc.setFontSize(7);
-    doc.setFont("helvetica", "normal");
-    doc.setTextColor("#718096");
-    doc.text(`Generated by ATSFy Technologies\u2122`, pageWidth / 2, pageHeight - 6, { align: "center" });
-  }
+  // No watermark, no footer text.
 
   return doc;
 };
