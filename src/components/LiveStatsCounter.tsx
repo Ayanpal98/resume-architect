@@ -60,7 +60,7 @@ export const LiveStatsCounter = () => {
 
   return (
     <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
-      <div className="flex items-center gap-3 px-6 py-4 bg-card rounded-2xl border border-border shadow-sm">
+      <div className="flex items-center gap-3 px-6 py-4 glass rounded-2xl">
         <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
           <FileText className="w-5 h-5 text-primary" />
         </div>
@@ -72,7 +72,7 @@ export const LiveStatsCounter = () => {
         </div>
         <div className="ml-2 w-2 h-2 rounded-full bg-accent animate-pulse" title="Live" />
       </div>
-      <div className="flex items-center gap-3 px-6 py-4 bg-card rounded-2xl border border-border shadow-sm">
+      <div className="flex items-center gap-3 px-6 py-4 glass rounded-2xl">
         <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
           <Users className="w-5 h-5 text-accent" />
         </div>
