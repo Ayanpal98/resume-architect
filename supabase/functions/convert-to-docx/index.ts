@@ -2,10 +2,29 @@
  import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
  
- const corsHeaders = {
-   "Access-Control-Allow-Origin": "*",
-   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
- };
+ const ALLOWED_ORIGIN_PATTERNS = [
+  /^https?:\/\/localhost(:\d+)?$/,
+  /^https?:\/\/127\.0\.0\.1(:\d+)?$/,
+  /\.lovable\.app$/,
+  /\.lovable\.dev$/,
+  /\.lovableproject\.com$/,
+];
+
+function buildCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get("Origin") || "";
+  const extra = (Deno.env.get("ALLOWED_ORIGIN") || "").split(",").map((s) => s.trim()).filter(Boolean);
+  const isAllowed =
+    extra.includes(origin) ||
+    ALLOWED_ORIGIN_PATTERNS.some((re) => {
+      try { return re.test(new URL(origin).host) || re.test(origin); } catch { return false; }
+    });
+  return {
+    "Access-Control-Allow-Origin": isAllowed ? origin : (extra[0] || "https://atsfycareerintelligentplatform.lovable.app"),
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+    "Vary": "Origin",
+  };
+}
  
  // Simple DOCX generation using Office Open XML format
  function escapeXml(text: string): string {
@@ -128,6 +147,7 @@
  }
  
  serve(async (req) => {
+  const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
