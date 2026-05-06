@@ -1,5 +1,6 @@
 import jsPDF from "jspdf";
 import { checkPdfLayout, type LayoutCheckResult } from "./pdfLayoutCheck";
+import { normalizeResumeData } from "./resumeNormalizer";
 
 export interface ResumeData {
   personalInfo: {
