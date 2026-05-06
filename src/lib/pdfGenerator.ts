@@ -347,7 +347,13 @@ export const generatePDF = (data: ResumeData, _templateId: string = "classic"): 
   }
 
   // ========== CERTIFICATIONS ==========
-  const validCerts = (data.certifications || []).filter((c) => c && c.trim());
+  const validCerts = (data.certifications || [])
+    .map((c: any) => {
+      if (typeof c === "string") return c;
+      if (c && typeof c === "object") return c.name || c.title || c.certification || "";
+      return String(c ?? "");
+    })
+    .filter((c) => c && c.trim());
   if (validCerts.length > 0) {
     addSectionHeader("Certifications");
     doc.setFontSize(SIZE_BODY);
