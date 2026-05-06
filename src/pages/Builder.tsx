@@ -285,43 +285,16 @@ const Builder = () => {
   };
 
   const handleImport = (data: any, importAtsResult?: ATSCheckResult) => {
-    // Normalize parsed projects from upload (parser returns {title, description, technologies, outcomes})
-    // into the builder's shape ({id, name, description, tools}).
-    const normalizedProjects: Project[] = Array.isArray(data.projects)
-      ? data.projects
-          .map((p: any) => {
-            const name = (p?.name ?? p?.title ?? "").toString().trim();
-            const descParts = [p?.description, p?.outcomes].filter(Boolean).map((s: any) => s.toString().trim());
-            const description = descParts.join("\n");
-            const tools = Array.isArray(p?.technologies)
-              ? p.technologies.filter(Boolean).join(", ")
-              : (p?.tools ?? p?.technologies ?? "").toString();
-            return {
-              id: p?.id || crypto.randomUUID(),
-              name,
-              description,
-              tools,
-            };
-          })
-          .filter((p: Project) => p.name || p.description || p.tools)
-      : [];
+    // Run all imported data through the shared normalizer so every field
+    // (strings, arrays, objects from any source) matches the builder/PDF shape.
+    const normalized = normalizeResumeData(data);
 
-    // Store original data for comparison (deep clone)
-    const importedData = {
-      ...data,
-      personalInfo: { ...data.personalInfo },
-      experience: data.experience?.map((exp: any) => ({ ...exp })) || [],
-      education: data.education?.map((edu: any) => ({ ...edu })) || [],
-      skills: [...(data.skills || [])],
-      projects: normalizedProjects,
-    };
-    setOriginalResumeData(importedData);
+    setOriginalResumeData(normalized);
 
     setResumeData((prev) => ({
       ...prev,
-      ...data,
-      personalInfo: { ...prev.personalInfo, ...data.personalInfo },
-      projects: normalizedProjects,
+      ...normalized,
+      personalInfo: { ...prev.personalInfo, ...normalized.personalInfo },
     }));
     setShowImport(false);
 
