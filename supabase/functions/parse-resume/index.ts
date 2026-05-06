@@ -234,6 +234,8 @@ Return ONLY the JSON object. No markdown, no explanation, no code blocks.`;
           { role: "system", content: systemPrompt },
           { role: "user", content: `Parse this resume for ATS optimization:\n\n${trimmedText}` },
         ],
+        max_tokens: 8000,
+        response_format: { type: "json_object" },
       }),
     });
 
