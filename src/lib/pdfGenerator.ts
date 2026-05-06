@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import { checkPdfLayout, type LayoutCheckResult } from "./pdfLayoutCheck";
 
 export interface ResumeData {
   personalInfo: {
@@ -415,8 +416,17 @@ export const generatePDF = (data: ResumeData, _templateId: string = "classic"): 
   return doc;
 };
 
-export const downloadPDF = (data: ResumeData, templateId: string = "classic") => {
+export const downloadPDF = (data: ResumeData, templateId: string = "classic"): LayoutCheckResult => {
   const doc = generatePDF(data, templateId);
+  const result = checkPdfLayout(doc, data);
+  if (!result.passed) {
+    console.warn("[PDF Layout Check] Failures detected:", result.failures);
+    throw new Error(
+      `Resume PDF layout check failed:\n• ${result.failures.join("\n• ")}`
+    );
+  }
+  console.info("[PDF Layout Check] All checks passed", result.checks);
   const fileName = `${data.personalInfo.fullName || "resume"}_resume.pdf`.replace(/\s+/g, "_");
   doc.save(fileName);
+  return result;
 };
