@@ -87,7 +87,8 @@ const categorizeSkillsForPDF = (skills: string[]): Record<string, string[]> => {
   return groups;
 };
 
-export const generatePDF = (data: ResumeData, _templateId: string = "classic"): jsPDF => {
+export const generatePDF = (rawData: ResumeData, _templateId: string = "classic"): jsPDF => {
+  const data = normalizeResumeData(rawData);
   const doc = new jsPDF({ orientation: "portrait", unit: "in", format: "letter" });
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
