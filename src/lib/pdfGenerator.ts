@@ -1,4 +1,5 @@
 import jsPDF from "jspdf";
+import { checkPdfLayout, type LayoutCheckResult } from "./pdfLayoutCheck";
 
 export interface ResumeData {
   personalInfo: {
