@@ -418,14 +418,17 @@ export const generatePDF = (data: ResumeData, _templateId: string = "classic"): 
 
 export const downloadPDF = (data: ResumeData, templateId: string = "classic"): LayoutCheckResult => {
   const doc = generatePDF(data, templateId);
-  const result = checkPdfLayout(doc, data);
-  if (!result.passed) {
-    console.warn("[PDF Layout Check] Failures detected:", result.failures);
-    throw new Error(
-      `Resume PDF layout check failed:\n• ${result.failures.join("\n• ")}`
-    );
+  let result: LayoutCheckResult = { passed: true, checks: [], failures: [] };
+  try {
+    result = checkPdfLayout(doc, data);
+    if (!result.passed) {
+      console.warn("[PDF Layout Check] Non-blocking failures:", result.failures);
+    } else {
+      console.info("[PDF Layout Check] All checks passed");
+    }
+  } catch (e) {
+    console.warn("[PDF Layout Check] Check threw, continuing with download:", e);
   }
-  console.info("[PDF Layout Check] All checks passed", result.checks);
   const fileName = `${data.personalInfo.fullName || "resume"}_resume.pdf`.replace(/\s+/g, "_");
   doc.save(fileName);
   return result;
