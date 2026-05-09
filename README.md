@@ -1,7 +1,7 @@
 <div align="center">
 
 <picture>
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=C9A84C,1A1610&height=200&section=header&text=TaskAssess%20Platform&fontSize=48&fontColor=FAF7F0&fontAlignY=38&desc=Certificate%20%26%20Intern%20Assessment%20System&descAlignY=58&descColor=C9A84C&animation=fadeIn" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=C9A84C,1A1610&height=200&section=header&text=Career%20Intelligence%20Platform&fontSize=48&fontColor=FAF7F0&fontAlignY=38&desc=Certificate%20%26%20Intern%20Assessment%20System&descAlignY=58&descColor=C9A84C&animation=fadeIn" width="100%"/>
 </picture>
 
 <br/>
@@ -29,7 +29,7 @@
 
 <div align="center">
 
-## `TASKASSESS · BUILT BY ATSFY TECHNOLOGIES · EST. 2026`
+## `CAREER INTELLIGENCE PLATFORM · BUILT BY ATSFY TECHNOLOGIES · EST. 2026`
 
 </div>
 
