@@ -32,13 +32,28 @@ const jobSeekerPlans: Plan[] = [
     variant: "muted",
   },
   {
+    name: "Starter",
+    price: "₹199",
+    period: "/ report",
+    badge: "Quick fix",
+    bestFor: "One-time resume cleanup",
+    features: [
+      "Full ATS Readiness report",
+      "Keyword & formatting fixes",
+      "Top 10 prioritized suggestions",
+      "Clean PDF download (no branding)",
+    ],
+    cta: "Get Starter Report",
+    variant: "standard",
+  },
+  {
     name: "Pro",
     price: "₹249",
     period: "/ report",
     badge: "Most Popular ⭐",
     bestFor: "Active job seekers applying weekly",
     features: [
-      "Full ATS Readiness report",
+      "Everything in Starter",
       "Job-description match analysis",
       "Skills gap & keyword optimization",
       "AI resume rewrite (section-by-section)",
@@ -63,6 +78,23 @@ const jobSeekerPlans: Plan[] = [
       "Priority report generation",
     ],
     cta: "Unlock Career+",
+    variant: "standard",
+  },
+  {
+    name: "Premium",
+    price: "₹999",
+    period: "/ report",
+    badge: "Full platform",
+    bestFor: "Maximum results & faster hiring",
+    features: [
+      "Everything in Career+",
+      "Multi-role tailored resume variants",
+      "Recruiter-perspective screening report",
+      "LinkedIn profile full optimization",
+      "30-day re-scan & re-optimization",
+      "White-glove report delivery",
+    ],
+    cta: "Go Premium",
     variant: "dark",
   },
 ];
@@ -231,7 +263,7 @@ export const PricingSection = () => {
           </div>
 
           <TabsContent value="jobseeker">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-8">
               {jobSeekerPlans.map((plan) => (
                 <PlanCard key={plan.name} plan={plan} />
               ))}
