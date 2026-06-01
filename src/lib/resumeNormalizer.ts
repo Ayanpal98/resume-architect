@@ -58,7 +58,11 @@ const normalizePersonalInfo = (p: any): ResumeData["personalInfo"] => {
     phone: toStr(src.phone ?? src.phoneNumber ?? src.mobile).trim(),
     location: toStr(src.location ?? src.address ?? src.city).trim(),
     linkedin: toStr(src.linkedin ?? src.linkedIn ?? src.linkedinUrl).trim(),
-    portfolio: toStr(src.portfolio ?? src.website ?? src.github ?? src.url).trim(),
+    portfolio: toStr(src.portfolio ?? src.website ?? src.url).trim(),
+    github: toStr(src.github ?? src.githubUrl ?? src.git).trim(),
+    otherLinks: Array.isArray(src.otherLinks)
+      ? toStrArray(src.otherLinks).join(", ")
+      : toStr(src.otherLinks ?? src.links ?? src.otherWebsites).trim(),
   };
 };
 
