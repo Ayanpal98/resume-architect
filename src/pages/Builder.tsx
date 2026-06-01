@@ -749,61 +749,92 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm = ({ data, summary, onUpdate, onSummaryChange, onApplySuggestion, resumeData, jobDescription }: PersonalInfoFormProps) => (
-  <div className="space-y-6">
-    <div>
-      <h2 className="text-2xl font-display font-bold text-foreground mb-2">Personal Information</h2>
-      <p className="text-muted-foreground">Start with your contact details and professional summary.</p>
+  <div className="space-y-8">
+    <div className="relative overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-primary/5 via-background to-accent/10 p-6 sm:p-8 shadow-sm">
+      <div className="absolute -top-16 -right-16 w-48 h-48 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative flex items-start gap-4">
+        <div className="hidden sm:flex w-12 h-12 rounded-xl bg-gradient-hero items-center justify-center shadow-md">
+          <User className="w-6 h-6 text-primary-foreground" />
+        </div>
+        <div>
+          <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-2">
+            <Sparkles className="w-3 h-3" />
+            Step 1 · Identity
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground tracking-tight">Personal Information</h2>
+          <p className="text-muted-foreground mt-1">Recruiters scan this in 6 seconds — make every link count.</p>
+        </div>
+      </div>
     </div>
-    
-    <div className="grid sm:grid-cols-2 gap-4">
+
+    <div className="rounded-2xl border border-border/60 bg-card p-5 sm:p-7 shadow-sm space-y-6">
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Full Name *</label>
-        <Input
-          placeholder="John Doe"
-          value={data.fullName}
-          onChange={(e) => onUpdate("fullName", e.target.value)}
-        />
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-[11px] font-semibold tracking-widest uppercase text-muted-foreground">Contact</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Full Name *</label>
+            <Input placeholder="John Doe" value={data.fullName} onChange={(e) => onUpdate("fullName", e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Email *</label>
+            <Input type="email" placeholder="john@example.com" value={data.email} onChange={(e) => onUpdate("email", e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Phone *</label>
+            <Input placeholder="+1 (555) 123-4567" value={data.phone} onChange={(e) => onUpdate("phone", e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-foreground mb-2">Location</label>
+            <Input placeholder="New York, NY" value={data.location} onChange={(e) => onUpdate("location", e.target.value)} />
+          </div>
+        </div>
       </div>
+
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Email *</label>
-        <Input
-          type="email"
-          placeholder="john@example.com"
-          value={data.email}
-          onChange={(e) => onUpdate("email", e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Phone *</label>
-        <Input
-          placeholder="+1 (555) 123-4567"
-          value={data.phone}
-          onChange={(e) => onUpdate("phone", e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Location</label>
-        <Input
-          placeholder="New York, NY"
-          value={data.location}
-          onChange={(e) => onUpdate("location", e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">LinkedIn</label>
-        <Input
-          placeholder="linkedin.com/in/johndoe"
-          value={data.linkedin}
-          onChange={(e) => onUpdate("linkedin", e.target.value)}
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">Portfolio/Website</label>
-        <Input
-          placeholder="johndoe.com"
-          value={data.portfolio}
-          onChange={(e) => onUpdate("portfolio", e.target.value)}
-        />
+        <div className="flex items-center gap-2 mb-4">
+          <div className="h-px flex-1 bg-border" />
+          <span className="text-[11px] font-semibold tracking-widest uppercase text-muted-foreground">Online Presence</span>
+          <div className="h-px flex-1 bg-border" />
+        </div>
+        <div className="grid sm:grid-cols-2 gap-4">
+          <div>
+            <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#0A66C2]" />
+              LinkedIn
+            </label>
+            <Input placeholder="linkedin.com/in/johndoe" value={data.linkedin} onChange={(e) => onUpdate("linkedin", e.target.value)} />
+          </div>
+          <div>
+            <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+              <FolderGit2 className="w-3.5 h-3.5 text-foreground/70" />
+              GitHub
+            </label>
+            <Input placeholder="github.com/johndoe" value={data.github || ""} onChange={(e) => onUpdate("github", e.target.value)} />
+          </div>
+          <div>
+            <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary" />
+              Portfolio / Website
+            </label>
+            <Input placeholder="johndoe.com" value={data.portfolio} onChange={(e) => onUpdate("portfolio", e.target.value)} />
+          </div>
+          <div>
+            <label className="flex items-center gap-1.5 text-sm font-medium text-foreground mb-2">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-accent" />
+              Other Notable Links
+            </label>
+            <Input
+              placeholder="behance.net/you, medium.com/@you, dribbble.com/you"
+              value={data.otherLinks || ""}
+              onChange={(e) => onUpdate("otherLinks", e.target.value)}
+            />
+            <p className="text-[11px] text-muted-foreground mt-1.5">Separate multiple links with commas.</p>
+          </div>
+        </div>
       </div>
     </div>
 
