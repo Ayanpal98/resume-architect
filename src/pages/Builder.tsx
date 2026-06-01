@@ -94,6 +94,8 @@ const initialResumeData: ResumeData = {
     location: "",
     linkedin: "",
     portfolio: "",
+    github: "",
+    otherLinks: "",
   },
   summary: "",
   experience: [],
