@@ -10,6 +10,8 @@ export interface ResumeData {
     location: string;
     linkedin: string;
     portfolio: string;
+    github?: string;
+    otherLinks?: string;
   };
   summary: string;
   experience: {
