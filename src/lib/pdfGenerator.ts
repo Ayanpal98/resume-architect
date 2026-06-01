@@ -10,6 +10,8 @@ export interface ResumeData {
     location: string;
     linkedin: string;
     portfolio: string;
+    github?: string;
+    otherLinks?: string;
   };
   summary: string;
   experience: {
@@ -171,12 +173,18 @@ export const generatePDF = (rawData: ResumeData, _templateId: string = "classic"
   yPos += ptToIn(SIZE_NAME) * 1.2;
 
   // ========== CONTACT LINE (single line: phone | email | city | LinkedIn | GitHub) ==========
+  const otherLinksList = (data.personalInfo.otherLinks || "")
+    .split(/[,\n;|]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
   const contactParts = [
     data.personalInfo.phone,
     data.personalInfo.email,
     data.personalInfo.location,
     data.personalInfo.linkedin,
+    data.personalInfo.github,
     data.personalInfo.portfolio,
+    ...otherLinksList,
   ]
     .map((p) => (p || "").trim())
     .filter(Boolean);
