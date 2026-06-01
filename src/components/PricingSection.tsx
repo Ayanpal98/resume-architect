@@ -19,97 +19,50 @@ const jobSeekerPlans: Plan[] = [
     name: "Free",
     price: "₹0",
     period: "/ forever",
-    badge: "Start here",
-    bestFor: "Quick visibility check",
+    badge: "Start free",
+    bestFor: "First-time check on resume health",
     features: [
-      "Basic ATS Score",
-      "Keyword match overview",
-      "Limited feedback (3 suggestions)",
-      "1 resume scan per month",
+      "1 ATS Readiness scan / month",
+      "Basic Hiring Readiness score",
+      "Top 3 quick-win suggestions",
+      "Keyword coverage overview",
+      "PDF download (with footer branding)",
     ],
-    cta: "Get Free Report",
+    cta: "Start Free",
     variant: "muted",
   },
   {
-    name: "Starter",
-    price: "₹99",
-    period: "/ report",
-    badge: "Most accessible",
-    bestFor: "First-time optimizers",
-    features: [
-      "Full ATS Readability Score",
-      "Section-by-section parse report",
-      "10 keyword improvement suggestions",
-      "Formatting issue flags",
-      "PDF export",
-    ],
-    cta: "Get Starter Report",
-    variant: "standard",
-  },
-  {
-    name: "Core",
-    price: "₹199",
-    period: "/ report",
-    bestFor: "Active job seekers",
-    features: [
-      "Everything in Starter",
-      "Job Match Analysis",
-      "Skills Gap Breakdown",
-      "ATS Optimization Suggestions",
-      "Career Roadmap (30 days)",
-    ],
-    cta: "Run Core Analysis",
-    variant: "standard",
-  },
-  {
     name: "Pro",
-    price: "₹299",
+    price: "₹249",
     period: "/ report",
     badge: "Most Popular ⭐",
-    bestFor: "Serious job seekers",
+    bestFor: "Active job seekers applying weekly",
     features: [
-      "Everything in Core",
-      "Full Candidate Screening Report",
-      "Keyword & Content Improvements",
-      "Career Roadmap (30-60-90 days)",
-      "Resume Rewrite Suggestions",
-      "Priority report generation",
+      "Full ATS Readiness report",
+      "Job-description match analysis",
+      "Skills gap & keyword optimization",
+      "AI resume rewrite (section-by-section)",
+      "Before vs After comparison",
+      "Unlimited PDF downloads",
     ],
-    cta: "Upgrade to Pro",
+    cta: "Get Pro Report",
     variant: "highlight",
   },
   {
-    name: "Intelligence",
-    price: "₹499",
+    name: "Career+",
+    price: "₹599",
     period: "/ report",
     badge: "Best value",
-    bestFor: "Competitive applicants",
+    bestFor: "Career switchers & senior roles",
     features: [
       "Everything in Pro",
-      "Advanced Career Strategy Insights",
-      "Interview Preparation Questions",
-      "Industry Signal Mapping",
-      "Personalized Resume Improvement",
-      "Recruiter perspective summary",
+      "AI cover letter generator",
+      "30-60-90 day career roadmap",
+      "Interview question pack (role-specific)",
+      "LinkedIn headline & About rewrite",
+      "Priority report generation",
     ],
-    cta: "Get Intelligence Report",
-    variant: "standard",
-  },
-  {
-    name: "Elite",
-    price: "₹999",
-    period: "/ report",
-    badge: "Full platform",
-    bestFor: "Maximum results & faster hiring",
-    features: [
-      "Everything in Intelligence",
-      "1-on-1 Strategy Session (async)",
-      "LinkedIn Profile Optimization Report",
-      "Multi-role application strategy",
-      "30-day re-scan included",
-      "White-glove report delivery",
-    ],
-    cta: "Go Elite",
+    cta: "Unlock Career+",
     variant: "dark",
   },
 ];
@@ -117,33 +70,34 @@ const jobSeekerPlans: Plan[] = [
 const recruiterPlans: Plan[] = [
   {
     name: "Starter",
-    price: "₹7,999",
+    price: "₹4,999",
     period: "/ month",
     badge: "Small teams",
-    bestFor: "Small teams & startups",
+    bestFor: "Startups & solo recruiters",
     features: [
-      "Up to 50 candidate reports",
-      "Candidate ranking system",
-      "Skill match analysis",
-      "Interview question suggestions",
+      "Up to 75 candidate screenings / month",
+      "Auto-ranking with score weights",
+      "Skill & experience match analysis",
+      "Branded PDF screening reports",
     ],
-    cta: "Start Hiring Smarter",
+    cta: "Start Screening",
     variant: "standard",
   },
   {
     name: "Growth",
-    price: "₹19,999",
+    price: "₹14,999",
     period: "/ month",
     badge: "Most Popular ⭐",
-    bestFor: "Growing companies",
+    bestFor: "Scaling hiring teams",
     features: [
       "Everything in Starter",
-      "200 candidate reports / month",
-      "Advanced candidate comparison",
+      "300 candidate screenings / month",
+      "Bulk upload & side-by-side compare",
+      "Custom scoring weights per role",
       "Hiring insights dashboard",
       "Priority support",
     ],
-    cta: "Scale Your Hiring",
+    cta: "Scale Hiring",
     variant: "highlight",
   },
   {
@@ -151,14 +105,14 @@ const recruiterPlans: Plan[] = [
     price: "Custom",
     period: "",
     badge: "Full platform",
-    bestFor: "Large organizations",
+    bestFor: "Large hiring organizations",
     features: [
-      "Unlimited candidate analysis",
-      "API & ATS integration",
-      "Custom AI models",
-      "Dedicated account manager",
+      "Unlimited candidate screenings",
+      "API & ATS integrations",
+      "Custom AI scoring models",
+      "SSO, audit logs & dedicated CSM",
     ],
-    cta: "Contact Sales",
+    cta: "Talk to Sales",
     variant: "dark",
   },
 ];
@@ -201,7 +155,6 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         </div>
       )}
 
-      {/* Name */}
       <div className="mb-5">
         <h3 className={`font-display text-2xl font-medium tracking-tight ${headingClass}`}>
           {plan.name}
@@ -209,7 +162,6 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         <p className={`text-xs mt-1 ${mutedTextClass}`}>Best for: {plan.bestFor}</p>
       </div>
 
-      {/* Price */}
       <div className={`pb-5 mb-5 border-b ${dividerClass}`}>
         <div className="flex items-baseline gap-1.5">
           <span className={`font-display text-4xl font-medium tracking-tight ${headingClass}`}>
@@ -219,7 +171,6 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         </div>
       </div>
 
-      {/* Features */}
       <ul className="space-y-3 mb-7 flex-1">
         {plan.features.map((feature, i) => (
           <li key={i} className={`flex items-start gap-2.5 text-sm ${headingClass}`}>
@@ -229,7 +180,6 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         ))}
       </ul>
 
-      {/* CTA */}
       <Button
         variant={isHighlight ? "hero" : isDark ? "default" : "outline"}
         className={
@@ -255,10 +205,10 @@ export const PricingSection = () => {
             — Pricing
           </div>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
-            Pay per report. <em className="italic font-normal text-primary">No subscriptions.</em>
+            Simple pricing. <em className="italic font-normal text-primary">Built for Indian job seekers.</em>
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg font-sans">
-            Six tiers built for every stage of your job search — from a free visibility check to full white-glove career intelligence.
+            Start free. Upgrade only when you're ready to apply. No subscriptions, no hidden fees — pay per report.
           </p>
         </div>
 
@@ -281,7 +231,7 @@ export const PricingSection = () => {
           </div>
 
           <TabsContent value="jobseeker">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {jobSeekerPlans.map((plan) => (
                 <PlanCard key={plan.name} plan={plan} />
               ))}
@@ -289,7 +239,7 @@ export const PricingSection = () => {
           </TabsContent>
 
           <TabsContent value="recruiter">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {recruiterPlans.map((plan) => (
                 <PlanCard key={plan.name} plan={plan} />
               ))}
@@ -298,7 +248,7 @@ export const PricingSection = () => {
         </Tabs>
 
         <p className="text-center text-sm text-muted-foreground mt-12 max-w-2xl mx-auto font-sans">
-          All reports are one-time purchases. No subscriptions. No auto-renewals. Pay only when you need it.
+          One-time purchases. No subscriptions. No auto-renewals. 7-day money-back guarantee on all paid reports.
         </p>
       </div>
     </section>
