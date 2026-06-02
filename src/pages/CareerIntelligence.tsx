@@ -66,14 +66,22 @@ const CareerIntelligence = () => {
     rejection_decoder: null,
   });
 
-  // Job-Seeker-only gating via localStorage flag
+  // Job-Seeker-only gating — authoritative check is in the edge function via
+  // user_metadata.user_type; this is a UX-only client-side hint.
   useEffect(() => {
-    const userType = localStorage.getItem("atsfy_user_type");
-    if (userType === "institution") {
-      toast.error("Career Intelligence is available for Job Seekers only.");
-      navigate("/recruiter");
-    }
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: { user } } = await supabase.auth.getUser();
+      const serverType = (user?.user_metadata as any)?.user_type;
+      const localType = localStorage.getItem("atsfy_user_type");
+      const userType = serverType || localType;
+      if (userType === "institution") {
+        toast.error("Career Intelligence is available for Job Seekers only.");
+        navigate("/recruiter");
+      }
+    })();
   }, [navigate]);
+
 
   const toggleFocus = (f: FocusArea) => {
     setProfile((p) => ({
