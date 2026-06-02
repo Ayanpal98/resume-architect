@@ -243,6 +243,11 @@ const Index = () => {
                 <span className="text-[9px] uppercase tracking-[0.18em] text-muted-foreground">Career Intelligence</span>
               </div>
             </div>
+            <div className="flex items-center gap-5 text-xs">
+              <Link to="/security" className="text-muted-foreground hover:text-foreground transition-colors">Security</Link>
+              <Link to="/privacy" className="text-muted-foreground hover:text-foreground transition-colors">Privacy</Link>
+              <a href="mailto:grievance.atsfy@gmail.com" className="text-muted-foreground hover:text-foreground transition-colors">Grievance Officer</a>
+            </div>
             <div className="text-center sm:text-right space-y-1">
               <p className="text-xs sm:text-sm font-medium text-foreground">
                 Built by <span className="text-primary font-bold">ATSFy Technologies™</span>
