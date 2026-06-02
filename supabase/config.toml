@@ -14,3 +14,10 @@ verify_jwt = false
 
 [functions.ocr-pdf]
 verify_jwt = false
+
+[functions.career-intelligence]
+verify_jwt = false
+
+[functions.career-roadmap-ai]
+verify_jwt = false
+

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { FileText, Users, Briefcase, ArrowRight, CheckCircle2, Building2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
 
 type UserType = "jobseeker" | "institution" | null;
 
@@ -10,7 +11,14 @@ const Welcome = () => {
   const [selectedType, setSelectedType] = useState<UserType>(null);
   const navigate = useNavigate();
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+    if (!selectedType) return;
+    // Persist role to server-side user_metadata so it cannot be tampered with via DevTools
+    try {
+      await supabase.auth.updateUser({ data: { user_type: selectedType } });
+    } catch (err) {
+      console.error("Failed to persist user role", err);
+    }
     if (selectedType === "jobseeker") {
       localStorage.setItem("atsfy_user_type", "jobseeker");
       navigate("/builder");
@@ -19,6 +27,7 @@ const Welcome = () => {
       navigate("/recruiter");
     }
   };
+
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
