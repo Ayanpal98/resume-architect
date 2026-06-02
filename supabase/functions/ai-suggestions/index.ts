@@ -49,6 +49,13 @@ serve(async (req) => {
     if (claimsError || !claimsData?.claims) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+
+    // RBAC: enforce role from auth user_metadata. Soft-allow users with no
+    // role set yet (transitional); reject any explicit mismatched role.
+    const _userMetadata = (claimsData.claims as any).user_metadata || {};
+    if (_userMetadata.user_type && _userMetadata.user_type !== "jobseeker") {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const body = await req.json();
 
     // Validate request body
