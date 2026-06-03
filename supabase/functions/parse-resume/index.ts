@@ -29,6 +29,30 @@ function buildCorsHeaders(req: Request): Record<string, string> {
 const MAX_TEXT_LENGTH = 100000; // 100KB max for resume text
 const MIN_TEXT_LENGTH = 50; // Minimum meaningful resume content
 
+// Structured audit log for auth/authorization events. Emitted as JSON to
+// stdout so logs can be searched/filtered via Cloud edge function logs.
+function auditAuth(req: Request, event: string, details: Record<string, unknown> = {}) {
+  try {
+    const url = new URL(req.url);
+    const payload = {
+      audit: true,
+      ts: new Date().toISOString(),
+      fn: "parse-resume",
+      required_role: "jobseeker",
+      event,
+      path: url.pathname,
+      method: req.method,
+      ip: req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || null,
+      ua: req.headers.get("user-agent") || null,
+      origin: req.headers.get("origin") || null,
+      ...details,
+    };
+    console.log("AUDIT " + JSON.stringify(payload));
+  } catch (_e) {
+    // never fail the request because of logging
+  }
+}
+
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") {
@@ -39,21 +63,26 @@ serve(async (req) => {
     // Auth validation
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
+      auditAuth(req, "auth_missing_bearer", { reason: "no_authorization_header" });
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     const supabaseClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: authHeader } } });
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
+      auditAuth(req, "auth_invalid_token", { error: claimsError?.message || "no_claims" });
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // RBAC: enforce role from auth user_metadata. Soft-allow users with no
     // role set yet (transitional); reject any explicit mismatched role.
     const _userMetadata = (claimsData.claims as any).user_metadata || {};
+    const _sub = (claimsData.claims as any).sub;
     if (_userMetadata.user_type && _userMetadata.user_type !== "jobseeker") {
+      auditAuth(req, "authz_role_mismatch", { user_id: _sub, actual_role: _userMetadata.user_type });
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    auditAuth(req, "auth_success", { user_id: _sub, role: _userMetadata.user_type || "unset" });
 
     const body = await req.json();
     

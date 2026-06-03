@@ -25,6 +25,30 @@ function buildCorsHeaders(req: Request): Record<string, string> {
   };
 }
 
+// Structured audit log for auth/authorization events. Emitted as JSON to
+// stdout so logs can be searched/filtered via Cloud edge function logs.
+function auditAuth(req: Request, event: string, details: Record<string, unknown> = {}) {
+  try {
+    const url = new URL(req.url);
+    const payload = {
+      audit: true,
+      ts: new Date().toISOString(),
+      fn: "career-roadmap-ai",
+      required_role: "jobseeker",
+      event,
+      path: url.pathname,
+      method: req.method,
+      ip: req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || null,
+      ua: req.headers.get("user-agent") || null,
+      origin: req.headers.get("origin") || null,
+      ...details,
+    };
+    console.log("AUDIT " + JSON.stringify(payload));
+  } catch (_e) {
+    // never fail the request because of logging
+  }
+}
+
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") {
@@ -35,6 +59,7 @@ serve(async (req) => {
     // Auth validation — reject anonymous and non-jobseeker accounts
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
+      auditAuth(req, "auth_missing_bearer", { reason: "no_authorization_header" });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -47,16 +72,20 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
+      auditAuth(req, "auth_invalid_token", { error: claimsError?.message || "no_claims" });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     const userMetadata = (claimsData.claims as any).user_metadata || {};
+    const _sub = (claimsData.claims as any).sub;
     if (userMetadata.user_type && userMetadata.user_type !== "jobseeker") {
+      auditAuth(req, "authz_role_mismatch", { user_id: _sub, actual_role: userMetadata.user_type });
       return new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    auditAuth(req, "auth_success", { user_id: _sub, role: userMetadata.user_type || "unset" });
 
     const body = await req.json();
     const { resumeData, jobDescription, industryMode } = body;
