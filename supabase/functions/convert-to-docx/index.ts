@@ -146,6 +146,25 @@ function buildCorsHeaders(req: Request): Record<string, string> {
    return content;
  }
  
+function auditAuth(req: Request, event: string, details: Record<string, unknown> = {}) {
+  try {
+    const url = new URL(req.url);
+    console.log("AUDIT " + JSON.stringify({
+      audit: true,
+      ts: new Date().toISOString(),
+      fn: "convert-to-docx",
+      required_role: "jobseeker",
+      event,
+      path: url.pathname,
+      method: req.method,
+      ip: req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || null,
+      ua: req.headers.get("user-agent") || null,
+      origin: req.headers.get("origin") || null,
+      ...details,
+    }));
+  } catch (_e) { /* noop */ }
+}
+
  serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") {
