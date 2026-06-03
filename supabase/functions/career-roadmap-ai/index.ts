@@ -75,6 +75,13 @@ serve(async (req) => {
       );
     }
 
+    if (JSON.stringify(resumeData).length > 100000) {
+      return new Response(
+        JSON.stringify({ error: "Resume data exceeds maximum size." }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -283,7 +290,7 @@ Analyze this portfolio like a $500/hr career strategist. Produce an intelligent,
   } catch (error) {
     console.error("Error in career-roadmap-ai:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Internal server error" }),
+      JSON.stringify({ error: "Internal server error" }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }
