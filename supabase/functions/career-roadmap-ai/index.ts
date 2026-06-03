@@ -59,6 +59,7 @@ serve(async (req) => {
     // Auth validation — reject anonymous and non-jobseeker accounts
     const authHeader = req.headers.get("Authorization");
     if (!authHeader?.startsWith("Bearer ")) {
+      auditAuth(req, "auth_missing_bearer", { reason: "no_authorization_header" });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -71,16 +72,20 @@ serve(async (req) => {
     const token = authHeader.replace("Bearer ", "");
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
+      auditAuth(req, "auth_invalid_token", { error: claimsError?.message || "no_claims" });
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
     const userMetadata = (claimsData.claims as any).user_metadata || {};
+    const _sub = (claimsData.claims as any).sub;
     if (userMetadata.user_type && userMetadata.user_type !== "jobseeker") {
+      auditAuth(req, "authz_role_mismatch", { user_id: _sub, actual_role: userMetadata.user_type });
       return new Response(JSON.stringify({ error: "Forbidden" }), {
         status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    auditAuth(req, "auth_success", { user_id: _sub, role: userMetadata.user_type || "unset" });
 
     const body = await req.json();
     const { resumeData, jobDescription, industryMode } = body;
