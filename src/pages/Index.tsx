@@ -179,6 +179,137 @@ const Index = () => {
         </div>
       </section>
 
+      {/* From ignored → informed: feature mapping + adaptive roadmap */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
+        <div className="container mx-auto max-w-6xl">
+          <div className="max-w-3xl mb-12 sm:mb-16">
+            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— From ignored → informed</div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
+              Candidates deserve a verdict, <em className="italic font-normal text-primary">not a void.</em>
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg font-sans">
+              Six chronic candidate-experience failures — and exactly which ATSFy capabilities answer each one today.
+            </p>
+          </div>
+
+          <div className="space-y-px bg-border/60 border border-border/60 rounded-2xl overflow-hidden">
+            {[
+              {
+                pain: "Application submitted",
+                painSub: "…then silence for weeks",
+                answer: "Real-time status tracking",
+                answerSub: "Candidate sees every stage update",
+                status: "planned",
+              },
+              {
+                pain: "Generic rejection email",
+                painSub: "\"We went with another candidate\"",
+                answer: "Explainable scorecard",
+                answerSub: "Per-dimension feedback via ATS Score Panel & Optimization Report",
+                status: "live",
+              },
+              {
+                pain: "\"Did they see my application?\"",
+                painSub: "ATS black-box screening",
+                answer: "6-engine merit evaluation",
+                answerSub: "Recruiter Screening Dashboard — IRS, CSA, SAX scoring",
+                status: "live",
+              },
+              {
+                pain: "Followed up — no reply",
+                painSub: "Hiring paused? No one knows",
+                answer: "Proactive status alerts",
+                answerSub: "Candidate notified if role paused or closed",
+                status: "planned",
+              },
+              {
+                pain: "Another rejection, another day",
+                painSub: "No growth signal, no closure",
+                answer: "Career Progression Blueprint",
+                answerSub: "CPB engine maps next-step gaps — live in Career Intelligence",
+                status: "live",
+              },
+              {
+                pain: "Opaque AI decisions",
+                painSub: "Who reviewed me? On what basis?",
+                answer: "EU AI Act compliant by architecture",
+                answerSub: "Bias-free · Explainable · DISHA/GDPR aligned · Every decision audit-logged",
+                status: "partial",
+              },
+            ].map((row, i) => (
+              <div key={i} className="grid md:grid-cols-[1fr_auto_1fr_auto] items-center gap-4 bg-background p-5 sm:p-6">
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.15em] text-destructive/70 mb-1">Pain today</div>
+                  <div className="font-display text-base sm:text-lg text-foreground tracking-tight">{row.pain}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-sans mt-0.5">{row.painSub}</div>
+                </div>
+                <ArrowRight className="hidden md:block w-4 h-4 text-muted-foreground" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-[0.15em] text-accent mb-1">ATSFy answer</div>
+                  <div className="font-display text-base sm:text-lg text-foreground tracking-tight">{row.answer}</div>
+                  <div className="text-xs sm:text-sm text-muted-foreground font-sans mt-0.5">{row.answerSub}</div>
+                </div>
+                <span
+                  className={
+                    "justify-self-start md:justify-self-end inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] rounded-full px-2.5 py-1 border " +
+                    (row.status === "live"
+                      ? "border-accent/40 text-accent bg-accent/5"
+                      : row.status === "partial"
+                      ? "border-primary/40 text-primary bg-primary/5"
+                      : "border-border text-muted-foreground bg-muted/30")
+                  }
+                >
+                  <span className={"w-1.5 h-1.5 rounded-full " + (row.status === "live" ? "bg-accent" : row.status === "partial" ? "bg-primary" : "bg-muted-foreground")} />
+                  {row.status === "live" ? "Shipping today" : row.status === "partial" ? "Partial — hardening" : "On roadmap"}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Adaptive Infrastructure Roadmap */}
+          <div className="mt-20 sm:mt-24">
+            <div className="max-w-3xl mb-12">
+              <div className="text-xs uppercase tracking-[0.2em] text-primary mb-4">— What's next · Adaptive Infrastructure</div>
+              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
+                Beyond compliant. <em className="italic font-normal text-primary">Self-correcting.</em>
+              </h3>
+              <p className="text-muted-foreground text-base sm:text-lg font-sans">
+                The next phase of ATSFy is infrastructure that learns from drift, defends itself, and proves its own fairness — continuously.
+              </p>
+            </div>
+
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 glass rounded-2xl overflow-hidden">
+              {[
+                { icon: Radar, title: "Bias-drift monitor", description: "Continuous statistical checks on screening outcomes by demographic proxy — auto-pauses scoring if drift exceeds threshold.", horizon: "Q3 · 2026" },
+                { icon: GitBranch, title: "Self-healing parser mesh", description: "Multi-engine fallback (Gemini → GPT → local OCR) with automatic re-routing when any provider degrades.", horizon: "Q3 · 2026" },
+                { icon: ShieldAlert, title: "Zero-trust rate shield", description: "Per-user, per-org, per-IP adaptive throttling backed by a shared Postgres ledger — replaces in-memory counters.", horizon: "Q4 · 2026" },
+                { icon: ScrollText, title: "Immutable explainability ledger", description: "Hash-chained audit log of every AI verdict — exportable for DPDP / EU AI Act regulator requests.", horizon: "Q4 · 2026" },
+                { icon: RefreshCw, title: "Recruiter-feedback recalibration", description: "Scoring weights re-tuned weekly from anonymized recruiter accept/reject signals — closes the loop on merit fit.", horizon: "Q1 · 2027" },
+                { icon: Webhook, title: "Real-time recruiter event bus", description: "Webhook + SSE stream so candidates receive stage-change pings the instant a recruiter updates status.", horizon: "Q1 · 2027" },
+                { icon: Network, title: "Federated candidate signal mesh", description: "Privacy-preserving cross-org skill-gap aggregation — no raw resume ever leaves its tenant.", horizon: "Q2 · 2027" },
+                { icon: Gauge, title: "Continuous model-eval harness", description: "Nightly golden-set regression on every prompt + model swap — blocks deploys that regress accuracy or fairness.", horizon: "Q2 · 2027" },
+                { icon: Eye, title: "Candidate-side decision viewer", description: "Live mirror of the recruiter scorecard the candidate can open, contest, and download — closing the void.", horizon: "Q3 · 2027" },
+              ].map((item, i) => (
+                <div key={i} className="group p-6 sm:p-8 border-b border-r border-border/60 last:border-r-0 hover:bg-background/50 transition-colors">
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <item.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-sans">{item.horizon}</span>
+                  </div>
+                  <h4 className="font-display text-lg sm:text-xl font-medium text-foreground mb-2 tracking-tight">{item.title}</h4>
+                  <p className="text-muted-foreground text-sm leading-relaxed font-sans">{item.description}</p>
+                </div>
+              ))}
+            </div>
+
+            <p className="text-xs text-muted-foreground font-sans mt-6 italic">
+              Roadmap reflects current engineering intent — horizons are directional, not contractual commitments.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Sample Reports Showcase */}
       <SampleReportsShowcase />
 
