@@ -156,21 +156,26 @@ function buildCorsHeaders(req: Request): Record<string, string> {
     // Auth validation
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
+      auditAuth(req, "auth_missing_bearer", { reason: "no_authorization_header" });
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
     const supabaseClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: authHeader } } });
     const token = authHeader.replace('Bearer ', '');
     const { data: claimsData, error: claimsError } = await supabaseClient.auth.getClaims(token);
     if (claimsError || !claimsData?.claims) {
+      auditAuth(req, "auth_invalid_token", { error: claimsError?.message || "no_claims" });
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // RBAC: enforce role from auth user_metadata. Soft-allow users with no
     // role set yet (transitional); reject any explicit mismatched role.
     const _userMetadata = (claimsData.claims as any).user_metadata || {};
+    const _sub = (claimsData.claims as any).sub;
     if (_userMetadata.user_type && _userMetadata.user_type !== "jobseeker") {
+      auditAuth(req, "authz_role_mismatch", { user_id: _sub, actual_role: _userMetadata.user_type });
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    auditAuth(req, "auth_success", { user_id: _sub, role: _userMetadata.user_type || "unset" });
 
     const body = await req.json();
     const { text, fileName } = body;

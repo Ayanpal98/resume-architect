@@ -38,6 +38,30 @@ interface ProfilePayload {
   coachingTopic?: string;
 }
 
+// Structured audit log for auth/authorization events. Emitted as JSON to
+// stdout so logs can be searched/filtered via Cloud edge function logs.
+function auditAuth(req: Request, event: string, details: Record<string, unknown> = {}) {
+  try {
+    const url = new URL(req.url);
+    const payload = {
+      audit: true,
+      ts: new Date().toISOString(),
+      fn: "career-intelligence",
+      required_role: "jobseeker",
+      event,
+      path: url.pathname,
+      method: req.method,
+      ip: req.headers.get("x-forwarded-for") || req.headers.get("cf-connecting-ip") || null,
+      ua: req.headers.get("user-agent") || null,
+      origin: req.headers.get("origin") || null,
+      ...details,
+    };
+    console.log("AUDIT " + JSON.stringify(payload));
+  } catch (_e) {
+    // never fail the request because of logging
+  }
+}
+
 serve(async (req) => {
   const corsHeaders = buildCorsHeaders(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
