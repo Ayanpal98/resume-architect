@@ -188,6 +188,13 @@ function buildCorsHeaders(req: Request): Record<string, string> {
          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
        );
      }
+
+     if (text.trim().length > 100000) {
+       return new Response(
+         JSON.stringify({ error: "Text exceeds maximum length of 100000 characters." }),
+         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+       );
+     }
  
      const docxContent = await createDocx(text.trim(), fileName || "resume");
      const base64Content = base64Encode(docxContent);
