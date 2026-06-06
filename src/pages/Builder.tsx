@@ -484,7 +484,7 @@ const Builder = () => {
                     ))}
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2 pt-2">
-                    <Link to="/ats-analysis" className="flex-1">
+                    <Link to="/deep-improvement" className="flex-1">
                       <Button variant="hero" className="w-full">
                         Run the deep analysis
                         <ArrowLeft className="w-4 h-4 rotate-180" />
