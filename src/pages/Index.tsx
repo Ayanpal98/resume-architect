@@ -310,6 +310,97 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Deep Resume Improvement — for genuine candidates */}
+      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60 bg-gradient-to-b from-background to-primary/[0.03]">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary/30 rounded-full text-xs font-medium text-primary mb-6 uppercase tracking-[0.15em]">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              For genuine candidates · standalone module
+            </div>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 tracking-tight max-w-3xl mx-auto">
+              You've earned the experience. Let's make sure it <em className="italic font-normal text-primary">reads that way</em>.
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans">
+              Built for candidates with real depth — not embellishments. A deeper, slower, recruiter-grade pass on your authentic story, rewritten without inventing a single metric.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mb-10">
+            {[
+              {
+                icon: Eye,
+                title: "Evidence-first analysis",
+                description: "Every suggestion cites a line from your actual resume. No fabricated metrics, no invented leadership scope, no AI-flavoured filler.",
+              },
+              {
+                icon: ScrollText,
+                title: "Depth-aware rewriting",
+                description: "Your bullets get sharper positioning and stronger industry language — but only using achievements you actually delivered.",
+              },
+              {
+                icon: Target,
+                title: "Section-by-section guidance",
+                description: "Summary, experience, skills, and keywords reviewed independently with a current assessment and a recruiter-grade improved version.",
+              },
+              {
+                icon: TrendingUp,
+                title: "Gap-to-90% roadmap",
+                description: "A concrete 30 / 60 / 90-day plan covering skill development, experience reframing, and networking moves tied to your target role.",
+              },
+            ].map((item, idx) => (
+              <div
+                key={idx}
+                className="group p-6 sm:p-7 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-elegant transition-all"
+              >
+                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
+                  <item.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-display text-xl font-medium text-foreground mb-2 tracking-tight">{item.title}</h3>
+                <p className="text-muted-foreground text-sm leading-relaxed font-sans">{item.description}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="rounded-2xl border border-primary/20 bg-card/60 p-6 sm:p-8 mb-10">
+            <div className="text-xs uppercase tracking-[0.2em] text-primary mb-4">— How the deep pass works</div>
+            <div className="grid sm:grid-cols-4 gap-5">
+              {[
+                { step: "01", title: "Upload authentic resume", body: "Paste or import your real resume — the messier the better. We work with what you actually have." },
+                { step: "02", title: "Drop the target JD", body: "We map your background against the specific role, not a generic template." },
+                { step: "03", title: "Read the recruiter pass", body: "Section-by-section assessment with rewritten bullets grounded only in your real history." },
+                { step: "04", title: "Follow the 30/60/90 plan", body: "Concrete actions to close the gap to a 90%+ match — without faking anything." },
+              ].map((s, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="font-display text-2xl text-primary/70">{s.step}</div>
+                  <div className="font-medium text-foreground text-sm">{s.title}</div>
+                  <p className="text-xs text-muted-foreground leading-relaxed font-sans">{s.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <Link to="/ats-analysis">
+              <Button variant="hero" size="xl" className="w-full sm:w-auto">
+                Run the deep analysis
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Link to="/welcome">
+              <Button variant="outline-hero" size="xl" className="w-full sm:w-auto">
+                <Upload className="w-5 h-5" />
+                Upload my real resume
+              </Button>
+            </Link>
+          </div>
+
+          <p className="text-xs text-muted-foreground font-sans mt-6 italic text-center">
+            Standalone module — no metric invention, no fabricated experience. We rewrite how your story reads, never what it claims.
+          </p>
+        </div>
+      </section>
+
       {/* Sample Reports Showcase */}
       <SampleReportsShowcase />
 
