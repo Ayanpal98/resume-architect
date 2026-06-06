@@ -24,7 +24,10 @@ import {
   BarChart3,
   LogOut,
   Compass,
-  FolderGit2
+  FolderGit2,
+  ShieldCheck,
+  ScrollText,
+  TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
