@@ -443,6 +443,69 @@ const Builder = () => {
                 <span className="hidden lg:inline">Career Intelligence</span>
               </Button>
             </Link>
+
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="px-2 sm:px-3 border-primary/40 text-primary bg-primary/5 hover:bg-primary/10 hidden md:inline-flex"
+                  title="Deep Resume Improvement"
+                >
+                  <ShieldCheck className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden lg:inline">Deep Improvement</span>
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto mx-auto">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <ShieldCheck className="w-5 h-5 text-primary" />
+                    Deep Resume Improvement
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="space-y-5 pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    A standalone module for genuine candidates with real depth.
+                    No metric invention. No fabricated experience. Just a recruiter-grade
+                    read of what you already have — and a precise path to 90%.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {[
+                      { icon: Eye, title: "Evidence-first analysis", desc: "Every suggestion traces back to a line in your resume." },
+                      { icon: ScrollText, title: "Depth-aware rewriting", desc: "Preserves your scope, ownership and seniority." },
+                      { icon: Target, title: "Section-by-section guidance", desc: "Summary, experience, skills — line-level fixes." },
+                      { icon: TrendingUp, title: "Gap-to-90% roadmap", desc: "30 / 60 / 90 day plan to recruiter-ready." },
+                    ].map((f) => (
+                      <div key={f.title} className="rounded-lg border border-border p-3 bg-card">
+                        <f.icon className="w-4 h-4 text-primary mb-1.5" />
+                        <div className="text-sm font-medium text-foreground">{f.title}</div>
+                        <div className="text-xs text-muted-foreground mt-0.5">{f.desc}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex flex-col sm:flex-row gap-2 pt-2">
+                    <Link to="/ats-analysis" className="flex-1">
+                      <Button variant="hero" className="w-full">
+                        Run the deep analysis
+                        <ArrowLeft className="w-4 h-4 rotate-180" />
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="outline"
+                      className="flex-1"
+                      onClick={() => setShowImport(true)}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      Upload my real resume
+                    </Button>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    Standalone module · included free while in beta · Pro plan from ₹349/report
+                  </p>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
