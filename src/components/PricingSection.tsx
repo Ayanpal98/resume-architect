@@ -64,6 +64,23 @@ const jobSeekerPlans: Plan[] = [
     variant: "highlight",
   },
   {
+    name: "Deep Improvement",
+    price: "₹349",
+    period: "/ report",
+    badge: "Standalone module",
+    bestFor: "Genuine candidates with real depth",
+    features: [
+      "Evidence-first resume read (no fabrication)",
+      "Depth-aware rewriting — keeps your scope intact",
+      "Section-by-section recruiter pass",
+      "Gap-to-90% Hiring Readiness roadmap",
+      "30 / 60 / 90 day improvement plan",
+      "PDF report with line-level fixes",
+    ],
+    cta: "Run Deep Analysis",
+    variant: "standard",
+  },
+  {
     name: "Career+",
     price: "₹599",
     period: "/ report",
