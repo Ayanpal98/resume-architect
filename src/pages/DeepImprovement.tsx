@@ -78,12 +78,12 @@ const DeepImprovement = () => {
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 sm:px-6 py-8 max-w-5xl space-y-6">
-        <header className="space-y-3">
-          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+      <main className="container mx-auto px-3 sm:px-6 py-5 sm:py-8 max-w-5xl space-y-4 sm:space-y-6">
+        <header className="space-y-2 sm:space-y-3">
+          <h1 className="font-display text-xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
             Standalone <span className="text-gradient">Deep Improvement</span> module
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-base max-w-3xl">
+          <p className="text-muted-foreground text-xs sm:text-base max-w-3xl leading-relaxed">
             For candidates with real depth. Every rewrite is anchored to a line in your actual resume.
             A fabrication guard rejects any AI-introduced number, tool or employer that isn't already in your text —
             and asks you a clarifying question instead.
@@ -91,34 +91,34 @@ const DeepImprovement = () => {
         </header>
 
         <Card>
-          <CardContent className="p-4 sm:p-6 space-y-4">
+          <CardContent className="p-3 sm:p-6 space-y-4">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Your real resume (paste full text)</label>
               <Textarea
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value.slice(0, 100000))}
                 placeholder="Paste your actual resume text here. The deeper and more authentic, the better the read."
-                className="min-h-[220px] font-mono text-xs"
+                className="min-h-[160px] sm:min-h-[220px] font-mono text-xs"
               />
               <div className="text-[11px] text-muted-foreground mt-1">
                 {resumeText.length.toLocaleString()} / 100,000 characters · stored only for this session
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Target job description (optional, sharpens the read)</label>
+              <label className="text-sm font-medium mb-1.5 block">Target job description (optional)</label>
               <Textarea
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value.slice(0, 50000))}
                 placeholder="Paste the JD you're targeting (optional)."
-                className="min-h-[120px] text-xs"
+                className="min-h-[100px] sm:min-h-[120px] text-xs"
               />
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between">
-              <div className="text-xs text-muted-foreground flex items-start gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+              <div className="text-[11px] sm:text-xs text-muted-foreground flex items-start gap-2 leading-snug">
                 <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>No metric invention · no fabricated experience · every suggestion traces back to a line in your resume.</span>
               </div>
-              <Button variant="hero" size="lg" onClick={runAnalysis} disabled={loading} className="sm:min-w-[220px]">
+              <Button variant="hero" size="lg" onClick={runAnalysis} disabled={loading} className="w-full sm:w-auto sm:min-w-[220px]">
                 {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Running deep read…</>) : (<><Sparkles className="w-4 h-4 mr-2" />Run deep analysis</>)}
               </Button>
             </div>
@@ -126,32 +126,32 @@ const DeepImprovement = () => {
         </Card>
 
         {result && (
-          <section className="space-y-5">
-            <div className="grid sm:grid-cols-3 gap-3">
+          <section className="space-y-4 sm:space-y-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Hiring Readiness</div>
-                  <div className="font-display text-3xl font-bold text-primary mt-1">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Hiring Readiness</div>
+                  <div className="font-display text-2xl sm:text-3xl font-bold text-primary mt-1">
                     {result.hiringReadiness ?? "—"}{result.hiringReadiness ? "%" : ""}
                   </div>
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Depth Signal</div>
-                  <div className="text-sm mt-1 leading-snug">{result.depthSignal || "—"}</div>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Fabrications Blocked</div>
+                  <div className="font-display text-2xl sm:text-3xl font-bold text-accent mt-1 flex items-center gap-2">
+                    {result.meta.flaggedFabrications}
+                    <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
+                  </div>
+                  <div className="text-[10px] sm:text-[11px] text-muted-foreground mt-1">
+                    of {result.meta.totalSuggestions} suggestions
+                  </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Fabrications Blocked</div>
-                  <div className="font-display text-3xl font-bold text-accent mt-1 flex items-center gap-2">
-                    {result.meta.flaggedFabrications}
-                    <ShieldCheck className="w-5 h-5 text-accent" />
-                  </div>
-                  <div className="text-[11px] text-muted-foreground mt-1">
-                    out of {result.meta.totalSuggestions} suggestions
-                  </div>
+              <Card className="col-span-2 sm:col-span-1">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Depth Signal</div>
+                  <div className="text-xs sm:text-sm mt-1 leading-snug">{result.depthSignal || "—"}</div>
                 </CardContent>
               </Card>
             </div>
@@ -178,17 +178,17 @@ const DeepImprovement = () => {
               </h2>
               {result.suggestions.map((s, i) => (
                 <Card key={i} className={s.evidence.fabricated ? "border-destructive/40" : "border-border"}>
-                  <CardContent className="p-4 sm:p-5 space-y-3">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <CardContent className="p-3 sm:p-5 space-y-3">
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
                       <Badge variant="outline" className="text-[10px] uppercase tracking-wider">
                         {s.section}
                       </Badge>
                       {s.evidence.fabricated ? (
-                        <Badge className="bg-destructive/10 text-destructive border border-destructive/30 text-[10px] uppercase tracking-wider">
-                          <AlertTriangle className="w-3 h-3 mr-1" /> Held back — needs your input
+                        <Badge className="bg-destructive/10 text-destructive border border-destructive/30 text-[9px] sm:text-[10px] uppercase tracking-wider whitespace-normal text-left leading-tight py-1">
+                          <AlertTriangle className="w-3 h-3 mr-1 shrink-0" /> Held back — needs input
                         </Badge>
                       ) : (
-                        <Badge className="bg-accent/10 text-accent border border-accent/30 text-[10px] uppercase tracking-wider">
+                        <Badge className="bg-accent/10 text-accent border border-accent/30 text-[9px] sm:text-[10px] uppercase tracking-wider">
                           <ShieldCheck className="w-3 h-3 mr-1" /> Evidence verified
                         </Badge>
                       )}
@@ -196,7 +196,7 @@ const DeepImprovement = () => {
 
                     <div className="text-sm leading-relaxed">
                       <div className="font-medium text-foreground mb-1">Rewrite</div>
-                      <div className={s.evidence.fabricated ? "text-destructive" : "text-foreground"}>{s.rewrite}</div>
+                      <div className={`break-words ${s.evidence.fabricated ? "text-destructive" : "text-foreground"}`}>{s.rewrite}</div>
                     </div>
 
                     {s.rationale && (
