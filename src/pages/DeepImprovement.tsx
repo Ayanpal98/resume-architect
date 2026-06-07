@@ -178,17 +178,17 @@ const DeepImprovement = () => {
               </h2>
               {result.suggestions.map((s, i) => (
                 <Card key={i} className={s.evidence.fabricated ? "border-destructive/40" : "border-border"}>
-                  <CardContent className="p-4 sm:p-5 space-y-3">
-                    <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <CardContent className="p-3 sm:p-5 space-y-3">
+                    <div className="flex items-start justify-between gap-2 flex-wrap">
                       <Badge variant="outline" className="text-[10px] uppercase tracking-wider">
                         {s.section}
                       </Badge>
                       {s.evidence.fabricated ? (
-                        <Badge className="bg-destructive/10 text-destructive border border-destructive/30 text-[10px] uppercase tracking-wider">
-                          <AlertTriangle className="w-3 h-3 mr-1" /> Held back — needs your input
+                        <Badge className="bg-destructive/10 text-destructive border border-destructive/30 text-[9px] sm:text-[10px] uppercase tracking-wider whitespace-normal text-left leading-tight py-1">
+                          <AlertTriangle className="w-3 h-3 mr-1 shrink-0" /> Held back — needs input
                         </Badge>
                       ) : (
-                        <Badge className="bg-accent/10 text-accent border border-accent/30 text-[10px] uppercase tracking-wider">
+                        <Badge className="bg-accent/10 text-accent border border-accent/30 text-[9px] sm:text-[10px] uppercase tracking-wider">
                           <ShieldCheck className="w-3 h-3 mr-1" /> Evidence verified
                         </Badge>
                       )}
@@ -196,7 +196,7 @@ const DeepImprovement = () => {
 
                     <div className="text-sm leading-relaxed">
                       <div className="font-medium text-foreground mb-1">Rewrite</div>
-                      <div className={s.evidence.fabricated ? "text-destructive" : "text-foreground"}>{s.rewrite}</div>
+                      <div className={`break-words ${s.evidence.fabricated ? "text-destructive" : "text-foreground"}`}>{s.rewrite}</div>
                     </div>
 
                     {s.rationale && (
