@@ -338,22 +338,22 @@ const Builder = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2 sm:gap-4">
+        <div className="container mx-auto px-2 sm:px-6 py-2 sm:py-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
+          <div className="flex items-center gap-1.5 sm:gap-4 min-w-0 shrink-0">
             <Link to="/">
-              <Button variant="ghost" size="sm" className="px-2 sm:px-3">
+              <Button variant="ghost" size="sm" className="px-2 sm:px-3 h-9">
                 <ArrowLeft className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Back</span>
               </Button>
             </Link>
-            <div className="flex items-center gap-2">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-hero rounded-lg flex items-center justify-center">
+            <div className="flex items-center gap-2 min-w-0">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-gradient-hero rounded-lg flex items-center justify-center shrink-0">
                 <FileText className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary-foreground" />
               </div>
-              <span className="text-sm sm:text-lg font-display font-bold text-foreground hidden xs:inline">Resume Builder</span>
+              <span className="text-sm sm:text-lg font-display font-bold text-foreground hidden sm:inline truncate">Resume Builder</span>
             </div>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-3">
+          <div className="flex items-center gap-1 sm:gap-3 flex-wrap justify-end">
             <Dialog open={showImport} onOpenChange={setShowImport}>
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="px-2 sm:px-3">
