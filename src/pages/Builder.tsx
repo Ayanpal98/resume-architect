@@ -518,7 +518,7 @@ const Builder = () => {
       </header>
 
       {/* Main Content */}
-      <main className="pt-16 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-6">
+      <main className="pt-24 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-6">
         <div className="container mx-auto max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
             {/* Sidebar - horizontal scroll on mobile */}
