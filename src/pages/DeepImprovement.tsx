@@ -78,12 +78,12 @@ const DeepImprovement = () => {
         </div>
       </nav>
 
-      <main className="container mx-auto px-4 sm:px-6 py-8 max-w-5xl space-y-6">
-        <header className="space-y-3">
-          <h1 className="font-display text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">
+      <main className="container mx-auto px-3 sm:px-6 py-5 sm:py-8 max-w-5xl space-y-4 sm:space-y-6">
+        <header className="space-y-2 sm:space-y-3">
+          <h1 className="font-display text-xl sm:text-3xl md:text-4xl font-bold tracking-tight leading-tight">
             Standalone <span className="text-gradient">Deep Improvement</span> module
           </h1>
-          <p className="text-muted-foreground text-sm sm:text-base max-w-3xl">
+          <p className="text-muted-foreground text-xs sm:text-base max-w-3xl leading-relaxed">
             For candidates with real depth. Every rewrite is anchored to a line in your actual resume.
             A fabrication guard rejects any AI-introduced number, tool or employer that isn't already in your text —
             and asks you a clarifying question instead.
