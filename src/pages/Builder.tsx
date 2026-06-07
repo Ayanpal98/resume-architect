@@ -437,8 +437,8 @@ const Builder = () => {
               </Dialog>
             )}
 
-            <Link to="/career-intelligence" className="hidden md:inline-flex">
-              <Button variant="outline" size="sm" className="px-2 sm:px-3 border-accent/40 text-accent-foreground bg-accent/10 hover:bg-accent/20">
+            <Link to="/career-intelligence">
+              <Button variant="outline" size="sm" className="px-2 sm:px-3 border-accent/40 text-accent-foreground bg-accent/10 hover:bg-accent/20" title="Career Intelligence">
                 <Compass className="w-4 h-4 sm:mr-2" />
                 <span className="hidden lg:inline">Career Intelligence</span>
               </Button>
@@ -449,7 +449,7 @@ const Builder = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="px-2 sm:px-3 border-primary/40 text-primary bg-primary/5 hover:bg-primary/10 hidden md:inline-flex"
+                  className="px-2 sm:px-3 border-primary/40 text-primary bg-primary/5 hover:bg-primary/10"
                   title="Deep Resume Improvement"
                 >
                   <ShieldCheck className="w-4 h-4 sm:mr-2" />
