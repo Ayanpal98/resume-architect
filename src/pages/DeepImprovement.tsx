@@ -126,32 +126,32 @@ const DeepImprovement = () => {
         </Card>
 
         {result && (
-          <section className="space-y-5">
-            <div className="grid sm:grid-cols-3 gap-3">
+          <section className="space-y-4 sm:space-y-5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
               <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Hiring Readiness</div>
-                  <div className="font-display text-3xl font-bold text-primary mt-1">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Hiring Readiness</div>
+                  <div className="font-display text-2xl sm:text-3xl font-bold text-primary mt-1">
                     {result.hiringReadiness ?? "—"}{result.hiringReadiness ? "%" : ""}
                   </div>
                 </CardContent>
               </Card>
               <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Depth Signal</div>
-                  <div className="text-sm mt-1 leading-snug">{result.depthSignal || "—"}</div>
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Fabrications Blocked</div>
+                  <div className="font-display text-2xl sm:text-3xl font-bold text-accent mt-1 flex items-center gap-2">
+                    {result.meta.flaggedFabrications}
+                    <ShieldCheck className="w-4 h-4 sm:w-5 sm:h-5 text-accent" />
+                  </div>
+                  <div className="text-[10px] sm:text-[11px] text-muted-foreground mt-1">
+                    of {result.meta.totalSuggestions} suggestions
+                  </div>
                 </CardContent>
               </Card>
-              <Card>
-                <CardContent className="p-4">
-                  <div className="text-xs uppercase tracking-wider text-muted-foreground">Fabrications Blocked</div>
-                  <div className="font-display text-3xl font-bold text-accent mt-1 flex items-center gap-2">
-                    {result.meta.flaggedFabrications}
-                    <ShieldCheck className="w-5 h-5 text-accent" />
-                  </div>
-                  <div className="text-[11px] text-muted-foreground mt-1">
-                    out of {result.meta.totalSuggestions} suggestions
-                  </div>
+              <Card className="col-span-2 sm:col-span-1">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground">Depth Signal</div>
+                  <div className="text-xs sm:text-sm mt-1 leading-snug">{result.depthSignal || "—"}</div>
                 </CardContent>
               </Card>
             </div>
