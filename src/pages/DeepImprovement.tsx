@@ -91,34 +91,34 @@ const DeepImprovement = () => {
         </header>
 
         <Card>
-          <CardContent className="p-4 sm:p-6 space-y-4">
+          <CardContent className="p-3 sm:p-6 space-y-4">
             <div>
               <label className="text-sm font-medium mb-1.5 block">Your real resume (paste full text)</label>
               <Textarea
                 value={resumeText}
                 onChange={(e) => setResumeText(e.target.value.slice(0, 100000))}
                 placeholder="Paste your actual resume text here. The deeper and more authentic, the better the read."
-                className="min-h-[220px] font-mono text-xs"
+                className="min-h-[160px] sm:min-h-[220px] font-mono text-xs"
               />
               <div className="text-[11px] text-muted-foreground mt-1">
                 {resumeText.length.toLocaleString()} / 100,000 characters · stored only for this session
               </div>
             </div>
             <div>
-              <label className="text-sm font-medium mb-1.5 block">Target job description (optional, sharpens the read)</label>
+              <label className="text-sm font-medium mb-1.5 block">Target job description (optional)</label>
               <Textarea
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value.slice(0, 50000))}
                 placeholder="Paste the JD you're targeting (optional)."
-                className="min-h-[120px] text-xs"
+                className="min-h-[100px] sm:min-h-[120px] text-xs"
               />
             </div>
-            <div className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-center justify-between">
-              <div className="text-xs text-muted-foreground flex items-start gap-2">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+              <div className="text-[11px] sm:text-xs text-muted-foreground flex items-start gap-2 leading-snug">
                 <ShieldCheck className="w-4 h-4 text-primary shrink-0 mt-0.5" />
                 <span>No metric invention · no fabricated experience · every suggestion traces back to a line in your resume.</span>
               </div>
-              <Button variant="hero" size="lg" onClick={runAnalysis} disabled={loading} className="sm:min-w-[220px]">
+              <Button variant="hero" size="lg" onClick={runAnalysis} disabled={loading} className="w-full sm:w-auto sm:min-w-[220px]">
                 {loading ? (<><Loader2 className="w-4 h-4 mr-2 animate-spin" />Running deep read…</>) : (<><Sparkles className="w-4 h-4 mr-2" />Run deep analysis</>)}
               </Button>
             </div>
