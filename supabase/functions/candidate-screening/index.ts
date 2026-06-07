@@ -361,6 +361,19 @@ Provide a comprehensive analysis following the JSON structure specified. Be thor
       const jsonString = jsonMatch[1] || content;
       analysis = JSON.parse(jsonString.trim());
       
+      // Output schema validation: clamp scores to 0-100 and validate enums to
+      // mitigate prompt-injection attempts that try to manipulate scoring.
+      const ALLOWED_RECS = new Set(["highly_recommended", "recommended", "consider", "not_recommended"]);
+      const ALLOWED_SEVERITY = new Set(["low", "medium", "high"]);
+      const clampScore = (v: any, def = 50): number => {
+        const n = typeof v === "number" ? v : Number(v);
+        if (!Number.isFinite(n)) return def;
+        return Math.max(0, Math.min(100, Math.round(n)));
+      };
+      const rawRec = typeof analysis.recommendation === "string" ? analysis.recommendation.toLowerCase().trim() : "";
+      const safeRec = ALLOWED_RECS.has(rawRec) ? rawRec : "consider";
+      const rawFit = analysis.fitScore || {};
+
       // Ensure all required fields exist with defaults
       analysis = {
         name: analysis.name || "Unknown",
@@ -369,29 +382,37 @@ Provide a comprehensive analysis following the JSON structure specified. Be thor
         location: analysis.location || "",
         currentRole: analysis.currentRole || "",
         totalExperience: analysis.totalExperience || "N/A",
-        overallScore: analysis.overallScore ?? 50,
-        technicalSkillsScore: analysis.technicalSkillsScore ?? analysis.skillsMatch ?? 50,
-        experienceScore: analysis.experienceScore ?? analysis.experienceMatch ?? 50,
-        educationScore: analysis.educationScore ?? analysis.educationMatch ?? 50,
-        softSkillsScore: analysis.softSkillsScore ?? 50,
-        atsScore: analysis.atsScore ?? 50,
+        overallScore: clampScore(analysis.overallScore),
+        technicalSkillsScore: clampScore(analysis.technicalSkillsScore ?? analysis.skillsMatch),
+        experienceScore: clampScore(analysis.experienceScore ?? analysis.experienceMatch),
+        educationScore: clampScore(analysis.educationScore ?? analysis.educationMatch),
+        softSkillsScore: clampScore(analysis.softSkillsScore),
+        atsScore: clampScore(analysis.atsScore),
         matchedSkills: analysis.matchedSkills || [],
         missingSkills: analysis.missingSkills || [],
         partialSkills: analysis.partialSkills || [],
         experienceSummary: analysis.experienceSummary || analysis.experience || "",
         educationDetails: analysis.educationDetails || { degree: "", field: "", institution: "", certifications: [] },
-        strengths: Array.isArray(analysis.strengths) 
+        strengths: Array.isArray(analysis.strengths)
           ? analysis.strengths.map((s: any) => typeof s === 'string' ? { point: s, evidence: "" } : s)
           : [],
         concerns: Array.isArray(analysis.concerns)
-          ? analysis.concerns.map((c: any) => typeof c === 'string' ? { point: c, severity: "medium", mitigation: "" } : c)
+          ? analysis.concerns.map((c: any) => {
+              const obj = typeof c === 'string' ? { point: c, severity: "medium", mitigation: "" } : c;
+              const sev = typeof obj.severity === 'string' ? obj.severity.toLowerCase() : "medium";
+              return { ...obj, severity: ALLOWED_SEVERITY.has(sev) ? sev : "medium" };
+            })
           : [],
         keyAchievements: analysis.keyAchievements || [],
         interviewQuestions: analysis.interviewQuestions || [],
         salaryRange: analysis.salaryRange || "Not estimated",
-        recommendation: analysis.recommendation || "consider",
+        recommendation: safeRec,
         recommendationReason: analysis.recommendationReason || "",
-        fitScore: analysis.fitScore || { technical: 50, cultural: 50, growth: 50 },
+        fitScore: {
+          technical: clampScore(rawFit.technical),
+          cultural: clampScore(rawFit.cultural),
+          growth: clampScore(rawFit.growth),
+        },
         competitiveAnalysis: analysis.competitiveAnalysis || { percentile: "N/A", standoutFactors: [], improvementAreas: [] },
       };
     } catch (parseError) {
