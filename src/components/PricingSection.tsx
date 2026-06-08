@@ -1,190 +1,164 @@
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight, Zap, Star, Crown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 
-type Plan = {
+/* ─── Types ─── */
+type MainPlan = {
   name: string;
   price: string;
   period: string;
   badge?: string;
-  bestFor: string;
+  icon: React.ReactNode;
+  gains: { label: string; detail: string }[];
   features: string[];
   cta: string;
-  variant: "muted" | "standard" | "highlight" | "dark";
+  variant: "standard" | "highlight" | "dark";
 };
 
-const jobSeekerPlans: Plan[] = [
+type AddonPlan = {
+  name: string;
+  price: string;
+  period: string;
+  description: string;
+  features: string[];
+  cta: string;
+};
+
+/* ─── Main Tiers ─── */
+const mainPlans: MainPlan[] = [
   {
-    name: "Free",
-    price: "₹0",
-    period: "/ forever",
-    badge: "Start free",
-    bestFor: "First-time check on resume health",
-    features: [
-      "1 ATS Readiness scan / month",
-      "Basic Hiring Readiness score",
-      "Top 3 quick-win suggestions",
-      "Keyword coverage overview",
-      "PDF download (with footer branding)",
-    ],
-    cta: "Start Free",
-    variant: "muted",
-  },
-  {
-    name: "Starter",
-    price: "₹199",
-    period: "/ report",
-    badge: "Quick fix",
-    bestFor: "One-time resume cleanup",
-    features: [
-      "Full ATS Readiness report",
-      "Keyword & formatting fixes",
-      "Top 10 prioritized suggestions",
-      "Clean PDF download (no branding)",
-    ],
-    cta: "Get Starter Report",
-    variant: "standard",
-  },
-  {
-    name: "Pro",
-    price: "₹249",
-    period: "/ report",
-    badge: "Most Popular ⭐",
-    bestFor: "Active job seekers applying weekly",
-    features: [
-      "Everything in Starter",
-      "Job-description match analysis",
-      "Skills gap & keyword optimization",
-      "AI resume rewrite (section-by-section)",
-      "Before vs After comparison",
-      "Unlimited PDF downloads",
-    ],
-    cta: "Get Pro Report",
-    variant: "highlight",
-  },
-  {
-    name: "Deep Improvement",
-    price: "₹349",
-    period: "/ report",
-    badge: "Standalone module",
-    bestFor: "Genuine candidates with real depth",
-    features: [
-      "Evidence-first resume read (no fabrication)",
-      "Depth-aware rewriting — keeps your scope intact",
-      "Section-by-section recruiter pass",
-      "Gap-to-90% Hiring Readiness roadmap",
-      "30 / 60 / 90 day improvement plan",
-      "PDF report with line-level fixes",
-    ],
-    cta: "Run Deep Analysis",
-    variant: "standard",
-  },
-  {
-    name: "Career+",
+    name: "Essentials",
     price: "₹599",
     period: "/ report",
-    badge: "Best value",
-    bestFor: "Career switchers & senior roles",
-    features: [
-      "Everything in Pro",
-      "AI cover letter generator",
-      "30-60-90 day career roadmap",
-      "Interview question pack (role-specific)",
-      "LinkedIn headline & About rewrite",
-      "Priority report generation",
+    badge: "Start Strong",
+    icon: <Zap className="w-5 h-5" />,
+    gains: [
+      { label: "ATS Visibility", detail: "Resume passes 90%+ of applicant tracking systems" },
+      { label: "Keyword Match", detail: "Role-aligned keywords injected across all sections" },
+      { label: "Clean Format", detail: "Single-column ATS-safe PDF with zero parsing errors" },
     ],
-    cta: "Unlock Career+",
+    features: [
+      "Full ATS Readiness scan + score",
+      "Keyword coverage & gap analysis",
+      "Section-by-section AI rewrite",
+      "1 tailored resume variant",
+      "PDF + DOCX download",
+    ],
+    cta: "Get Essentials",
     variant: "standard",
+  },
+  {
+    name: "Professional",
+    price: "₹999",
+    period: "/ report",
+    badge: "Most Popular ⭐",
+    icon: <Star className="w-5 h-5" />,
+    gains: [
+      { label: "Job Match Boost", detail: "Resume tuned to a specific job description — 2× interviews" },
+      { label: "Skills Authority", detail: "15 top skills ranked by industry demand for your role" },
+      { label: "Cover Letter", detail: "Matching AI cover letter that mirrors the JD language" },
+    ],
+    features: [
+      "Everything in Essentials",
+      "Job-description match analysis",
+      "AI cover letter generator",
+      "Skills gap & optimization",
+      "Before vs After comparison",
+      "2 resume variants (role-specific)",
+    ],
+    cta: "Go Professional",
+    variant: "highlight",
   },
   {
     name: "Premium",
-    price: "₹999",
+    price: "₹1,499",
     period: "/ report",
-    badge: "Full platform",
-    bestFor: "Maximum results & faster hiring",
+    badge: "Full Power",
+    icon: <Crown className="w-5 h-5" />,
+    gains: [
+      { label: "Career Roadmap", detail: "30-60-90 day plan to close every gap in your profile" },
+      { label: "LinkedIn Sync", detail: "Headline, About & featured sections rewritten for recruiters" },
+      { label: "Interview Ready", detail: "Role-specific question pack + answer frameworks" },
+    ],
     features: [
-      "Everything in Career+",
-      "Multi-role tailored resume variants",
-      "Recruiter-perspective screening report",
-      "LinkedIn profile full optimization",
+      "Everything in Professional",
+      "30-60-90 day career roadmap",
+      "LinkedIn profile optimization",
+      "Interview question pack",
+      "Recruiter-perspective screening",
       "30-day re-scan & re-optimization",
-      "White-glove report delivery",
+      "Priority support & white-glove delivery",
     ],
-    cta: "Go Premium",
+    cta: "Unlock Premium",
     variant: "dark",
   },
 ];
 
-const recruiterPlans: Plan[] = [
+/* ─── Add-on Tiers ─── */
+const addonPlans: AddonPlan[] = [
   {
-    name: "Starter",
-    price: "₹4,999",
-    period: "/ month",
-    badge: "Small teams",
-    bestFor: "Startups & solo recruiters",
+    name: "Quick Scan",
+    price: "₹99",
+    period: "/ scan",
+    description: "Not ready to buy? Get a fast health check first.",
     features: [
-      "Up to 75 candidate screenings / month",
-      "Auto-ranking with score weights",
-      "Skill & experience match analysis",
-      "Branded PDF screening reports",
+      "ATS Readiness score (0-100)",
+      "Top 5 quick-win fixes",
+      "Keyword density snapshot",
+      "Delivered in 2 minutes",
     ],
-    cta: "Start Screening",
-    variant: "standard",
+    cta: "Run Quick Scan",
   },
   {
-    name: "Growth",
-    price: "₹14,999",
-    period: "/ month",
-    badge: "Most Popular ⭐",
-    bestFor: "Scaling hiring teams",
+    name: "Deep Analysis",
+    price: "₹399",
+    period: "/ report",
+    description: "Evidence-first rewrite that keeps your real scope intact.",
     features: [
-      "Everything in Starter",
-      "300 candidate screenings / month",
-      "Bulk upload & side-by-side compare",
-      "Custom scoring weights per role",
-      "Hiring insights dashboard",
-      "Priority support",
+      "Evidence-first resume read",
+      "Depth-aware section rewriting",
+      "Recruiter-pass line-level fixes",
+      "Gap-to-90% Hiring Readiness plan",
     ],
-    cta: "Scale Hiring",
-    variant: "highlight",
+    cta: "Run Deep Analysis",
   },
   {
-    name: "Enterprise",
-    price: "Custom",
-    period: "",
-    badge: "Full platform",
-    bestFor: "Large hiring organizations",
+    name: "Career Boost",
+    price: "₹799",
+    period: "/ bundle",
+    description: "Everything a career switcher or senior candidate needs.",
     features: [
-      "Unlimited candidate screenings",
-      "API & ATS integrations",
-      "Custom AI scoring models",
-      "SSO, audit logs & dedicated CSM",
+      "Professional tier resume + cover letter",
+      "LinkedIn headline & About rewrite",
+      "30-60-90 day transition roadmap",
+      "Senior-role interview question pack",
     ],
-    cta: "Talk to Sales",
-    variant: "dark",
+    cta: "Get Career Boost",
   },
 ];
 
-const PlanCard = ({ plan }: { plan: Plan }) => {
+/* ─── Card Components ─── */
+const MainPlanCard = ({ plan }: { plan: MainPlan }) => {
   const isHighlight = plan.variant === "highlight";
   const isDark = plan.variant === "dark";
-  const isMuted = plan.variant === "muted";
 
   const cardClasses = [
-    "relative flex flex-col h-full rounded-2xl border p-6 sm:p-7 transition-all duration-300",
+    "relative flex flex-col h-full rounded-2xl border p-6 sm:p-8 transition-all duration-300",
     isHighlight && "border-primary ring-2 ring-primary/20 shadow-xl scale-[1.02] bg-card",
     isDark && "border-foreground bg-foreground text-background shadow-xl",
-    isMuted && "border-dashed border-border bg-muted/30",
     plan.variant === "standard" && "border-border bg-card hover:border-primary/40 hover:shadow-md",
   ]
     .filter(Boolean)
     .join(" ");
 
-  const mutedTextClass = isDark ? "text-background/60" : "text-muted-foreground";
-  const headingClass = isDark ? "text-background" : "text-foreground";
-  const checkClass = isDark ? "text-background" : "text-accent";
-  const dividerClass = isDark ? "border-background/15" : "border-border";
+  const mutedText = isDark ? "text-background/60" : "text-muted-foreground";
+  const heading = isDark ? "text-background" : "text-foreground";
+  const check = isDark ? "text-background" : "text-accent";
+  const divider = isDark ? "border-background/15" : "border-border";
+  const gainBg = isDark ? "bg-background/10" : "bg-primary/5";
+  const gainText = isDark ? "text-background/90" : "text-primary";
+  const gainSub = isDark ? "text-background/60" : "text-muted-foreground";
 
   return (
     <div className={cardClasses}>
@@ -204,26 +178,48 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         </div>
       )}
 
+      {/* Header */}
       <div className="mb-5">
-        <h3 className={`font-display text-2xl font-medium tracking-tight ${headingClass}`}>
-          {plan.name}
-        </h3>
-        <p className={`text-xs mt-1 ${mutedTextClass}`}>Best for: {plan.bestFor}</p>
-      </div>
-
-      <div className={`pb-5 mb-5 border-b ${dividerClass}`}>
+        <div className="flex items-center gap-2 mb-2">
+          <span className={isDark ? "text-background/80" : "text-primary"}>{plan.icon}</span>
+          <h3 className={`font-display text-2xl font-medium tracking-tight ${heading}`}>
+            {plan.name}
+          </h3>
+        </div>
         <div className="flex items-baseline gap-1.5">
-          <span className={`font-display text-4xl font-medium tracking-tight ${headingClass}`}>
+          <span className={`font-display text-4xl font-medium tracking-tight ${heading}`}>
             {plan.price}
           </span>
-          {plan.period && <span className={`text-sm ${mutedTextClass}`}>{plan.period}</span>}
+          <span className={`text-sm ${mutedText}`}>{plan.period}</span>
         </div>
       </div>
 
-      <ul className="space-y-3 mb-7 flex-1">
+      {/* Gains */}
+      <div className={`rounded-xl p-4 mb-5 ${gainBg}`}>
+        <p className={`text-xs font-semibold uppercase tracking-wider mb-3 ${gainText}`}>
+          What you gain
+        </p>
+        <ul className="space-y-3">
+          {plan.gains.map((gain, i) => (
+            <li key={i} className="flex items-start gap-2">
+              <Sparkles className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${gainText}`} />
+              <div>
+                <p className={`text-sm font-medium ${gainText}`}>{gain.label}</p>
+                <p className={`text-xs ${gainSub}`}>{gain.detail}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Divider */}
+      <div className={`border-t ${divider} mb-5`} />
+
+      {/* Features */}
+      <ul className="space-y-2.5 mb-7 flex-1">
         {plan.features.map((feature, i) => (
-          <li key={i} className={`flex items-start gap-2.5 text-sm ${headingClass}`}>
-            <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${checkClass}`} />
+          <li key={i} className={`flex items-start gap-2.5 text-sm ${heading}`}>
+            <CheckCircle2 className={`w-4 h-4 shrink-0 mt-0.5 ${check}`} />
             <span className="leading-snug">{feature}</span>
           </li>
         ))}
@@ -245,10 +241,41 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
   );
 };
 
+const AddonCard = ({ plan }: { plan: AddonPlan }) => {
+  return (
+    <div className="flex flex-col h-full rounded-xl border border-dashed border-border bg-muted/30 p-5 sm:p-6 transition-all hover:border-primary/30 hover:bg-muted/50">
+      <div className="mb-3">
+        <h4 className="font-display text-lg font-medium text-foreground">{plan.name}</h4>
+        <div className="flex items-baseline gap-1.5 mt-1">
+          <span className="font-display text-2xl font-medium text-foreground">{plan.price}</span>
+          <span className="text-sm text-muted-foreground">{plan.period}</span>
+        </div>
+        <p className="text-sm text-muted-foreground mt-2">{plan.description}</p>
+      </div>
+
+      <ul className="space-y-2 mb-5 flex-1">
+        {plan.features.map((feature, i) => (
+          <li key={i} className="flex items-start gap-2 text-sm text-foreground">
+            <CheckCircle2 className="w-3.5 h-3.5 shrink-0 mt-0.5 text-accent" />
+            <span className="leading-snug">{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Button variant="ghost" className="w-full" size="sm">
+        {plan.cta}
+        <ArrowRight className="w-3.5 h-3.5 ml-1" />
+      </Button>
+    </div>
+  );
+};
+
+/* ─── Section ─── */
 export const PricingSection = () => {
   return (
     <section id="pricing" className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
       <div className="container mx-auto max-w-6xl">
+        {/* Intro */}
         <div className="max-w-3xl mb-10 sm:mb-14">
           <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
             — Pricing
@@ -257,7 +284,7 @@ export const PricingSection = () => {
             Simple pricing. <em className="italic font-normal text-primary">Built for Indian job seekers.</em>
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg font-sans">
-            Start free. Upgrade only when you're ready to apply. No subscriptions, no hidden fees — pay per report.
+            One-time report purchases. No subscriptions, no auto-renewals. Pick a full package or bolt on exactly what you need.
           </p>
         </div>
 
@@ -279,18 +306,99 @@ export const PricingSection = () => {
             </TabsList>
           </div>
 
-          <TabsContent value="jobseeker">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-8">
-              {jobSeekerPlans.map((plan) => (
-                <PlanCard key={plan.name} plan={plan} />
-              ))}
+          <TabsContent value="jobseeker" className="space-y-12">
+            {/* Main Plans */}
+            <div>
+              <h3 className="font-display text-xl sm:text-2xl font-medium text-foreground mb-6 text-center">
+                Full Report Packages
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
+                {mainPlans.map((plan) => (
+                  <MainPlanCard key={plan.name} plan={plan} />
+                ))}
+              </div>
+            </div>
+
+            {/* Add-ons */}
+            <div>
+              <h3 className="font-display text-xl sm:text-2xl font-medium text-foreground mb-6 text-center">
+                Special Add-ons
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+                {addonPlans.map((plan) => (
+                  <AddonCard key={plan.name} plan={plan} />
+                ))}
+              </div>
             </div>
           </TabsContent>
 
           <TabsContent value="recruiter">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
-              {recruiterPlans.map((plan) => (
-                <PlanCard key={plan.name} plan={plan} />
+              {[
+                {
+                  name: "Starter",
+                  price: "₹4,999",
+                  period: "/ month",
+                  badge: "Small teams",
+                  icon: <Zap className="w-5 h-5" />,
+                  gains: [
+                    { label: "Time Saved", detail: "Screen 75 candidates in minutes, not days" },
+                    { label: "Consistent Scoring", detail: "Same AI weights applied to every resume" },
+                    { label: "Branded Reports", detail: "PDFs carry your company logo & colors" },
+                  ],
+                  features: [
+                    "Up to 75 candidate screenings / month",
+                    "Auto-ranking with score weights",
+                    "Skill & experience match analysis",
+                    "Branded PDF screening reports",
+                  ],
+                  cta: "Start Screening",
+                  variant: "standard" as const,
+                },
+                {
+                  name: "Growth",
+                  price: "₹14,999",
+                  period: "/ month",
+                  badge: "Most Popular ⭐",
+                  icon: <Star className="w-5 h-5" />,
+                  gains: [
+                    { label: "Bulk Power", detail: "Upload 300 resumes and compare side-by-side" },
+                    { label: "Custom Weights", detail: "Tune scoring per role, team, or department" },
+                    { label: "Hiring Insights", detail: "Dashboard shows funnel & pipeline trends" },
+                  ],
+                  features: [
+                    "Everything in Starter",
+                    "300 candidate screenings / month",
+                    "Bulk upload & side-by-side compare",
+                    "Custom scoring weights per role",
+                    "Hiring insights dashboard",
+                    "Priority support",
+                  ],
+                  cta: "Scale Hiring",
+                  variant: "highlight" as const,
+                },
+                {
+                  name: "Enterprise",
+                  price: "Custom",
+                  period: "",
+                  badge: "Full platform",
+                  icon: <Crown className="w-5 h-5" />,
+                  gains: [
+                    { label: "Unlimited Volume", detail: "No caps on screenings or team members" },
+                    { label: "Integration Ready", detail: "API + ATS connectors for seamless flow" },
+                    { label: "Enterprise Security", detail: "SSO, audit logs & dedicated success manager" },
+                  ],
+                  features: [
+                    "Unlimited candidate screenings",
+                    "API & ATS integrations",
+                    "Custom AI scoring models",
+                    "SSO, audit logs & dedicated CSM",
+                  ],
+                  cta: "Talk to Sales",
+                  variant: "dark" as const,
+                },
+              ].map((plan) => (
+                <MainPlanCard key={plan.name} plan={plan} />
               ))}
             </div>
           </TabsContent>
