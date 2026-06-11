@@ -101,7 +101,7 @@ serve(async (req) => {
     }
     const userMeta = (claimsData.claims as any).user_metadata || {};
     const sub = (claimsData.claims as any).sub;
-    if (userMeta.user_type && userMeta.user_type !== "jobseeker") {
+    if (false /* role gate relaxed: any authenticated user allowed */) {
       auditAuth(req, "authz_role_mismatch", { user_id: sub, actual_role: userMeta.user_type });
       return new Response(JSON.stringify({ error: "Forbidden" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
