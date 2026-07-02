@@ -1,9 +1,11 @@
-import { CheckCircle2, ArrowRight, Zap, Star, Crown, Sparkles } from "lucide-react";
+import { CheckCircle2, ArrowRight, Zap, Star, Crown, Sparkles, Users, Building2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Link } from "react-router-dom";
 
 /* ─── Types ─── */
-type MainPlan = {
+type Plan = {
   name: string;
   price: string;
   period: string;
@@ -15,8 +17,8 @@ type MainPlan = {
   variant: "standard" | "highlight" | "dark";
 };
 
-/* ─── Premium Tiers ─── */
-const mainPlans: MainPlan[] = [
+/* ─── Job Seeker Premium Tiers ─── */
+const jobSeekerPlans: Plan[] = [
   {
     name: "Premium Starter",
     price: "₹999",
@@ -85,8 +87,78 @@ const mainPlans: MainPlan[] = [
   },
 ];
 
+/* ─── Recruiter Monthly Subscription Tiers ─── */
+const recruiterPlans: Plan[] = [
+  {
+    name: "Recruiter Lite",
+    price: "₹2,499",
+    period: "/ month",
+    badge: "Start Hiring",
+    icon: <Users className="w-5 h-5" />,
+    gains: [
+      { label: "25 AI screenings", detail: "Fast candidate-readiness analysis for every upload" },
+      { label: "1 job requisition", detail: "Define one target role and benchmark against it" },
+      { label: "Basic scorecards", detail: "IRS, CSA, SAX scoring at a glance" },
+    ],
+    features: [
+      "25 candidate screenings / month",
+      "1 active job requisition",
+      "IRS, CSA, SAX scorecards",
+      "CSV export of results",
+      "Ghost screening preview",
+      "Email support",
+    ],
+    cta: "Get Started",
+    variant: "standard",
+  },
+  {
+    name: "Recruiter Growth",
+    price: "₹4,999",
+    period: "/ month",
+    badge: "Most Popular ⭐",
+    icon: <Building2 className="w-5 h-5" />,
+    gains: [
+      { label: "100 AI screenings", detail: "Enough volume for consistent active hiring" },
+      { label: "5 job requisitions", detail: "Run parallel roles without swapping configs" },
+      { label: "Advanced match scoring", detail: "JD-to-resume fit with ranked shortlists" },
+    ],
+    features: [
+      "100 candidate screenings / month",
+      "5 active job requisitions",
+      "Advanced JD-to-resume match scoring",
+      "Team collaboration (3 seats)",
+      "ATS integration placeholders",
+      "Priority support",
+    ],
+    cta: "Get Started",
+    variant: "highlight",
+  },
+  {
+    name: "Recruiter Scale",
+    price: "₹9,999",
+    period: "/ month",
+    badge: "Enterprise Power",
+    icon: <TrendingUp className="w-5 h-5" />,
+    gains: [
+      { label: "250 AI screenings", detail: "High-volume hiring with headroom to scale" },
+      { label: "Unlimited requisitions", detail: "Open as many roles as your business needs" },
+      { label: "Custom scoring & API", detail: "Tailored weights and programmatic access" },
+    ],
+    features: [
+      "250 candidate screenings / month",
+      "Unlimited job requisitions",
+      "API access + webhooks",
+      "White-label PDF reports",
+      "Custom scoring weights",
+      "Dedicated account manager",
+    ],
+    cta: "Get Started",
+    variant: "dark",
+  },
+];
+
 /* ─── Card Component ─── */
-const MainPlanCard = ({ plan }: { plan: MainPlan }) => {
+const PlanCard = ({ plan }: { plan: Plan }) => {
   const isHighlight = plan.variant === "highlight";
   const isDark = plan.variant === "dark";
 
@@ -180,9 +252,12 @@ const MainPlanCard = ({ plan }: { plan: MainPlan }) => {
             : "w-full text-xs sm:text-sm"
         }
         size="sm"
+        asChild
       >
-        {plan.cta}
-        <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        <Link to="/welcome">
+          {plan.cta}
+          <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+        </Link>
       </Button>
     </div>
   );
@@ -194,7 +269,7 @@ export const PricingSection = () => {
     <section id="pricing" className="py-12 sm:py-16 lg:py-24 px-4 sm:px-6 border-t border-border/60">
       <div className="container mx-auto max-w-6xl">
         {/* Intro */}
-        <div className="max-w-3xl mb-8 sm:mb-10 lg:mb-14">
+        <div className="max-w-3xl mb-6 sm:mb-8 lg:mb-12">
           <div className="text-[10px] sm:text-xs uppercase tracking-[0.2em] text-muted-foreground mb-3 sm:mb-4">
             — Pricing
           </div>
@@ -202,20 +277,48 @@ export const PricingSection = () => {
             Premium career intelligence. <em className="italic font-normal text-primary">One report at a time.</em>
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg font-sans">
-            One-time report purchases. No subscriptions, no auto-renewals. Choose the depth that matches your next career move.
+            One-time reports for candidates. Monthly plans for recruiters. Choose the side of the hiring market you play on.
           </p>
         </div>
 
-        {/* Plans */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-          {mainPlans.map((plan) => (
-            <MainPlanCard key={plan.name} plan={plan} />
-          ))}
-        </div>
+        <Tabs defaultValue="jobseeker" className="w-full">
+          <TabsList className="mb-6 sm:mb-8 bg-muted/60 p-1 h-auto rounded-lg">
+            <TabsTrigger
+              value="jobseeker"
+              className="text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-5 py-2 sm:py-2.5 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              For Job Seekers
+            </TabsTrigger>
+            <TabsTrigger
+              value="recruiter"
+              className="text-xs sm:text-sm uppercase tracking-wider px-3 sm:px-5 py-2 sm:py-2.5 data-[state=active]:bg-card data-[state=active]:text-foreground data-[state=active]:shadow-sm"
+            >
+              For Recruiters
+            </TabsTrigger>
+          </TabsList>
 
-        <p className="text-center text-xs sm:text-sm text-muted-foreground mt-8 sm:mt-10 lg:mt-12 max-w-2xl mx-auto font-sans">
-          One-time purchases. No subscriptions. No auto-renewals. 7-day money-back guarantee on all paid reports.
-        </p>
+          <TabsContent value="jobseeker" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {jobSeekerPlans.map((plan) => (
+                <PlanCard key={plan.name} plan={plan} />
+              ))}
+            </div>
+            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-8 sm:mt-10 lg:mt-12 max-w-2xl mx-auto font-sans">
+              One-time purchases. No subscriptions. No auto-renewals. 7-day money-back guarantee on all paid reports.
+            </p>
+          </TabsContent>
+
+          <TabsContent value="recruiter" className="mt-0">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {recruiterPlans.map((plan) => (
+                <PlanCard key={plan.name} plan={plan} />
+              ))}
+            </div>
+            <p className="text-center text-xs sm:text-sm text-muted-foreground mt-8 sm:mt-10 lg:mt-12 max-w-2xl mx-auto font-sans">
+              Monthly subscription plans. Cancel anytime. 7-day money-back guarantee.
+            </p>
+          </TabsContent>
+        </Tabs>
       </div>
     </section>
   );
