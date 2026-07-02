@@ -1,34 +1,39 @@
-Update the landing-page PricingSection to show only 3 premium Job Seeker tiers. Remove the Special Add-ons row and the Recruiter tab entirely. Keep all existing payment logic, Supabase calls, checkout functions, and routing untouched.
+Add a recruiter pricing tab to the existing landing-page PricingSection. Keep the current Job Seeker 3-tier premium grid untouched and add a second tab with 3 monthly subscription tiers for recruiters. No checkout logic, payment provider, or backend changes are in scope.
 
-New tier layout (exact copy to be written in `src/components/PricingSection.tsx`):
+## New layout
+- Convert the Pricing section into a shadcn `Tabs` block with two tabs:
+  - **For Job Seekers** — existing 3 tiers (₹999 / ₹1,499 / ₹2,599)
+  - **For Recruiters** — new 3-tier monthly subscription grid
+- Default tab remains **For Job Seekers**.
+- Tab labels use the same muted/uppercase styling as the section label.
 
-1. Premium Starter — ₹999 / report
-   - Best for: Mid-level professionals ready for a serious visibility upgrade
-   - Gains: ATS-safe rewrite, keyword injection, 1 role-aligned variant
-   - Features: ATS Readiness scan, section-by-section rewrite, clean single-column PDF, keyword gap analysis, 1 tailored variant
-   - CTA: Get Premium Starter
+## Recruiter tier details
+| Tier | Price | Positioning | Core gains | Key features | CTA | Variant |
+|---|---|---|---|---|---|---|
+| **Recruiter Lite** | ₹2,499 / month | Small teams, occasional hiring | 25 AI screenings, 1 job requisition, basic scorecards | CSV export, email support, candidate ranking, ghost-screening preview | Get Started | standard |
+| **Recruiter Growth** | ₹4,999 / month | Active hiring teams | 100 AI screenings, 5 job requisitions, advanced match scoring | Team collaboration, ATS integration placeholders, priority support | Get Started | highlight |
+| **Recruiter Scale** | ₹9,999 / month | High-volume / enterprise hiring | 250 AI screenings, unlimited requisitions, custom scoring | API access, white-label reports, custom scoring weights, dedicated account manager | Get Started | dark |
 
-2. Premium Professional — ₹1,499 / report
-   - Best for: Targeted job applications that need to beat the ATS + human recruiter
-   - Gains: JD-tuned resume, matching cover letter, skills authority map
-   - Features: everything in Premium Starter, job-description match analysis, AI cover letter, 15 ranked skills, before/after comparison, 2 role-specific variants
-   - CTA: Go Premium Professional
-   - Badge: Most Popular ⭐
+- All recruiter CTAs route to `/welcome` (the existing sign-up / role-selection flow).
+- The feature list for each tier should reuse the same gains box and bullet list pattern used by the job seeker cards.
 
-3. Premium Elite — ₹2,599 / report
-   - Best for: Senior candidates, career switchers, and leadership roles
-   - Gains: 90-day roadmap, LinkedIn rewrite, interview-ready prep pack
-   - Features: everything in Premium Professional, 30-60-90 day career roadmap, LinkedIn profile optimization, interview question pack, recruiter-perspective screening, 30-day re-scan, priority support
-   - CTA: Unlock Premium Elite
+## File changes
+- **Edit `src/components/PricingSection.tsx`** only.
+  - Add imports: `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` from `@/components/ui/tabs`, and `Link` from `react-router-dom`.
+  - Keep the `MainPlan` type and `mainPlans` data.
+  - Add a `RecruiterPlan` type and `recruiterPlans` data.
+  - Reuse `MainPlanCard` for both grids by making the card component accept `period` and `cta` generically.
+  - Wrap the two grids in `Tabs` with `defaultValue="jobseeker"`.
+  - Make the bottom trust line tab-aware:
+    - Job Seeker tab: "One-time purchases. No subscriptions. No auto-renewals. 7-day money-back guarantee on all paid reports."
+    - Recruiter tab: "Monthly subscription plans. Cancel anytime. 7-day money-back guarantee."
+  - Keep the existing intro heading but update the subheadline to: "One-time reports for candidates. Monthly plans for recruiters. Choose the side of the hiring market you play on."
 
-Visual changes:
-- Remove the Recruiter `Tabs` completely; keep the section as a single Job Seeker grid.
-- Remove the `addonPlans` block and its heading.
-- Keep the existing card, badge, gains, and feature styling so the section stays mobile-responsive.
-- Keep the bottom trust line: "One-time purchases. No subscriptions. No auto-renewals. 7-day money-back guarantee on all paid reports."
-- Remove unused imports (`Tabs`, `TabsContent`, `TabsList`, `TabsTrigger`, `Sparkles`) after the layout changes.
+## Out of scope
+- No payment processor integration (Paddle/Stripe/Shopify) unless explicitly requested later.
+- No changes to `/welcome`, `/auth`, `/recruiter`, or any backend edge functions.
+- No changes to existing job seeker prices, features, or CTAs.
 
-Technical notes:
-- File changed: `src/components/PricingSection.tsx` only.
-- No changes to payment processing, Supabase purchase records, auth/session handling, or API calls.
-- Build verification (`bun run build` or equivalent) after the edit.
+## Verification
+- Run `bun run build` to confirm no TypeScript/import errors.
+- Check the pricing section at mobile, tablet, and desktop widths to ensure the tab bar and 3-column grid do not overflow.
