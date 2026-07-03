@@ -270,10 +270,10 @@ export const PricingSection = () => {
             — Pricing
           </div>
           <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-foreground mb-3 sm:mb-4 leading-tight tracking-tight">
-            Premium career intelligence. <em className="italic font-normal text-primary">One report at a time.</em>
+            Pay for what the platform actually does. <em className="italic font-normal text-primary">One report at a time.</em>
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg font-sans">
-            One-time reports for candidates. Monthly plans for recruiters. Choose the side of the hiring market you play on.
+            One-time intelligence reports for candidates. Monthly screening plans for recruiters. Every feature listed below is live in the product today.
           </p>
         </div>
 
