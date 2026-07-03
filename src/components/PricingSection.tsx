@@ -26,16 +26,16 @@ const jobSeekerPlans: Plan[] = [
     badge: "Start Strong",
     icon: <Zap className="w-5 h-5" />,
     gains: [
-      { label: "ATS-safe rewrite", detail: "Resume passes 90%+ of applicant tracking systems" },
-      { label: "Keyword injection", detail: "Role-aligned keywords placed across every section" },
-      { label: "1 role-aligned variant", detail: "One polished resume tuned to your target role" },
+      { label: "ATS Readiness scan", detail: "Full Hiring Readiness score with issue breakdown" },
+      { label: "Section-by-section rewrite", detail: "AI rewrite for summary, experience and skills" },
+      { label: "ATS-safe PDF export", detail: "Clean single-column PDF built to parse cleanly" },
     ],
     features: [
-      "Full ATS Readiness scan + score",
+      "Full ATS Readiness scan + Hiring Readiness score",
       "Section-by-section AI rewrite",
-      "Clean single-column PDF",
-      "Keyword gap analysis",
-      "1 tailored resume variant",
+      "Skills grouped into 3 blocks (capped at 15)",
+      "Clean single-column ATS-safe PDF export",
+      "Access to the full template library (6 templates)",
     ],
     cta: "Get Premium Starter",
     variant: "standard",
@@ -47,17 +47,17 @@ const jobSeekerPlans: Plan[] = [
     badge: "Most Popular ⭐",
     icon: <Star className="w-5 h-5" />,
     gains: [
-      { label: "JD-tuned resume", detail: "Resume matched to a specific job description" },
-      { label: "Matching cover letter", detail: "AI cover letter that mirrors the JD language" },
-      { label: "Skills authority map", detail: "15 top skills ranked by industry demand" },
+      { label: "Job Match analysis", detail: "Before vs After match % against a target JD" },
+      { label: "AI cover letter", detail: "Cover letter aligned to the job description" },
+      { label: "Keyword & verb tuning", detail: "Gap analysis plus action-verb enhancer" },
     ],
     features: [
       "Everything in Premium Starter",
-      "Job-description match analysis",
-      "AI cover letter generator",
-      "15 ranked skills gap & optimization",
-      "Before vs After comparison",
-      "2 role-specific resume variants",
+      "Job Description match analysis (Before vs After %)",
+      "AI cover letter generator aligned to the JD",
+      "Keyword gap analysis + Quick Wins",
+      "Resume comparison view (before/after diff)",
+      "Action verb enhancer",
     ],
     cta: "Go Premium Professional",
     variant: "highlight",
@@ -69,18 +69,16 @@ const jobSeekerPlans: Plan[] = [
     badge: "Full Power",
     icon: <Crown className="w-5 h-5" />,
     gains: [
-      { label: "90-day roadmap", detail: "30-60-90 day plan to close every profile gap" },
-      { label: "LinkedIn rewrite", detail: "Headline, About & featured sections rewritten" },
-      { label: "Interview-ready pack", detail: "Role-specific questions + answer frameworks" },
+      { label: "90-day Career Roadmap", detail: "30-60-90 day plan to close every profile gap" },
+      { label: "Deep Resume Improvement", detail: "Evidence-linked rewrite with fabrication guards" },
+      { label: "Career Intelligence export", detail: "Full intelligence report + ATS score deltas" },
     ],
     features: [
       "Everything in Premium Professional",
-      "30-60-90 day career roadmap",
-      "LinkedIn profile optimization",
-      "Interview question pack",
-      "Recruiter-perspective screening",
-      "30-day re-scan & re-optimization",
-      "Priority support & white-glove delivery",
+      "30-60-90 day Career Roadmap report",
+      "Deep Resume Improvement (evidence-linked rewrite)",
+      "Career Intelligence report export",
+      "ATS Readiness PDF report with score deltas",
     ],
     cta: "Unlock Premium Elite",
     variant: "dark",
@@ -96,17 +94,17 @@ const recruiterPlans: Plan[] = [
     badge: "Start Hiring",
     icon: <Users className="w-5 h-5" />,
     gains: [
-      { label: "25 AI screenings", detail: "Fast candidate-readiness analysis for every upload" },
+      { label: "25 AI screenings", detail: "Candidate-readiness analysis for every upload" },
       { label: "1 job requisition", detail: "Define one target role and benchmark against it" },
-      { label: "Basic scorecards", detail: "IRS, CSA, SAX scoring at a glance" },
+      { label: "Scorecards + CSV", detail: "IRS, CSA, SAX scores exportable to CSV" },
     ],
     features: [
       "25 candidate screenings / month",
       "1 active job requisition",
       "IRS, CSA, SAX scorecards",
-      "CSV export of results",
+      "Bulk resume upload + parsing",
       "Ghost screening preview",
-      "Email support",
+      "CSV export of screening results",
     ],
     cta: "Get Started",
     variant: "standard",
@@ -120,15 +118,14 @@ const recruiterPlans: Plan[] = [
     gains: [
       { label: "100 AI screenings", detail: "Enough volume for consistent active hiring" },
       { label: "5 job requisitions", detail: "Run parallel roles without swapping configs" },
-      { label: "Advanced match scoring", detail: "JD-to-resume fit with ranked shortlists" },
+      { label: "Ranked shortlists", detail: "JD-to-resume match scoring with ranked output" },
     ],
     features: [
       "100 candidate screenings / month",
       "5 active job requisitions",
-      "Advanced JD-to-resume match scoring",
-      "Team collaboration (3 seats)",
-      "ATS integration placeholders",
-      "Priority support",
+      "JD-to-resume match scoring with ranked shortlists",
+      "PDF screening reports per candidate",
+      "Bulk CSV export with score breakdown",
     ],
     cta: "Get Started",
     variant: "highlight",
@@ -137,20 +134,19 @@ const recruiterPlans: Plan[] = [
     name: "Recruiter Scale",
     price: "₹9,999",
     period: "/ month",
-    badge: "Enterprise Power",
+    badge: "High Volume",
     icon: <TrendingUp className="w-5 h-5" />,
     gains: [
       { label: "250 AI screenings", detail: "High-volume hiring with headroom to scale" },
       { label: "Unlimited requisitions", detail: "Open as many roles as your business needs" },
-      { label: "Custom scoring & API", detail: "Tailored weights and programmatic access" },
+      { label: "Custom scoring weights", detail: "Tune IRS / CSA / SAX weights per role" },
     ],
     features: [
       "250 candidate screenings / month",
       "Unlimited job requisitions",
-      "API access + webhooks",
-      "White-label PDF reports",
-      "Custom scoring weights",
-      "Dedicated account manager",
+      "Custom scoring weights (IRS / CSA / SAX)",
+      "PDF screening reports per candidate",
+      "Full CSV + PDF export bundle",
     ],
     cta: "Get Started",
     variant: "dark",
@@ -274,10 +270,10 @@ export const PricingSection = () => {
             — Pricing
           </div>
           <h2 className="font-display text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-medium text-foreground mb-3 sm:mb-4 leading-tight tracking-tight">
-            Premium career intelligence. <em className="italic font-normal text-primary">One report at a time.</em>
+            Pay for what the platform actually does. <em className="italic font-normal text-primary">One report at a time.</em>
           </h2>
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg font-sans">
-            One-time reports for candidates. Monthly plans for recruiters. Choose the side of the hiring market you play on.
+            One-time intelligence reports for candidates. Monthly screening plans for recruiters. Every feature listed below is live in the product today.
           </p>
         </div>
 
