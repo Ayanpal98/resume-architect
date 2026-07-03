@@ -300,7 +300,7 @@ const Recruiter = () => {
     }
 
     // Increment candidate screening counter
-    supabase.rpc("increment_stat", { stat_name: "candidate_screenings" }).then();
+    supabase.functions.invoke("bump-stat", { body: { stat_name: "candidate_screenings" } });
 
     return {
       id: crypto.randomUUID(),

@@ -283,7 +283,7 @@ const Builder = () => {
     try {
       downloadPDF(resumeData, selectedTemplate);
       toast.success("Resume downloaded successfully!");
-      supabase.rpc("increment_stat", { stat_name: "resumes_optimized" }).then();
+      supabase.functions.invoke("bump-stat", { body: { stat_name: "resumes_optimized" } });
     } catch (error) {
       console.error("PDF download failed:", error);
       toast.error(`Failed to generate PDF: ${(error as Error)?.message || "Unknown error"}`);
