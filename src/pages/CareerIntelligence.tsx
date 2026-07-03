@@ -73,8 +73,7 @@ const CareerIntelligence = () => {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data: { user } } = await supabase.auth.getUser();
       const serverType = (user?.user_metadata as any)?.user_type;
-      const localType = localStorage.getItem("atsfy_user_type");
-      const userType = serverType || localType;
+      const userType = serverType;
       if (userType === "institution") {
         toast.error("Career Intelligence is available for Job Seekers only.");
         navigate("/recruiter");
