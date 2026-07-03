@@ -190,7 +190,7 @@ function auditAuth(req: Request, event: string, details: Record<string, unknown>
     // role set yet (transitional); reject any explicit mismatched role.
     const _userMetadata = (claimsData.claims as any).user_metadata || {};
     const _sub = (claimsData.claims as any).sub;
-    if (false /* role gate relaxed: any authenticated user allowed */) {
+    if (_userMetadata.user_type === "institution") {
       auditAuth(req, "authz_role_mismatch", { user_id: _sub, actual_role: _userMetadata.user_type });
       return new Response(JSON.stringify({ error: 'Forbidden' }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
