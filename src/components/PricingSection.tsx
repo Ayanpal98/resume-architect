@@ -89,7 +89,7 @@ const jobSeekerPlans: Plan[] = [
 const recruiterPlans: Plan[] = [
   {
     name: "Recruiter Lite",
-    price: "₹2,499",
+    price: "₹4,499",
     period: "/ month",
     badge: "Start Hiring",
     icon: <Users className="w-5 h-5" />,
@@ -111,7 +111,7 @@ const recruiterPlans: Plan[] = [
   },
   {
     name: "Recruiter Growth",
-    price: "₹4,999",
+    price: "₹6,999",
     period: "/ month",
     badge: "Most Popular ⭐",
     icon: <Building2 className="w-5 h-5" />,
@@ -132,7 +132,7 @@ const recruiterPlans: Plan[] = [
   },
   {
     name: "Recruiter Scale",
-    price: "₹9,999",
+    price: "₹11,999",
     period: "/ month",
     badge: "High Volume",
     icon: <TrendingUp className="w-5 h-5" />,
