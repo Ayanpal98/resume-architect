@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Security from "./pages/Security";
 import Privacy from "./pages/Privacy";
 import DeepImprovement from "./pages/DeepImprovement";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 const queryClient = new QueryClient();
 
@@ -23,7 +24,9 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
+      <Toaster />
       <Sonner />
+      <InstallPrompt />
       <AuthProvider>
         <BrowserRouter>
           <Routes>
