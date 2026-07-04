@@ -1,13 +1,16 @@
-import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut, TrendingUp, ShieldCheck, Activity, Signal, Radar, GitBranch, Network, ShieldAlert, Gauge, Webhook, ScrollText, RefreshCw, Bell, Eye, Cpu, Scale } from "lucide-react";
+import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut, TrendingUp, ShieldCheck, Activity, Signal, Radar, GitBranch, Network, ShieldAlert, Gauge, Webhook, ScrollText, RefreshCw, Bell, Eye, Cpu, Scale, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
 import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
 import { useAuth } from "@/contexts/AuthContext";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useState } from "react";
 
 const Index = () => {
   const { user, signOut } = useAuth();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background">
       {/* Navigation */}
@@ -31,28 +34,55 @@ const Index = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             {user ? (
               <>
-                <span className="text-sm text-muted-foreground hidden sm:inline">{user.email}</span>
-                <Button variant="ghost" size="sm" onClick={signOut} className="gap-1">
+                <span className="text-sm text-muted-foreground hidden lg:inline">{user.email}</span>
+                <Button variant="ghost" size="sm" onClick={signOut} className="gap-1 hidden sm:inline-flex">
                   <LogOut className="w-4 h-4" />
                   <span className="hidden sm:inline">Sign Out</span>
                 </Button>
               </>
             ) : (
               <>
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Sign In</Button>
+                <Link to="/auth" className="hidden sm:inline-flex">
+                  <Button variant="ghost" size="sm">Sign In</Button>
                 </Link>
                 <Link to="/auth">
                   <Button variant="hero" size="sm">Get Started</Button>
                 </Link>
               </>
             )}
+            {/* Mobile menu */}
+            <Sheet open={mobileNavOpen} onOpenChange={setMobileNavOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden h-10 w-10" aria-label="Open menu">
+                  <Menu className="w-5 h-5" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-[85vw] max-w-sm">
+                <div className="flex flex-col gap-1 mt-8">
+                  <a href="#features" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 text-base text-foreground hover:bg-muted rounded-lg">Intelligence</a>
+                  <a href="#how-it-works" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 text-base text-foreground hover:bg-muted rounded-lg">How it Works</a>
+                  <a href="#reports" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 text-base text-foreground hover:bg-muted rounded-lg">Reports</a>
+                  <a href="#pricing" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 text-base text-foreground hover:bg-muted rounded-lg">Pricing</a>
+                  <div className="border-t border-border my-3" />
+                  {user ? (
+                    <>
+                      <div className="px-4 py-2 text-xs text-muted-foreground truncate">{user.email}</div>
+                      <button onClick={() => { setMobileNavOpen(false); signOut(); }} className="flex items-center gap-2 px-4 py-3 text-base text-foreground hover:bg-muted rounded-lg text-left">
+                        <LogOut className="w-4 h-4" /> Sign Out
+                      </button>
+                    </>
+                  ) : (
+                    <Link to="/auth" onClick={() => setMobileNavOpen(false)} className="px-4 py-3 text-base text-foreground hover:bg-muted rounded-lg">Sign In</Link>
+                  )}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 border-b border-border/60">
+      <section className="pt-28 sm:pt-32 pb-16 sm:pb-20 px-4 sm:px-6 border-b border-border/60">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             <div className="animate-fade-up">
