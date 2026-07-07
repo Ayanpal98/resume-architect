@@ -413,8 +413,30 @@ export const CareerRoadmap = ({
             <SelectContent>
               <SelectItem value="auto">Auto-Detect</SelectItem>
               <SelectItem value="tech">Technology</SelectItem>
+              <SelectItem value="ai-ml">AI & Machine Learning</SelectItem>
+              <SelectItem value="data">Data & Analytics</SelectItem>
+              <SelectItem value="cybersecurity">Cybersecurity</SelectItem>
               <SelectItem value="finance">Finance</SelectItem>
+              <SelectItem value="fintech">FinTech</SelectItem>
               <SelectItem value="healthcare">Healthcare</SelectItem>
+              <SelectItem value="pharma">Pharma & Biotech</SelectItem>
+              <SelectItem value="ecommerce">E-Commerce & Retail</SelectItem>
+              <SelectItem value="consulting">Consulting</SelectItem>
+              <SelectItem value="education">Education & EdTech</SelectItem>
+              <SelectItem value="manufacturing">Manufacturing</SelectItem>
+              <SelectItem value="energy">Energy & Utilities</SelectItem>
+              <SelectItem value="media">Media & Entertainment</SelectItem>
+              <SelectItem value="telecom">Telecommunications</SelectItem>
+              <SelectItem value="travel">Travel & Hospitality</SelectItem>
+              <SelectItem value="logistics">Logistics & Supply Chain</SelectItem>
+              <SelectItem value="realestate">Real Estate & Construction</SelectItem>
+              <SelectItem value="legal">Legal Services</SelectItem>
+              <SelectItem value="government">Government & Public Sector</SelectItem>
+              <SelectItem value="nonprofit">Non-Profit & NGO</SelectItem>
+              <SelectItem value="marketing">Marketing & Advertising</SelectItem>
+              <SelectItem value="hr">Human Resources</SelectItem>
+              <SelectItem value="design">Design & Creative</SelectItem>
+              <SelectItem value="agriculture">Agriculture & AgriTech</SelectItem>
             </SelectContent>
           </Select>
           <Button
