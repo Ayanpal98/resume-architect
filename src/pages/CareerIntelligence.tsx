@@ -23,7 +23,17 @@ type FocusArea = "Skill gaps" | "Certifications" | "Networking" | "Salary jump" 
 const FOCUS_AREAS: FocusArea[] = ["Skill gaps", "Certifications", "Networking", "Salary jump", "Leadership"];
 const TIMELINES = ["3 months", "6 months", "1 year", "2 years"];
 const YEARS = ["0-1 years", "1-3 years", "3-5 years", "5-8 years", "8-12 years", "12+ years"];
-const INDUSTRIES = ["Technology", "Finance", "Healthcare", "E-Commerce", "Consulting", "Education", "Manufacturing", "Media & Entertainment"];
+const INDUSTRIES = [
+  "Technology", "Software & SaaS", "Artificial Intelligence & ML", "Data & Analytics", "Cybersecurity",
+  "Cloud & DevOps", "Finance", "Banking", "Investment & Capital Markets", "Insurance", "FinTech",
+  "Healthcare", "Pharmaceuticals & Biotech", "Medical Devices", "E-Commerce", "Retail & CPG",
+  "Consulting", "Education & EdTech", "Manufacturing", "Automotive", "Aerospace & Defense",
+  "Energy & Utilities", "Oil & Gas", "Renewable Energy", "Construction & Real Estate",
+  "Media & Entertainment", "Gaming", "Telecommunications", "Travel & Hospitality", "Logistics & Supply Chain",
+  "Transportation", "Agriculture & AgriTech", "Legal Services", "Government & Public Sector",
+  "Non-Profit & NGO", "Marketing & Advertising", "Human Resources", "Design & Creative",
+  "Sports & Fitness", "Food & Beverage",
+];
 
 interface Profile {
   currentRole: string;
