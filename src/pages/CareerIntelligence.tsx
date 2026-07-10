@@ -785,8 +785,9 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
   </div>
 );
 
-const RejectionView = ({ data }: { data: any }) => (
+const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Rejection Decoder" onExport={() => exportRejectionDecoderPdf(data, profile)} />
     <Card className="border-l-4 border-l-warning bg-warning/5">
       <CardContent className="p-5">
         <SectionHeader icon={<ShieldCheck className="w-5 h-5" />} title="Decoded Summary" />
