@@ -15,9 +15,16 @@ import {
 import {
   Compass, Sparkles, ShieldCheck, Award, BookOpen, MessageCircle, Globe,
   TrendingUp, ArrowLeft, Loader2, Target, AlertTriangle, CheckCircle2, Rocket,
-  Zap, Users, GraduationCap, Brain, Lightbulb, Star, ChevronRight,
+  Zap, Users, GraduationCap, Brain, Lightbulb, Star, ChevronRight, Download,
 } from "lucide-react";
 import { ComplianceFooter } from "@/components/ComplianceFooter";
+import {
+  exportRoadmapPdf,
+  exportSkillAnalysisPdf,
+  exportRoleFitPdf,
+  exportCoachingPdf,
+  exportRejectionDecoderPdf,
+} from "@/lib/careerIntelligencePdf";
 
 type FocusArea = "Skill gaps" | "Certifications" | "Networking" | "Salary jump" | "Leadership";
 const FOCUS_AREAS: FocusArea[] = ["Skill gaps", "Certifications", "Networking", "Salary jump", "Leadership"];
