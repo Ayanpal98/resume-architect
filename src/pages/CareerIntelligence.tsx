@@ -15,9 +15,16 @@ import {
 import {
   Compass, Sparkles, ShieldCheck, Award, BookOpen, MessageCircle, Globe,
   TrendingUp, ArrowLeft, Loader2, Target, AlertTriangle, CheckCircle2, Rocket,
-  Zap, Users, GraduationCap, Brain, Lightbulb, Star, ChevronRight,
+  Zap, Users, GraduationCap, Brain, Lightbulb, Star, ChevronRight, Download,
 } from "lucide-react";
 import { ComplianceFooter } from "@/components/ComplianceFooter";
+import {
+  exportRoadmapPdf,
+  exportSkillAnalysisPdf,
+  exportRoleFitPdf,
+  exportCoachingPdf,
+  exportRejectionDecoderPdf,
+} from "@/lib/careerIntelligencePdf";
 
 type FocusArea = "Skill gaps" | "Certifications" | "Networking" | "Salary jump" | "Leadership";
 const FOCUS_AREAS: FocusArea[] = ["Skill gaps", "Certifications", "Networking", "Salary jump", "Leadership"];
@@ -305,7 +312,7 @@ const CareerIntelligence = () => {
             {/* Roadmap */}
             <TabsContent value="roadmap" className="mt-5">
               {results.roadmap ? (
-                <RoadmapView data={results.roadmap} />
+                <RoadmapView data={results.roadmap} profile={profile} />
               ) : (
                 <EmptyState
                   icon={<Globe className="w-7 h-7 text-primary" />}
@@ -323,7 +330,7 @@ const CareerIntelligence = () => {
             {/* Skill Analysis */}
             <TabsContent value="skill_analysis" className="mt-5">
               {results.skill_analysis ? (
-                <SkillAnalysisView data={results.skill_analysis} />
+                <SkillAnalysisView data={results.skill_analysis} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="Skill Intelligence Report"
@@ -339,7 +346,7 @@ const CareerIntelligence = () => {
             {/* Role Fit */}
             <TabsContent value="role_fit" className="mt-5">
               {results.role_fit ? (
-                <RoleFitView data={results.role_fit} />
+                <RoleFitView data={results.role_fit} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="Role Fit Score"
@@ -365,7 +372,7 @@ const CareerIntelligence = () => {
                 </CardContent>
               </Card>
               {results.ai_coaching ? (
-                <CoachingView data={results.ai_coaching} />
+                <CoachingView data={results.ai_coaching} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="AI Coaching Session"
@@ -392,7 +399,7 @@ const CareerIntelligence = () => {
                 </CardContent>
               </Card>
               {results.rejection_decoder ? (
-                <RejectionView data={results.rejection_decoder} />
+                <RejectionView data={results.rejection_decoder} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="Rejection Decoder"
@@ -425,8 +432,30 @@ const SectionHeader = ({ icon, title, sub }: { icon: React.ReactNode; title: str
   </div>
 );
 
-const RoadmapView = ({ data }: { data: any }) => (
+const ExportBar = ({ label, onExport }: { label: string; onExport: () => void }) => (
+  <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+    <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={() => {
+        try {
+          onExport();
+          toast.success("PDF report downloaded.");
+        } catch (e: any) {
+          toast.error(e?.message || "Could not export PDF.");
+        }
+      }}
+      className="gap-1.5"
+    >
+      <Download className="w-4 h-4" /> Download Full PDF Report
+    </Button>
+  </div>
+);
+
+const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Career Roadmap" onExport={() => exportRoadmapPdf(data, profile)} />
     <Card className="bg-gradient-card border-accent/30">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
@@ -547,8 +576,9 @@ const ScoreBlock = ({ label, value, accent }: { label: string; value: number; ac
   </div>
 );
 
-const SkillAnalysisView = ({ data }: { data: any }) => (
+const SkillAnalysisView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Skill Intelligence" onExport={() => exportSkillAnalysisPdf(data, profile)} />
     <Card className="bg-gradient-card">
       <CardContent className="p-5">
         <p className="text-sm text-foreground">{data.summary}</p>
@@ -621,8 +651,9 @@ const SkillBlock = ({ icon, title, items, tone }: { icon: React.ReactNode; title
   );
 };
 
-const RoleFitView = ({ data }: { data: any }) => (
+const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Role Fit Score" onExport={() => exportRoleFitPdf(data, profile)} />
     <Card className="bg-gradient-hero text-primary-foreground">
       <CardContent className="p-6 flex items-center justify-between gap-4 flex-wrap">
         <div>
@@ -677,8 +708,9 @@ const RoleFitView = ({ data }: { data: any }) => (
   </div>
 );
 
-const CoachingView = ({ data }: { data: any }) => (
+const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="AI Coaching Session" onExport={() => exportCoachingPdf(data, profile)} />
     <Card className="bg-gradient-card">
       <CardContent className="p-5">
         <p className="text-sm text-foreground">{data.coaching_summary}</p>
@@ -753,8 +785,9 @@ const CoachingView = ({ data }: { data: any }) => (
   </div>
 );
 
-const RejectionView = ({ data }: { data: any }) => (
+const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Rejection Decoder" onExport={() => exportRejectionDecoderPdf(data, profile)} />
     <Card className="border-l-4 border-l-warning bg-warning/5">
       <CardContent className="p-5">
         <SectionHeader icon={<ShieldCheck className="w-5 h-5" />} title="Decoded Summary" />

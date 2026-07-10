@@ -1,86 +1,53 @@
-# Mobile-Friendly UI + PWA Conversion
 
-Two-part scope: (1) global mobile responsiveness audit and fixes, (2) installable PWA with offline support via `vite-plugin-pwa`.
+## Goal
+Add a polished, full-length PDF export for each of the 5 Career Intelligence outputs — Roadmap, Skill Analysis, Role Fit Score, AI Coaching, and Rejection Decoder — including every field from the AI response, styled as a premium, easy-to-read user report.
 
-## Part 1 — Mobile UI Polish (Global)
+## Approach
+Client-side generation using `jsPDF` + `jspdf-autotable` (already used elsewhere for report exports). No edge function changes, no new server calls. Each report is generated from the existing `results[mode]` state so the full JSON payload is rendered — no data omitted.
 
-Sweep every page and shared component so the app is usable on phones (≤640px) and tablets (641–1024px).
+## What gets added
 
-### Pages to audit and fix
-- `src/pages/Index.tsx` (landing)
-- `src/pages/Welcome.tsx`
-- `src/pages/Auth.tsx`
-- `src/pages/Builder.tsx` (heaviest — horizontal editor, live preview drawer)
-- `src/pages/ATSAnalysis.tsx`
-- `src/pages/Recruiter.tsx`
-- `src/pages/CareerIntelligence.tsx`
-- `src/pages/DeepImprovement.tsx`
-- `src/pages/Security.tsx`, `src/pages/Privacy.tsx`, `src/pages/NotFound.tsx`
+**1. New util: `src/lib/careerIntelligencePdf.ts`**
+A single module exporting one function per mode:
+- `exportRoadmapPdf(data, profile)`
+- `exportSkillAnalysisPdf(data, profile)`
+- `exportRoleFitPdf(data, profile)`
+- `exportCoachingPdf(data, profile)`
+- `exportRejectionDecoderPdf(data, profile)`
 
-### Shared components to audit
-`PricingSection`, `ResumeUploader`, `ResumeImport`, `ATSScorePanel`, `ATSScorePreview`, `AISuggestionPanel`, `OptimizationReport`, `ResumeComparison`, `ResumeImprovementPanel`, `CoverLetterGenerator`, `JobMatchPanel`, `CareerRoadmap`, `GhostScreeningPreview`, `SampleReportsShowcase`, `TemplateRecommendation`, `TemplateSelector`, `ComplianceFooter`, `LiveStatsCounter`, `NavLink`.
+Each function shares a common premium layout:
+- Cover header: ATSFy gradient bar, report title, candidate current → target role, industry, timeline, generation date
+- Executive summary / verdict block
+- Section-per-field rendering with auto page-breaks
+- Tables for structured arrays (phases, dimensions, skills, questions, reasons, actions)
+- Bullet lists for string arrays
+- Readiness/score visual bars where numeric scores exist
+- Footer on every page: page X of Y, ATSFy Technologies™ trademark, UUID, timestamp, 24h data deletion notice, AI disclaimer (matches project compliance rules)
+- Consistent typography: sans-serif, heading weights, muted section labels, accent color for scores
 
-### Fix categories (per file)
-1. **Overflow / horizontal scroll**: replace fixed widths with `w-full max-w-*`, add `min-w-0` on flex children, `overflow-x-auto` on wide tables/preview strips.
-2. **Grids**: normalize to `grid-cols-1 sm:grid-cols-2 lg:grid-cols-3` where currently forced multi-col.
-3. **Typography scale**: `text-4xl md:text-5xl lg:text-6xl` for hero H1s; body `text-base md:text-lg`.
-4. **Spacing**: `px-4 sm:px-6 lg:px-8`, `py-12 md:py-20` for sections.
-5. **Tap targets**: min height `h-11` (44px) on primary buttons/inputs on mobile; `gap-3` minimum between tappable items.
-6. **Navigation**: convert desktop horizontal nav in `Index`/nav bar into a hamburger `Sheet` drawer under `md`.
-7. **Builder page**: preserve existing mobile FAB preview drawer (already noted in memory); ensure editor form stacks single-column on mobile, sticky action bar at bottom.
-8. **Recruiter dashboard**: tables become card list under `md`; horizontal scroll only as fallback.
-9. **Pricing tabs**: ensure tab triggers wrap or scroll horizontally; cards stack single-column.
-10. **Modals / Sheets**: force `w-full` on mobile, respect safe-area (`pb-[env(safe-area-inset-bottom)]`).
-11. **Images**: `max-w-full h-auto`, add `loading="lazy"`.
+Field coverage per mode (all fields from the edge function schemas):
+- **Roadmap**: executive_summary, readiness_score, target_score, phases[] (phase, title, objective, actions, deliverables, expected_score_after), quick_wins, certifications[] (name, provider, priority, cost, time), networking (target_companies, communities, events)
+- **Skill Analysis**: summary, strong_skills[], missing_critical_skills[], skills_to_deprioritize[], emerging_skills_to_watch[], recommended_skill_stack
+- **Role Fit**: overall_fit_score, verdict, dimensions[] (name, score, weight, observations) as a table, positioning_strategy, risks, opportunities
+- **AI Coaching**: coaching_summary, likely_interview_questions[] (question, how_to_answer, red_flags_to_avoid), talking_points, weakness_mitigation[], elevator_pitch, outreach_template, confidence_builders
+- **Rejection Decoder**: decoded_summary, likely_reasons[] with severity color coding, what_recruiters_actually_meant[], recovery_actions[], portfolio_fixes[], next_attempt_strategy
 
-### Viewport / theming
-- `index.html`: viewport already correct; add `viewport-fit=cover` for iOS notch and `apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style` meta tags.
-- Global `body` gets `overflow-x-hidden` in `src/index.css` as safety net.
+**2. `src/pages/CareerIntelligence.tsx` edits**
+- Import the export functions.
+- Add a "Download PDF Report" button (with Download icon) to the top-right of each of the 5 result views (`RoadmapView`, `SkillAnalysisView`, `RoleFitView`, `CoachingView`, `RejectionDecoderView`), passing the current `data` and `profile`.
+- Button disabled when data is null; toast on success/failure.
 
-## Part 2 — PWA (Installable + Offline)
+## Not changing
+- Edge functions
+- AI prompts / schemas
+- Pricing, auth, layout of the input sidebar
 
-Follow the Lovable PWA skill: `vite-plugin-pwa` with `generateSW`, guarded registration, NetworkFirst for HTML, CacheFirst for hashed assets.
+## Technical notes
+- jsPDF + jspdf-autotable are already in `package.json` (used by `pdfGenerator.ts` / `reportGenerator.ts`), so no new deps.
+- Long text fields use `splitTextToSize` for proper wrapping.
+- Every section calls a `checkPageBreak(y, needed)` helper so nothing gets cut off — "full length" is guaranteed.
+- Filenames: `ATSFy_<Mode>_<TargetRole>_<YYYY-MM-DD>.pdf`.
 
-### Dependencies
-- `vite-plugin-pwa` (dev)
-- `workbox-window` (runtime, used by wrapper)
-
-### App icon
-Generate one 512×512 PNG via `imagegen` in ATSFy brand style (purple→blue gradient, white document/checkmark glyph, rounded square). Derive:
-- `public/icon-192.png` (resized copy)
-- `public/icon-512.png`
-- `public/icon-maskable-512.png` (with safe padding)
-- `public/apple-touch-icon.png` (180×180)
-- `public/favicon.png` and replace `public/favicon.ico`
-
-### Files to create/edit
-- `vite.config.ts` — add `VitePWA({ registerType: "autoUpdate", injectRegister: null, devOptions: { enabled: false }, workbox: { navigateFallback: "/index.html", navigateFallbackDenylist: [/^\/~oauth/], runtimeCaching: [NetworkFirst for navigations excluding /~oauth, CacheFirst for same-origin hashed assets, NetworkFirst for Supabase/API calls with short TTL], globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"] }, manifest: {...} })`.
-- `public/manifest.webmanifest` handled by plugin; manifest fields: `name: "ATSFy — Career Intelligence"`, `short_name: "ATSFy"`, `description`, `start_url: "/"`, `scope: "/"`, `display: "standalone"`, `orientation: "portrait"`, `theme_color: "#1e3a8a"`, `background_color: "#ffffff"`, icons array (192, 512, 512 maskable), `categories: ["business","productivity"]`.
-- `src/pwa/registerSW.ts` — guarded wrapper: refuses in dev, in iframe, on `id-preview--*` / `preview--*` / `lovableproject.com` / `lovableproject-dev.com` / `beta.lovable.dev` hosts, or with `?sw=off`. Unregisters existing `/sw.js` in refused contexts. Otherwise uses `workbox-window` to register `/sw.js` with autoUpdate.
-- `src/main.tsx` — import and invoke `registerSW()` after render.
-- `index.html` — add manifest link, theme-color, apple-touch-icon, apple-mobile-web-app-* meta tags.
-
-### Optional install prompt
-Small `InstallPrompt` component listening for `beforeinstallprompt`, showing a subtle "Install app" button on mobile (dismissable, remembered in `localStorage`). Only rendered on `Index` page, hidden on installed (`display-mode: standalone`).
-
-## Deliverables
-
-Files edited:
-- `index.html`, `src/index.css`, `src/main.tsx`, `vite.config.ts`, `package.json` (via `bun add`)
-- All page files listed above
-- All shared components listed above
-
-Files created:
-- `src/pwa/registerSW.ts`
-- `src/components/InstallPrompt.tsx`
-- `public/icon-192.png`, `public/icon-512.png`, `public/icon-maskable-512.png`, `public/apple-touch-icon.png`, `public/favicon.png`
-- Generated brand icon under `src/assets/atsfy-icon.png` (source)
-
-Files removed:
-- `public/favicon.ico`
-
-## Notes for the user
-
-- Offline mode only activates on the **published** app, not inside the Lovable preview (per PWA guardrails).
-- After installing to home screen, iOS/Android cache manifest fields at install time — later changes to `start_url` / `scope` may require reinstall.
-- No backend/business logic changes; edits stay in presentation layer + PWA config.
+## Files touched
+- Create: `src/lib/careerIntelligencePdf.ts`
+- Edit: `src/pages/CareerIntelligence.tsx` (5 buttons + imports)
