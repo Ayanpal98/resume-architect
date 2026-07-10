@@ -576,8 +576,9 @@ const ScoreBlock = ({ label, value, accent }: { label: string; value: number; ac
   </div>
 );
 
-const SkillAnalysisView = ({ data }: { data: any }) => (
+const SkillAnalysisView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Skill Intelligence" onExport={() => exportSkillAnalysisPdf(data, profile)} />
     <Card className="bg-gradient-card">
       <CardContent className="p-5">
         <p className="text-sm text-foreground">{data.summary}</p>
