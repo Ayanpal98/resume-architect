@@ -708,8 +708,9 @@ const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
   </div>
 );
 
-const CoachingView = ({ data }: { data: any }) => (
+const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="AI Coaching Session" onExport={() => exportCoachingPdf(data, profile)} />
     <Card className="bg-gradient-card">
       <CardContent className="p-5">
         <p className="text-sm text-foreground">{data.coaching_summary}</p>
