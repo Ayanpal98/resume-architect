@@ -312,7 +312,7 @@ const CareerIntelligence = () => {
             {/* Roadmap */}
             <TabsContent value="roadmap" className="mt-5">
               {results.roadmap ? (
-                <RoadmapView data={results.roadmap} />
+                <RoadmapView data={results.roadmap} profile={profile} />
               ) : (
                 <EmptyState
                   icon={<Globe className="w-7 h-7 text-primary" />}
