@@ -456,6 +456,7 @@ const ExportBar = ({ label, onExport }: { label: string; onExport: () => void })
 const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
     <ExportBar label="Career Roadmap" onExport={() => exportRoadmapPdf(data, profile)} />
+    <Card className="bg-gradient-card border-accent/30">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
