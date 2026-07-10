@@ -651,8 +651,9 @@ const SkillBlock = ({ icon, title, items, tone }: { icon: React.ReactNode; title
   );
 };
 
-const RoleFitView = ({ data }: { data: any }) => (
+const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
+    <ExportBar label="Role Fit Score" onExport={() => exportRoleFitPdf(data, profile)} />
     <Card className="bg-gradient-hero text-primary-foreground">
       <CardContent className="p-6 flex items-center justify-between gap-4 flex-wrap">
         <div>
