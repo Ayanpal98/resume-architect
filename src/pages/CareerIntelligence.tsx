@@ -330,7 +330,7 @@ const CareerIntelligence = () => {
             {/* Skill Analysis */}
             <TabsContent value="skill_analysis" className="mt-5">
               {results.skill_analysis ? (
-                <SkillAnalysisView data={results.skill_analysis} />
+                <SkillAnalysisView data={results.skill_analysis} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="Skill Intelligence Report"
@@ -346,7 +346,7 @@ const CareerIntelligence = () => {
             {/* Role Fit */}
             <TabsContent value="role_fit" className="mt-5">
               {results.role_fit ? (
-                <RoleFitView data={results.role_fit} />
+                <RoleFitView data={results.role_fit} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="Role Fit Score"
@@ -372,7 +372,7 @@ const CareerIntelligence = () => {
                 </CardContent>
               </Card>
               {results.ai_coaching ? (
-                <CoachingView data={results.ai_coaching} />
+                <CoachingView data={results.ai_coaching} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="AI Coaching Session"
@@ -399,7 +399,7 @@ const CareerIntelligence = () => {
                 </CardContent>
               </Card>
               {results.rejection_decoder ? (
-                <RejectionView data={results.rejection_decoder} />
+                <RejectionView data={results.rejection_decoder} profile={profile} />
               ) : (
                 <ActionEmpty
                   title="Rejection Decoder"
