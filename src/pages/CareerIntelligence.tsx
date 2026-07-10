@@ -432,9 +432,30 @@ const SectionHeader = ({ icon, title, sub }: { icon: React.ReactNode; title: str
   </div>
 );
 
-const RoadmapView = ({ data }: { data: any }) => (
+const ExportBar = ({ label, onExport }: { label: string; onExport: () => void }) => (
+  <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+    <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
+    <Button
+      size="sm"
+      variant="outline"
+      onClick={() => {
+        try {
+          onExport();
+          toast.success("PDF report downloaded.");
+        } catch (e: any) {
+          toast.error(e?.message || "Could not export PDF.");
+        }
+      }}
+      className="gap-1.5"
+    >
+      <Download className="w-4 h-4" /> Download Full PDF Report
+    </Button>
+  </div>
+);
+
+const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
-    <Card className="bg-gradient-card border-accent/30">
+    <ExportBar label="Career Roadmap" onExport={() => exportRoadmapPdf(data, profile)} />
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
