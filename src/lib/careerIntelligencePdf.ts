@@ -359,10 +359,7 @@ function priorityColor(p?: string): [number, number, number] {
 /* ============================================================
  * Mode: Roadmap
  * ============================================================ */
-export function exportRoadmapPdf(data: any, profile: Profile) {
-  const ctx = newCtx("Career Roadmap Report", profile);
-  drawCover(ctx);
-
+function buildRoadmapSection(ctx: Ctx, data: any) {
   if (data.executive_summary) {
     h1(ctx, "Executive Summary");
     paragraph(ctx, data.executive_summary);
@@ -431,7 +428,6 @@ export function exportRoadmapPdf(data: any, profile: Profile) {
       ctx.doc.text(c.provider || "", PAGE.ml + 3, ctx.y + 10);
       const meta = [c.time_to_complete, c.cost_estimate].filter(Boolean).join("  •  ");
       if (meta) ctx.doc.text(meta, PAGE.ml + 3, ctx.y + 15);
-      // priority pill top right
       if (c.priority) {
         const label = String(c.priority).toUpperCase();
         ctx.doc.setFont("helvetica", "bold");
@@ -464,17 +460,19 @@ export function exportRoadmapPdf(data: any, profile: Profile) {
       bulletList(ctx, n.events);
     }
   }
+}
 
+export function exportRoadmapPdf(data: any, profile: Profile) {
+  const ctx = newCtx("Career Roadmap Report", profile);
+  drawCover(ctx);
+  buildRoadmapSection(ctx, data);
   save(ctx, `ATSFy_Roadmap_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
 }
 
 /* ============================================================
  * Mode: Skill Analysis
  * ============================================================ */
-export function exportSkillAnalysisPdf(data: any, profile: Profile) {
-  const ctx = newCtx("Skill Intelligence Report", profile);
-  drawCover(ctx);
-
+function buildSkillAnalysisSection(ctx: Ctx, data: any) {
   if (data.summary) {
     h1(ctx, "Summary");
     paragraph(ctx, data.summary);
@@ -558,18 +556,19 @@ export function exportSkillAnalysisPdf(data: any, profile: Profile) {
     paragraph(ctx, "The skills to lead with on your resume.", { color: BRAND.muted, size: 9 });
     bulletList(ctx, stack);
   }
+}
 
+export function exportSkillAnalysisPdf(data: any, profile: Profile) {
+  const ctx = newCtx("Skill Intelligence Report", profile);
+  drawCover(ctx);
+  buildSkillAnalysisSection(ctx, data);
   save(ctx, `ATSFy_SkillAnalysis_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
 }
 
 /* ============================================================
  * Mode: Role Fit Score
  * ============================================================ */
-export function exportRoleFitPdf(data: any, profile: Profile) {
-  const ctx = newCtx("Role Fit Score Report", profile);
-  drawCover(ctx);
-
-  // Big score hero
+function buildRoleFitSection(ctx: Ctx, data: any) {
   ensureSpace(ctx, 40);
   setFill(ctx.doc, BRAND.primary);
   ctx.doc.roundedRect(PAGE.ml, ctx.y, CONTENT_W, 34, 3, 3, "F");
@@ -605,17 +604,19 @@ export function exportRoleFitPdf(data: any, profile: Profile) {
     h1(ctx, "Opportunities");
     bulletList(ctx, data.opportunities);
   }
+}
 
+export function exportRoleFitPdf(data: any, profile: Profile) {
+  const ctx = newCtx("Role Fit Score Report", profile);
+  drawCover(ctx);
+  buildRoleFitSection(ctx, data);
   save(ctx, `ATSFy_RoleFit_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
 }
 
 /* ============================================================
  * Mode: AI Coaching
  * ============================================================ */
-export function exportCoachingPdf(data: any, profile: Profile) {
-  const ctx = newCtx("AI Coaching Session Report", profile);
-  drawCover(ctx);
-
+function buildCoachingSection(ctx: Ctx, data: any) {
   if (data.coaching_summary) {
     h1(ctx, "Coaching Summary");
     paragraph(ctx, data.coaching_summary);
@@ -706,17 +707,19 @@ export function exportCoachingPdf(data: any, profile: Profile) {
     h1(ctx, "Confidence Builders");
     bulletList(ctx, data.confidence_builders);
   }
+}
 
+export function exportCoachingPdf(data: any, profile: Profile) {
+  const ctx = newCtx("AI Coaching Session Report", profile);
+  drawCover(ctx);
+  buildCoachingSection(ctx, data);
   save(ctx, `ATSFy_Coaching_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
 }
 
 /* ============================================================
  * Mode: Rejection Decoder
  * ============================================================ */
-export function exportRejectionDecoderPdf(data: any, profile: Profile) {
-  const ctx = newCtx("Rejection Decoder Report", profile);
-  drawCover(ctx);
-
+function buildRejectionDecoderSection(ctx: Ctx, data: any) {
   if (data.decoded_summary) {
     h1(ctx, "Decoded Summary");
     paragraph(ctx, data.decoded_summary);
@@ -733,7 +736,6 @@ export function exportRejectionDecoderPdf(data: any, profile: Profile) {
       const t = r.reason || "—";
       const lines = ctx.doc.splitTextToSize(t, CONTENT_W - 26);
       ctx.doc.text(lines, PAGE.ml, ctx.y);
-      // severity pill right side
       if (r.severity) {
         const label = String(r.severity).toUpperCase();
         ctx.doc.setFont("helvetica", "bold");
@@ -823,6 +825,95 @@ export function exportRejectionDecoderPdf(data: any, profile: Profile) {
     ctx.doc.text(lines, PAGE.ml + 6, ctx.y + 6);
     ctx.y += h + 4;
   }
+}
 
+export function exportRejectionDecoderPdf(data: any, profile: Profile) {
+  const ctx = newCtx("Rejection Decoder Report", profile);
+  drawCover(ctx);
+  buildRejectionDecoderSection(ctx, data);
   save(ctx, `ATSFy_RejectionDecoder_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
 }
+
+/* ============================================================
+ * Combined: All Reports in one PDF
+ * ============================================================ */
+export interface CombinedResults {
+  roadmap?: any | null;
+  skill_analysis?: any | null;
+  role_fit?: any | null;
+  ai_coaching?: any | null;
+  rejection_decoder?: any | null;
+}
+
+function sectionDivider(ctx: Ctx, title: string, subtitle: string, index: number, total: number) {
+  ctx.doc.addPage();
+  ctx.y = PAGE.mt;
+  drawRunningHeader(ctx);
+  const { doc } = ctx;
+  ctx.y += 18;
+  setText(doc, BRAND.muted);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(9);
+  doc.text(`PART ${index} OF ${total}`, PAGE.ml, ctx.y);
+  ctx.y += 10;
+  setFill(doc, BRAND.primary);
+  doc.rect(PAGE.ml, ctx.y - 4, 3, 12, "F");
+  setText(doc, BRAND.ink);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(20);
+  doc.text(title, PAGE.ml + 8, ctx.y + 5);
+  ctx.y += 14;
+  setText(doc, BRAND.muted);
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(10);
+  const lines = doc.splitTextToSize(subtitle, CONTENT_W);
+  doc.text(lines, PAGE.ml, ctx.y);
+  ctx.y += lines.length * 5 + 6;
+  setDraw(doc, BRAND.border);
+  doc.setLineWidth(0.3);
+  doc.line(PAGE.ml, ctx.y, PAGE.w - PAGE.mr, ctx.y);
+  ctx.y += 6;
+}
+
+export function exportCombinedPdf(results: CombinedResults, profile: Profile) {
+  const parts: Array<{ key: keyof CombinedResults; title: string; subtitle: string; build: (c: Ctx, d: any) => void }> = [];
+  if (results.roadmap) parts.push({ key: "roadmap", title: "Career Roadmap", subtitle: "Phased action plan, quick wins, certifications, and networking targets.", build: buildRoadmapSection });
+  if (results.skill_analysis) parts.push({ key: "skill_analysis", title: "Skill Intelligence", subtitle: "Strong skills, critical gaps, deprioritized skills, and your recommended stack.", build: buildSkillAnalysisSection });
+  if (results.role_fit) parts.push({ key: "role_fit", title: "Role Fit Score", subtitle: "Overall fit, weighted dimension breakdown, risks, and opportunities.", build: buildRoleFitSection });
+  if (results.ai_coaching) parts.push({ key: "ai_coaching", title: "AI Coaching Session", subtitle: "Interview questions, talking points, weakness mitigation, and outreach templates.", build: buildCoachingSection });
+  if (results.rejection_decoder) parts.push({ key: "rejection_decoder", title: "Rejection Decoder", subtitle: "Decoded reasons, recruiter subtext, recovery plan, and next-attempt strategy.", build: buildRejectionDecoderSection });
+
+  if (!parts.length) {
+    throw new Error("Generate at least one report before exporting the combined PDF.");
+  }
+
+  const ctx = newCtx("Complete Career Intelligence Report", profile);
+  drawCover(ctx);
+
+  // Table of contents
+  h1(ctx, "Inside This Report");
+  paragraph(ctx, `This combined report includes ${parts.length} full-length section${parts.length === 1 ? "" : "s"}, each rendered with every field from the AI analysis.`, { color: BRAND.muted, size: 9.5 });
+  parts.forEach((p, i) => {
+    ensureSpace(ctx, 10);
+    setText(ctx.doc, BRAND.primary);
+    ctx.doc.setFont("helvetica", "bold");
+    ctx.doc.setFontSize(10);
+    ctx.doc.text(`${i + 1}.`, PAGE.ml, ctx.y);
+    setText(ctx.doc, BRAND.ink);
+    ctx.doc.text(p.title, PAGE.ml + 8, ctx.y);
+    setText(ctx.doc, BRAND.muted);
+    ctx.doc.setFont("helvetica", "normal");
+    ctx.doc.setFontSize(9);
+    const subLines = ctx.doc.splitTextToSize(p.subtitle, CONTENT_W - 8);
+    ctx.doc.text(subLines, PAGE.ml + 8, ctx.y + 4.5);
+    ctx.y += 4.5 + subLines.length * 4.5 + 3;
+  });
+
+  parts.forEach((p, i) => {
+    sectionDivider(ctx, p.title, p.subtitle, i + 1, parts.length);
+    p.build(ctx, results[p.key]);
+  });
+
+  save(ctx, `ATSFy_CareerIntelligence_Complete_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
+}
+
