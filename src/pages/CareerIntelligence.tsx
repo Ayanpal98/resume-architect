@@ -24,6 +24,7 @@ import {
   exportRoleFitPdf,
   exportCoachingPdf,
   exportRejectionDecoderPdf,
+  exportCombinedPdf,
 } from "@/lib/careerIntelligencePdf";
 
 type FocusArea = "Skill gaps" | "Certifications" | "Networking" | "Salary jump" | "Leadership";
