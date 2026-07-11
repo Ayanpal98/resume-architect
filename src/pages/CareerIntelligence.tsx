@@ -302,6 +302,35 @@ const CareerIntelligence = () => {
         {/* Main panel */}
         <main className="min-w-0">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Mode)}>
+            {(() => {
+              const readyCount = (Object.values(results) as any[]).filter(Boolean).length;
+              if (readyCount === 0) return null;
+              return (
+                <div className="mb-3 flex items-center justify-between gap-3 flex-wrap rounded-lg border border-accent/30 bg-gradient-card p-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-foreground">Export All Reports</div>
+                    <div className="text-xs text-muted-foreground">
+                      {readyCount} of 5 sections ready — combine into one full-length PDF.
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="hero"
+                    className="gap-1.5"
+                    onClick={() => {
+                      try {
+                        exportCombinedPdf(results, profile);
+                        toast.success("Combined PDF downloaded.");
+                      } catch (e: any) {
+                        toast.error(e?.message || "Could not export combined PDF.");
+                      }
+                    }}
+                  >
+                    <Download className="w-4 h-4" /> Export All Reports
+                  </Button>
+                </div>
+              );
+            })()}
             <TabsList className="w-full justify-start overflow-x-auto bg-card border border-border h-auto p-1">
               <TabsTrigger value="roadmap" className="gap-1.5"><TrendingUp className="w-4 h-4" /> Roadmap</TabsTrigger>
               <TabsTrigger value="skill_analysis" className="gap-1.5"><Brain className="w-4 h-4" /> Skill Analysis</TabsTrigger>
