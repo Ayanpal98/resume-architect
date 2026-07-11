@@ -359,10 +359,7 @@ function priorityColor(p?: string): [number, number, number] {
 /* ============================================================
  * Mode: Roadmap
  * ============================================================ */
-export function exportRoadmapPdf(data: any, profile: Profile) {
-  const ctx = newCtx("Career Roadmap Report", profile);
-  drawCover(ctx);
-
+function buildRoadmapSection(ctx: Ctx, data: any) {
   if (data.executive_summary) {
     h1(ctx, "Executive Summary");
     paragraph(ctx, data.executive_summary);
@@ -431,7 +428,6 @@ export function exportRoadmapPdf(data: any, profile: Profile) {
       ctx.doc.text(c.provider || "", PAGE.ml + 3, ctx.y + 10);
       const meta = [c.time_to_complete, c.cost_estimate].filter(Boolean).join("  •  ");
       if (meta) ctx.doc.text(meta, PAGE.ml + 3, ctx.y + 15);
-      // priority pill top right
       if (c.priority) {
         const label = String(c.priority).toUpperCase();
         ctx.doc.setFont("helvetica", "bold");
@@ -464,7 +460,12 @@ export function exportRoadmapPdf(data: any, profile: Profile) {
       bulletList(ctx, n.events);
     }
   }
+}
 
+export function exportRoadmapPdf(data: any, profile: Profile) {
+  const ctx = newCtx("Career Roadmap Report", profile);
+  drawCover(ctx);
+  buildRoadmapSection(ctx, data);
   save(ctx, `ATSFy_Roadmap_${safeName(profile.targetRole)}_${todayStr()}.pdf`);
 }
 
