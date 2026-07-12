@@ -337,6 +337,8 @@ const Builder = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Resume Builder — ATSFy"} description={"ATS-friendly resume builder with AI content optimization, template library, and real-time hiring readiness scoring."} path={"/builder"} />
+      <h1 className="sr-only">ATSFy Resume Builder</h1>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-2 sm:px-6 py-2 sm:py-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">

@@ -134,6 +134,8 @@ const CareerIntelligence = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Career Intelligence — ATSFy"} description={"Premium 5-module career engine: roadmap, skill analysis, role fit, AI coaching, and rejection decoder."} path={"/career-intelligence"} />
+      <h1 className="sr-only">ATSFy Career Intelligence</h1>
       {/* Header */}
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
