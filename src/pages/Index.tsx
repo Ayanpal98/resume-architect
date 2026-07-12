@@ -1,4 +1,5 @@
 import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut, TrendingUp, ShieldCheck, Activity, Signal, Radar, GitBranch, Network, ShieldAlert, Gauge, Webhook, ScrollText, RefreshCw, Bell, Eye, Cpu, Scale, Menu } from "lucide-react";
+import { Seo } from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
@@ -13,6 +14,7 @@ const Index = () => {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"ATSFy — Career Intelligence for the Modern Job Market"} description={"ATSFy decodes how hiring systems read, parse, and rank your resume. Get the visibility machines see — before you apply."} path={"/"} />
       {/* Navigation */}
       <nav className="fixed top-0 left-0 right-0 z-50 glass-nav">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">

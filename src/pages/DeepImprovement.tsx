@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Seo } from "@/components/Seo";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ShieldCheck, Sparkles, AlertTriangle, CheckCircle2, FileText, HelpCircle, Loader2, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ const DeepImprovement = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Deep Resume Improvement — ATSFy"} description={"Section-by-section AI rewrites with rationale and fabrication guards to lift your resume past the 90% mark."} path={"/deep-improvement"} />
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">

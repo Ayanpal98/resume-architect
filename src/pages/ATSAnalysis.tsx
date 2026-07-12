@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Seo } from "@/components/Seo";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -95,6 +96,7 @@ const ATSAnalysis = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"ATS Analysis & Hiring Readiness — ATSFy"} description={"Score your resume against any job description — keyword coverage, prioritized fixes, and hiring readiness insights."} path={"/ats-analysis"} />
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">

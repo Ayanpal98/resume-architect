@@ -1,9 +1,11 @@
 import { FileText, Shield, Lock, Activity, AlertTriangle, KeyRound, Server, Mail, ArrowLeft } from "lucide-react";
+import { Seo } from "@/components/Seo";
 import { Link } from "react-router-dom";
 
 const Security = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Security — ATSFy"} description={"How ATSFy protects your data: JWT-authenticated edge functions, encrypted transit, and 24-hour deletion policy."} path={"/security"} />
       <nav className="border-b border-border/60">
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">

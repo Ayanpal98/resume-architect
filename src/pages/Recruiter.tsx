@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { Seo } from "@/components/Seo";
 import jsPDF from "jspdf";
 import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import { Link } from "react-router-dom";
@@ -1361,6 +1362,7 @@ const CandidateCard = ({
 }: CandidateCardProps) => {
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${
+      <Seo title={"Recruiter Screening Dashboard — ATSFy"} description={"Bulk candidate screening for hiring teams — parse resumes, score fit, and export ranked reports in minutes."} path={"/recruiter"} />
       candidate.status === "shortlisted" ? "border-accent bg-accent/5" :
       candidate.status === "rejected" ? "border-destructive/50 bg-destructive/5" :
       "border-border"

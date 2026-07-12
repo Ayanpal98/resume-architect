@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Seo } from "@/components/Seo";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1381,6 +1382,7 @@ const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
 
   return (
     <div className="text-sm space-y-4">
+      <Seo title={"Resume Builder — ATSFy"} description={"ATS-friendly resume builder with AI content optimization, template library, and real-time hiring readiness scoring."} path={"/builder"} />
       {/* Header */}
       <div className="border-b border-border pb-3">
         <h1 className={`text-xl font-bold ${colors.primary}`}>{personalInfo.fullName || "Your Name"}</h1>
