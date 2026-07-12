@@ -1362,7 +1362,7 @@ const CandidateCard = ({
 }: CandidateCardProps) => {
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${
-      <Seo title={"Recruiter Screening Dashboard — ATSFy"} description={"Bulk candidate screening for hiring teams — parse resumes, score fit, and export ranked reports in minutes."} path={"/recruiter"} />
+      
       candidate.status === "shortlisted" ? "border-accent bg-accent/5" :
       candidate.status === "rejected" ? "border-destructive/50 bg-destructive/5" :
       "border-border"

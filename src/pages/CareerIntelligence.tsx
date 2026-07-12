@@ -664,7 +664,7 @@ const SkillBlock = ({ icon, title, items, tone }: { icon: React.ReactNode; title
   if (!items.length) return null;
   return (
     <Card className={`border-l-4 ${border}`}>
-      <Seo title={"Career Intelligence — ATSFy"} description={"Premium 5-module career engine: roadmap, skill analysis, role fit, AI coaching, and rejection decoder."} path={"/career-intelligence"} />
+      
       <CardContent className="p-5">
         <SectionHeader icon={icon} title={title} />
         <ul className="space-y-2">
