@@ -94,7 +94,7 @@ const Auth = () => {
         <div className="text-center space-y-2">
           <div className="flex items-center justify-center gap-2">
             <FileText className="h-8 w-8 text-primary" />
-            <h1 className="text-3xl font-bold text-foreground">ATSFy</h1>
+            <h1 className="text-3xl font-bold text-foreground">ATSFy — Sign In</h1>
           </div>
           <p className="text-muted-foreground">AI-Powered Resume Builder & ATS Optimizer</p>
         </div>
