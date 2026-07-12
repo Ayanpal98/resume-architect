@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Seo } from "@/components/Seo";
 import { Link, useLocation, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -336,6 +337,8 @@ const Builder = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Resume Builder — ATSFy"} description={"ATS-friendly resume builder with AI content optimization, template library, and real-time hiring readiness scoring."} path={"/builder"} />
+      <h1 className="sr-only">ATSFy Resume Builder</h1>
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-2 sm:px-6 py-2 sm:py-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
@@ -1381,6 +1384,7 @@ const ResumePreview = ({ data, templateId }: ResumePreviewProps) => {
 
   return (
     <div className="text-sm space-y-4">
+      
       {/* Header */}
       <div className="border-b border-border pb-3">
         <h1 className={`text-xl font-bold ${colors.primary}`}>{personalInfo.fullName || "Your Name"}</h1>

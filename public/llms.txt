@@ -1,0 +1,21 @@
+# ATSFy
+
+> ATSFy is a career intelligence platform that decodes how ATS (Applicant Tracking Systems) read, parse, and rank resumes — helping job seekers become visible to machines and chosen by humans.
+
+ATSFy provides AI-powered resume optimization, ATS hiring readiness scoring, career roadmaps, skill gap analysis, role-fit reports, interview coaching, and rejection decoding. It also offers recruiters a bulk candidate screening dashboard.
+
+## Pages
+
+- [Home](/): Overview of ATSFy — career intelligence for the modern job market.
+- [Welcome](/welcome): Getting started guide and product tour for new users.
+- [Resume Builder](/builder): ATS-friendly resume builder with AI content optimization and template library.
+- [ATS Analysis](/ats-analysis): Hiring readiness score, keyword coverage, and prioritized fixes.
+- [Career Intelligence](/career-intelligence): 5-module premium engine — roadmap, skills, role-fit, coaching, rejection decoder.
+- [Deep Improvement](/deep-improvement): Section-by-section AI improvements and optimization reports.
+- [Recruiter](/recruiter): Bulk candidate screening dashboard for hiring teams.
+- [Security](/security): Data security, JWT-authenticated edge functions, and 24-hour deletion policy.
+- [Privacy](/privacy): Privacy policy and data handling practices.
+
+## Optional
+
+- [Sign In](/auth): Authentication page for job seekers and recruiters.

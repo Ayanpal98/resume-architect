@@ -1,4 +1,5 @@
 import { useState, useCallback, useMemo } from "react";
+import { Seo } from "@/components/Seo";
 import jsPDF from "jspdf";
 import { addComplianceFooterBlock } from "@/lib/complianceFooter";
 import { Link } from "react-router-dom";
@@ -969,6 +970,7 @@ const Recruiter = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Recruiter Screening Dashboard — ATSFy"} description={"Bulk candidate screening for hiring teams — parse resumes, score fit, and export ranked reports in minutes."} path={"/recruiter"} />
       {/* Header */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
@@ -1361,6 +1363,7 @@ const CandidateCard = ({
 }: CandidateCardProps) => {
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${
+      
       candidate.status === "shortlisted" ? "border-accent bg-accent/5" :
       candidate.status === "rejected" ? "border-destructive/50 bg-destructive/5" :
       "border-border"

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Seo } from "@/components/Seo";
 import { useNavigate } from "react-router-dom";
 import { FileText, Users, Briefcase, ArrowRight, CheckCircle2, Building2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,6 +32,7 @@ const Welcome = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <Seo title={"Get Started — ATSFy Career Intelligence"} description={"Choose your path on ATSFy — job seeker resume builder or recruiter screening dashboard."} path={"/welcome"} />
       {/* Header */}
       <nav className="border-b border-border bg-card/50 backdrop-blur-sm">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">

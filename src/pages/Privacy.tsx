@@ -1,9 +1,11 @@
 import { FileText, ArrowLeft, Mail, Shield } from "lucide-react";
+import { Seo } from "@/components/Seo";
 import { Link } from "react-router-dom";
 
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Privacy Policy — ATSFy"} description={"ATSFy privacy policy — what data we collect, how we use it, and your control over your information."} path={"/privacy"} />
       <nav className="border-b border-border/60">
         <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-3">

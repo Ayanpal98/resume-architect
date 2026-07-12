@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Seo } from "@/components/Seo";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -133,6 +134,8 @@ const CareerIntelligence = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Seo title={"Career Intelligence — ATSFy"} description={"Premium 5-module career engine: roadmap, skill analysis, role fit, AI coaching, and rejection decoder."} path={"/career-intelligence"} />
+      <h1 className="sr-only">ATSFy Career Intelligence</h1>
       {/* Header */}
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
@@ -663,6 +666,7 @@ const SkillBlock = ({ icon, title, items, tone }: { icon: React.ReactNode; title
   if (!items.length) return null;
   return (
     <Card className={`border-l-4 ${border}`}>
+      
       <CardContent className="p-5">
         <SectionHeader icon={icon} title={title} />
         <ul className="space-y-2">
