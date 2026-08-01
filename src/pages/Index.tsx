@@ -1,4 +1,4 @@
-import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Zap, Target, Users, LogOut, TrendingUp, ShieldCheck, Activity, Signal, Radar, GitBranch, Network, ShieldAlert, Gauge, Webhook, ScrollText, RefreshCw, Bell, Eye, Cpu, Scale, Menu } from "lucide-react";
+import { FileText, Sparkles, CheckCircle2, ArrowRight, Upload, Target, LogOut, TrendingUp, ShieldCheck, Activity, Signal, Menu } from "lucide-react";
 import { Seo } from "@/components/Seo";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
