@@ -232,6 +232,10 @@ const Index = () => {
       {/* Pricing Section */}
       <PricingSection />
 
+      {/* Waitlist */}
+      <WaitlistSection />
+
+
       {/* CTA Section */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
         <div className="container mx-auto max-w-4xl">
