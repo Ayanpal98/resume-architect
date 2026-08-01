@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
 import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
+import { WaitlistSection } from "@/components/WaitlistSection";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
