@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
 import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
+import { WaitlistSection } from "@/components/WaitlistSection";
+
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState } from "react";
@@ -229,6 +231,10 @@ const Index = () => {
 
       {/* Pricing Section */}
       <PricingSection />
+
+      {/* Waitlist */}
+      <WaitlistSection />
+
 
       {/* CTA Section */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">

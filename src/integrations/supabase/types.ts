@@ -35,6 +35,30 @@ export type Database = {
         }
         Relationships: []
       }
+      waitlist_signups: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          name: string
+          resume_upload_consent: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          resume_upload_consent?: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          resume_upload_consent?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
