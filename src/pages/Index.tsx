@@ -142,33 +142,24 @@ const Index = () => {
       {/* Features Section */}
       <section id="features" className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
         <div className="container mx-auto max-w-6xl">
-          <div className="max-w-3xl mb-12 sm:mb-16">
+          <div className="max-w-2xl mb-10 sm:mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— Intelligence</div>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
-              Intelligence infrastructure, <em className="italic font-normal text-primary">not another resume builder.</em>
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground leading-tight tracking-tight">
+              Not another resume builder. <em className="italic font-normal text-primary">Career intelligence.</em>
             </h2>
-            <p className="text-muted-foreground text-base sm:text-lg font-sans">
-              Every layer of ATSFY is engineered around how hiring systems actually work — not keyword stuffing or black-box scores.
-            </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 glass rounded-2xl overflow-hidden">
+          <div className="grid sm:grid-cols-3 glass rounded-2xl overflow-hidden">
             {[
-              { icon: Target, title: "ATS Parsing Engine", description: "Analyzes your resume against real ATS parsing behavior — not just keywords.", tag: "Intelligence layer" },
-              { icon: Zap, title: "Real-time Signal Analysis", description: "See exactly how parsers read each section — headers, dates, and formatting issues flagged in real time.", tag: "Analysis" },
-              { icon: FileText, title: "Parser-safe Formatting", description: "Uses parser-safe layouts that preserve structure when converted to plain text by ATS software.", tag: "Parsing" },
-              { icon: Sparkles, title: "AI Content Intelligence", description: "Recommends action verbs and quantified achievements that match how recruiters actually search.", tag: "Intelligence layer" },
-              { icon: Upload, title: "Career Data Extraction", description: "Extracts and restructures your existing content to fix common parsing failures automatically.", tag: "Parsing" },
-              { icon: Users, title: "Industry Signal Mapping", description: "Adapts language and section order based on what top-performing resumes in your field include.", tag: "Analysis" },
+              { icon: Target, title: "ATS parsing engine", description: "See your resume the way hiring systems actually read it." },
+              { icon: Sparkles, title: "Evidence-linked rewrite", description: "Sharper positioning grounded only in what you truly delivered." },
+              { icon: TrendingUp, title: "Career intelligence reports", description: "Role fit, skill gaps, and a 30/60/90 plan — exportable as PDF." },
             ].map((feature, index) => (
-              <div key={index} className="group p-6 sm:p-8 border-b border-r border-border/60 last:border-r-0 hover:bg-background/50 transition-colors">
+              <div key={index} className="p-6 sm:p-8 border-b border-r border-border/60 last:border-r-0">
                 <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-5">
                   <feature.icon className="w-5 h-5 text-primary" />
                 </div>
                 <h3 className="font-display text-xl font-medium text-foreground mb-2 tracking-tight">{feature.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed mb-4 font-sans">{feature.description}</p>
-                <span className="inline-block text-[10px] uppercase tracking-[0.15em] text-muted-foreground border border-border rounded-full px-2.5 py-1">
-                  {feature.tag}
-                </span>
+                <p className="text-muted-foreground text-sm leading-relaxed font-sans">{feature.description}</p>
               </div>
             ))}
           </div>
@@ -178,20 +169,17 @@ const Index = () => {
       {/* How It Works */}
       <section id="how-it-works" className="py-16 sm:py-24 px-4 sm:px-6 bg-card border-t border-border/60">
         <div className="container mx-auto max-w-6xl">
-          <div className="max-w-3xl mb-12 sm:mb-16">
+          <div className="max-w-2xl mb-10 sm:mb-14">
             <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— Pipeline</div>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
+            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground leading-tight tracking-tight">
               Three stages. <em className="italic font-normal text-primary">One outcome.</em>
             </h2>
-            <p className="text-muted-foreground text-base sm:text-lg font-sans">
-              A streamlined intelligence pipeline that transforms your career data into machine-readable signal.
-            </p>
           </div>
           <div className="grid md:grid-cols-3 gap-px bg-border/60 border border-border/60 rounded-2xl overflow-hidden">
             {[
-              { step: "01", title: "Ingest your career data", description: "Fill in your profile or upload an existing resume. Our extraction layer handles restructuring automatically." },
-              { step: "02", title: "Run intelligence analysis", description: "ATSFY's parsing engine analyzes and optimizes every signal — formatting, keywords, structure, and ranking potential." },
-              { step: "03", title: "Deploy and get seen", description: "Export a polished, ATS-certified profile. Know your score before you apply. Land interviews that matter." },
+              { step: "01", title: "Upload your resume", description: "Import or paste — we restructure it automatically." },
+              { step: "02", title: "Run the analysis", description: "Formatting, keywords, structure, and ranking potential, decoded." },
+              { step: "03", title: "Export and apply", description: "A parser-safe profile plus the intelligence behind it." },
             ].map((step, index) => (
               <div key={index} className="bg-card p-8 sm:p-10">
                 <div className="font-display text-7xl sm:text-8xl font-medium text-muted-foreground/15 mb-6 leading-none">{step.step}</div>
@@ -211,207 +199,19 @@ const Index = () => {
         </div>
       </section>
 
-      {/* From ignored → informed: feature mapping + adaptive roadmap */}
-      <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60">
-        <div className="container mx-auto max-w-6xl">
-          <div className="max-w-3xl mb-12 sm:mb-16">
-            <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— From ignored → informed</div>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
-              Candidates deserve a verdict, <em className="italic font-normal text-primary">not a void.</em>
-            </h2>
-            <p className="text-muted-foreground text-base sm:text-lg font-sans">
-              Six chronic candidate-experience failures — and exactly which ATSFy capabilities answer each one today.
-            </p>
-          </div>
-
-          <div className="space-y-px bg-border/60 border border-border/60 rounded-2xl overflow-hidden">
-            {[
-              {
-                pain: "Application submitted",
-                painSub: "…then silence for weeks",
-                answer: "Real-time status tracking",
-                answerSub: "Candidate sees every stage update",
-                status: "planned",
-              },
-              {
-                pain: "Generic rejection email",
-                painSub: "\"We went with another candidate\"",
-                answer: "Explainable scorecard",
-                answerSub: "Per-dimension feedback via ATS Score Panel & Optimization Report",
-                status: "live",
-              },
-              {
-                pain: "\"Did they see my application?\"",
-                painSub: "ATS black-box screening",
-                answer: "6-engine merit evaluation",
-                answerSub: "Recruiter Screening Dashboard — IRS, CSA, SAX scoring",
-                status: "live",
-              },
-              {
-                pain: "Followed up — no reply",
-                painSub: "Hiring paused? No one knows",
-                answer: "Proactive status alerts",
-                answerSub: "Candidate notified if role paused or closed",
-                status: "planned",
-              },
-              {
-                pain: "Another rejection, another day",
-                painSub: "No growth signal, no closure",
-                answer: "Career Progression Blueprint",
-                answerSub: "CPB engine maps next-step gaps — live in Career Intelligence",
-                status: "live",
-              },
-              {
-                pain: "Opaque AI decisions",
-                painSub: "Who reviewed me? On what basis?",
-                answer: "EU AI Act compliant by architecture",
-                answerSub: "Bias-free · Explainable · DISHA/GDPR aligned · Every decision audit-logged",
-                status: "partial",
-              },
-            ].map((row, i) => (
-              <div key={i} className="grid md:grid-cols-[1fr_auto_1fr_auto] items-center gap-4 bg-background p-5 sm:p-6">
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.15em] text-destructive/70 mb-1">Pain today</div>
-                  <div className="font-display text-base sm:text-lg text-foreground tracking-tight">{row.pain}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-sans mt-0.5">{row.painSub}</div>
-                </div>
-                <ArrowRight className="hidden md:block w-4 h-4 text-muted-foreground" />
-                <div>
-                  <div className="text-[10px] uppercase tracking-[0.15em] text-accent mb-1">ATSFy answer</div>
-                  <div className="font-display text-base sm:text-lg text-foreground tracking-tight">{row.answer}</div>
-                  <div className="text-xs sm:text-sm text-muted-foreground font-sans mt-0.5">{row.answerSub}</div>
-                </div>
-                <span
-                  className={
-                    "justify-self-start md:justify-self-end inline-flex items-center gap-1.5 text-[10px] uppercase tracking-[0.15em] rounded-full px-2.5 py-1 border " +
-                    (row.status === "live"
-                      ? "border-accent/40 text-accent bg-accent/5"
-                      : row.status === "partial"
-                      ? "border-primary/40 text-primary bg-primary/5"
-                      : "border-border text-muted-foreground bg-muted/30")
-                  }
-                >
-                  <span className={"w-1.5 h-1.5 rounded-full " + (row.status === "live" ? "bg-accent" : row.status === "partial" ? "bg-primary" : "bg-muted-foreground")} />
-                  {row.status === "live" ? "Shipping today" : row.status === "partial" ? "Partial — hardening" : "On roadmap"}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Adaptive Infrastructure Roadmap */}
-          <div className="mt-20 sm:mt-24">
-            <div className="max-w-3xl mb-12">
-              <div className="text-xs uppercase tracking-[0.2em] text-primary mb-4">— What's next · Adaptive Infrastructure</div>
-              <h3 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 leading-tight tracking-tight">
-                Beyond compliant. <em className="italic font-normal text-primary">Self-correcting.</em>
-              </h3>
-              <p className="text-muted-foreground text-base sm:text-lg font-sans">
-                The next phase of ATSFy is infrastructure that learns from drift, defends itself, and proves its own fairness — continuously.
-              </p>
-            </div>
-
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 glass rounded-2xl overflow-hidden">
-              {[
-                { icon: Radar, title: "Bias-drift monitor", description: "Continuous statistical checks on screening outcomes by demographic proxy — auto-pauses scoring if drift exceeds threshold.", horizon: "Q3 · 2026" },
-                { icon: GitBranch, title: "Self-healing parser mesh", description: "Multi-engine fallback (Gemini → GPT → local OCR) with automatic re-routing when any provider degrades.", horizon: "Q3 · 2026" },
-                { icon: ShieldAlert, title: "Zero-trust rate shield", description: "Per-user, per-org, per-IP adaptive throttling backed by a shared Postgres ledger — replaces in-memory counters.", horizon: "Q4 · 2026" },
-                { icon: ScrollText, title: "Immutable explainability ledger", description: "Hash-chained audit log of every AI verdict — exportable for DPDP / EU AI Act regulator requests.", horizon: "Q4 · 2026" },
-                { icon: RefreshCw, title: "Recruiter-feedback recalibration", description: "Scoring weights re-tuned weekly from anonymized recruiter accept/reject signals — closes the loop on merit fit.", horizon: "Q1 · 2027" },
-                { icon: Webhook, title: "Real-time recruiter event bus", description: "Webhook + SSE stream so candidates receive stage-change pings the instant a recruiter updates status.", horizon: "Q1 · 2027" },
-                { icon: Network, title: "Federated candidate signal mesh", description: "Privacy-preserving cross-org skill-gap aggregation — no raw resume ever leaves its tenant.", horizon: "Q2 · 2027" },
-                { icon: Gauge, title: "Continuous model-eval harness", description: "Nightly golden-set regression on every prompt + model swap — blocks deploys that regress accuracy or fairness.", horizon: "Q2 · 2027" },
-                { icon: Eye, title: "Candidate-side decision viewer", description: "Live mirror of the recruiter scorecard the candidate can open, contest, and download — closing the void.", horizon: "Q3 · 2027" },
-              ].map((item, i) => (
-                <div key={i} className="group p-6 sm:p-8 border-b border-r border-border/60 last:border-r-0 hover:bg-background/50 transition-colors">
-                  <div className="flex items-center justify-between mb-5">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <item.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground font-sans">{item.horizon}</span>
-                  </div>
-                  <h4 className="font-display text-lg sm:text-xl font-medium text-foreground mb-2 tracking-tight">{item.title}</h4>
-                  <p className="text-muted-foreground text-sm leading-relaxed font-sans">{item.description}</p>
-                </div>
-              ))}
-            </div>
-
-            <p className="text-xs text-muted-foreground font-sans mt-6 italic">
-              Roadmap reflects current engineering intent — horizons are directional, not contractual commitments.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Deep Resume Improvement — for genuine candidates */}
+      {/* Deep Resume Improvement — condensed band */}
       <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60 bg-gradient-to-b from-background to-primary/[0.03]">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12 sm:mb-16">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary/30 rounded-full text-xs font-medium text-primary mb-6 uppercase tracking-[0.15em]">
-              <ShieldCheck className="w-3.5 h-3.5" />
-              For genuine candidates · standalone module
-            </div>
-            <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 tracking-tight max-w-3xl mx-auto">
-              You've earned the experience. Let's make sure it <em className="italic font-normal text-primary">reads that way</em>.
-            </h2>
-            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans">
-              Built for candidates with real depth — not embellishments. A deeper, slower, recruiter-grade pass on your authentic story, rewritten without inventing a single metric.
-            </p>
+        <div className="container mx-auto max-w-4xl text-center">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 border border-primary/30 rounded-full text-xs font-medium text-primary mb-6 uppercase tracking-[0.15em]">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Deep Resume Improvement
           </div>
-
-          <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mb-10">
-            {[
-              {
-                icon: Eye,
-                title: "Evidence-first analysis",
-                description: "Every suggestion cites a line from your actual resume. No fabricated metrics, no invented leadership scope, no AI-flavoured filler.",
-              },
-              {
-                icon: ScrollText,
-                title: "Depth-aware rewriting",
-                description: "Your bullets get sharper positioning and stronger industry language — but only using achievements you actually delivered.",
-              },
-              {
-                icon: Target,
-                title: "Section-by-section guidance",
-                description: "Summary, experience, skills, and keywords reviewed independently with a current assessment and a recruiter-grade improved version.",
-              },
-              {
-                icon: TrendingUp,
-                title: "Gap-to-90% roadmap",
-                description: "A concrete 30 / 60 / 90-day plan covering skill development, experience reframing, and networking moves tied to your target role.",
-              },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="group p-6 sm:p-7 rounded-2xl border border-border bg-card hover:border-primary/40 hover:shadow-elegant transition-all"
-              >
-                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/15 transition-colors">
-                  <item.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="font-display text-xl font-medium text-foreground mb-2 tracking-tight">{item.title}</h3>
-                <p className="text-muted-foreground text-sm leading-relaxed font-sans">{item.description}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="rounded-2xl border border-primary/20 bg-card/60 p-6 sm:p-8 mb-10">
-            <div className="text-xs uppercase tracking-[0.2em] text-primary mb-4">— How the deep pass works</div>
-            <div className="grid sm:grid-cols-4 gap-5">
-              {[
-                { step: "01", title: "Upload authentic resume", body: "Paste or import your real resume — the messier the better. We work with what you actually have." },
-                { step: "02", title: "Drop the target JD", body: "We map your background against the specific role, not a generic template." },
-                { step: "03", title: "Read the recruiter pass", body: "Section-by-section assessment with rewritten bullets grounded only in your real history." },
-                { step: "04", title: "Follow the 30/60/90 plan", body: "Concrete actions to close the gap to a 90%+ match — without faking anything." },
-              ].map((s, i) => (
-                <div key={i} className="space-y-2">
-                  <div className="font-display text-2xl text-primary/70">{s.step}</div>
-                  <div className="font-medium text-foreground text-sm">{s.title}</div>
-                  <p className="text-xs text-muted-foreground leading-relaxed font-sans">{s.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground mb-4 tracking-tight">
+            You've earned the experience. Let's make sure it <em className="italic font-normal text-primary">reads that way</em>.
+          </h2>
+          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed font-sans mb-8">
+            A recruiter-grade pass on your authentic story — every suggestion cited from your real resume. No invented metrics, ever.
+          </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link to="/ats-analysis">
               <Button variant="hero" size="xl" className="w-full sm:w-auto">
@@ -419,19 +219,10 @@ const Index = () => {
                 <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
-            <Link to="/welcome">
-              <Button variant="outline-hero" size="xl" className="w-full sm:w-auto">
-                <Upload className="w-5 h-5" />
-                Upload my real resume
-              </Button>
-            </Link>
           </div>
-
-          <p className="text-xs text-muted-foreground font-sans mt-6 italic text-center">
-            Standalone module — no metric invention, no fabricated experience. We rewrite how your story reads, never what it claims.
-          </p>
         </div>
       </section>
+
 
       {/* Sample Reports Showcase */}
       <SampleReportsShowcase />
