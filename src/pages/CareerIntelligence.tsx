@@ -166,6 +166,20 @@ const CareerIntelligence = () => {
         </div>
       </nav>
 
+      {recruiterAccount && (
+        <div className="container mx-auto px-4 sm:px-6 pt-4">
+          <div className="glass rounded-xl border border-border/60 p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+            <p className="text-sm text-muted-foreground">
+              Your account is set to Recruiter / HR. Career Intelligence is built for job seekers.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="hero" onClick={switchToJobSeeker}>Switch to Job Seeker</Button>
+              <Button size="sm" variant="outline" onClick={() => navigate("/recruiter")}>Go to Recruiter</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[360px_1fr] gap-6">
         {/* Profile Builder Sidebar */}
         <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pb-4">
