@@ -66,7 +66,7 @@ export const LiveStatsCounter = () => {
         </div>
         <div>
           <div className="text-2xl sm:text-3xl font-display font-bold text-foreground">
-            <AnimatedNumber value={stats.resumes_optimized + 100} />
+            <AnimatedNumber value={stats.resumes_optimized + 278} />
           </div>
           <div className="text-xs sm:text-sm text-muted-foreground">Resumes Optimized</div>
         </div>
