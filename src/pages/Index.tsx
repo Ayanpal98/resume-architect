@@ -6,6 +6,8 @@ import { LiveStatsCounter } from "@/components/LiveStatsCounter";
 import { PricingSection } from "@/components/PricingSection";
 import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
 import { WaitlistSection } from "@/components/WaitlistSection";
+import { CareerIntelligenceSection } from "@/components/CareerIntelligenceSection";
+import { RecruiterIntelligenceSection, TwoSidedPlatformSection } from "@/components/RecruiterIntelligenceSection";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -226,8 +228,17 @@ const Index = () => {
       </section>
 
 
+      {/* Career Intelligence Roadmap */}
+      <CareerIntelligenceSection />
+
       {/* Sample Reports Showcase */}
       <SampleReportsShowcase />
+
+      {/* Recruiter / Hiring Intelligence */}
+      <RecruiterIntelligenceSection />
+
+      {/* Two-sided platform comparison */}
+      <TwoSidedPlatformSection />
 
       {/* Pricing Section */}
       <PricingSection />
