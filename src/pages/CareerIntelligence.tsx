@@ -85,20 +85,24 @@ const CareerIntelligence = () => {
     rejection_decoder: null,
   });
 
-  // Job-Seeker-only gating — authoritative check is in the edge function via
-  // user_metadata.user_type; this is a UX-only client-side hint.
+  // Role hint only — never force-redirect away from an explicitly requested page.
+  const [recruiterAccount, setRecruiterAccount] = useState(false);
   useEffect(() => {
     (async () => {
       const { supabase } = await import("@/integrations/supabase/client");
       const { data: { user } } = await supabase.auth.getUser();
-      const serverType = (user?.user_metadata as any)?.user_type;
-      const userType = serverType;
-      if (userType === "institution") {
-        toast.error("Career Intelligence is available for Job Seekers only.");
-        navigate("/recruiter");
-      }
+      setRecruiterAccount((user?.user_metadata as any)?.user_type === "institution");
     })();
-  }, [navigate]);
+  }, []);
+
+  const switchToJobSeeker = async () => {
+    const { supabase } = await import("@/integrations/supabase/client");
+    await supabase.auth.updateUser({ data: { user_type: "jobseeker" } });
+    localStorage.setItem("atsfy_user_type", "jobseeker");
+    setRecruiterAccount(false);
+    toast.success("Switched to Job Seeker mode.");
+  };
+
 
 
   const toggleFocus = (f: FocusArea) => {
@@ -161,6 +165,20 @@ const CareerIntelligence = () => {
           </Badge>
         </div>
       </nav>
+
+      {recruiterAccount && (
+        <div className="container mx-auto px-4 sm:px-6 pt-4">
+          <div className="glass rounded-xl border border-border/60 p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+            <p className="text-sm text-muted-foreground">
+              Your account is set to Recruiter / HR. Career Intelligence is built for job seekers.
+            </p>
+            <div className="flex gap-2">
+              <Button size="sm" variant="hero" onClick={switchToJobSeeker}>Switch to Job Seeker</Button>
+              <Button size="sm" variant="outline" onClick={() => navigate("/recruiter")}>Go to Recruiter</Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="container mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[360px_1fr] gap-6">
         {/* Profile Builder Sidebar */}
