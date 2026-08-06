@@ -311,12 +311,16 @@ const Recruiter = () => {
   };
 
   const analyzeCandidate = async (file: File): Promise<CandidateAnalysis> => {
-    const text = await extractTextFromFile(file);
-    
+    const text = (await extractTextFromFile(file)).trim();
+
+    if (text.length < 50) {
+      throw new Error("Could not read enough text from this file. Convert it to DOCX or TXT and retry.");
+    }
+
     const { data, error } = await supabase.functions.invoke("candidate-screening", {
       body: { 
-        resumeText: text, 
-        jobDescription,
+        resumeText: text.slice(0, 100000), 
+        jobDescription: jobDescription.trim().slice(0, 50000),
         jobTitle,
         requiredExperience,
         requiredEducation
@@ -324,7 +328,29 @@ const Recruiter = () => {
     });
 
     if (error) {
-      throw new Error(error.message || "Failed to analyze candidate");
+      // functions.invoke returns a generic message — read the real server error.
+      let detail = "";
+      let status = 0;
+      const ctx = (error as any)?.context;
+      try {
+        if (ctx instanceof Response) {
+          status = ctx.status;
+          const body = await ctx.clone().json().catch(() => null);
+          detail = body?.error || "";
+        }
+      } catch { /* ignore */ }
+
+      if (status === 403 || /forbidden/i.test(detail)) {
+        throw new Error("Recruiter access required. Enable recruiter mode and try again.");
+      }
+      if (status === 401) {
+        throw new Error("Your session expired. Please sign in again.");
+      }
+      throw new Error(detail || error.message || "Failed to analyze candidate");
+    }
+
+    if (!data?.analysis) {
+      throw new Error("The screening service returned no analysis for this resume.");
     }
 
     // Increment candidate screening counter
@@ -339,6 +365,7 @@ const Recruiter = () => {
       fitScore: normalizeFitScore(data.analysis?.fitScore),
     };
   };
+
 
   const handleAnalyze = async () => {
     if (!jobDescription.trim()) {
