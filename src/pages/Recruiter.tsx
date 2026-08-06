@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { Seo } from "@/components/Seo";
 import jsPDF from "jspdf";
 import { addComplianceFooterBlock } from "@/lib/complianceFooter";
