@@ -421,7 +421,7 @@ const Recruiter = () => {
           console.error(`Error analyzing ${file.name}:`, error);
           toast({
             title: `Error analyzing ${file.name}`,
-            description: "This resume could not be processed.",
+            description: error instanceof Error ? error.message : "This resume could not be processed.",
             variant: "destructive",
           });
         }
