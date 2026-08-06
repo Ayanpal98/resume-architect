@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { Seo } from "@/components/Seo";
 import jsPDF from "jspdf";
 import { addComplianceFooterBlock } from "@/lib/complianceFooter";
@@ -190,7 +190,34 @@ const Recruiter = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [convertingFiles, setConvertingFiles] = useState<Set<number>>(new Set());
   const [convertedFiles, setConvertedFiles] = useState<Map<number, { url: string; fileName: string }>>(new Map());
+  const [recruiterMode, setRecruiterMode] = useState<boolean | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setRecruiterMode((user?.user_metadata as any)?.user_type === "institution");
+    })();
+  }, []);
+
+  // Screening requires an institution (recruiter) account. Users can be on this
+  // dashboard with a jobseeker account — let them switch without leaving.
+  const enableRecruiterMode = async (): Promise<boolean> => {
+    const { error } = await supabase.auth.updateUser({ data: { user_type: "institution" } });
+    if (error) {
+      toast({
+        title: "Could not enable recruiter mode",
+        description: "Please sign out and sign back in, then try again.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    // Refresh the session so the JWT carries the updated user_type claim.
+    await supabase.auth.refreshSession();
+    localStorage.setItem("atsfy_user_type", "institution");
+    setRecruiterMode(true);
+    return true;
+  };
 
   const extractTextFromFile = async (file: File): Promise<string> => {
     const extension = file.name.split('.').pop()?.toLowerCase();
@@ -284,12 +311,16 @@ const Recruiter = () => {
   };
 
   const analyzeCandidate = async (file: File): Promise<CandidateAnalysis> => {
-    const text = await extractTextFromFile(file);
-    
+    const text = (await extractTextFromFile(file)).trim();
+
+    if (text.length < 50) {
+      throw new Error("Could not read enough text from this file. Convert it to DOCX or TXT and retry.");
+    }
+
     const { data, error } = await supabase.functions.invoke("candidate-screening", {
       body: { 
-        resumeText: text, 
-        jobDescription,
+        resumeText: text.slice(0, 100000), 
+        jobDescription: jobDescription.trim().slice(0, 50000),
         jobTitle,
         requiredExperience,
         requiredEducation
@@ -297,7 +328,29 @@ const Recruiter = () => {
     });
 
     if (error) {
-      throw new Error(error.message || "Failed to analyze candidate");
+      // functions.invoke returns a generic message — read the real server error.
+      let detail = "";
+      let status = 0;
+      const ctx = (error as any)?.context;
+      try {
+        if (ctx instanceof Response) {
+          status = ctx.status;
+          const body = await ctx.clone().json().catch(() => null);
+          detail = body?.error || "";
+        }
+      } catch { /* ignore */ }
+
+      if (status === 403 || /forbidden/i.test(detail)) {
+        throw new Error("Recruiter access required. Enable recruiter mode and try again.");
+      }
+      if (status === 401) {
+        throw new Error("Your session expired. Please sign in again.");
+      }
+      throw new Error(detail || error.message || "Failed to analyze candidate");
+    }
+
+    if (!data?.analysis) {
+      throw new Error("The screening service returned no analysis for this resume.");
     }
 
     // Increment candidate screening counter
@@ -312,6 +365,7 @@ const Recruiter = () => {
       fitScore: normalizeFitScore(data.analysis?.fitScore),
     };
   };
+
 
   const handleAnalyze = async () => {
     if (!jobDescription.trim()) {
@@ -332,9 +386,25 @@ const Recruiter = () => {
       return;
     }
 
+    if (jobDescription.trim().length < 50) {
+      toast({
+        title: "Job Description Too Short",
+        description: "Add at least 50 characters of job description for accurate screening.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Screening is gated to recruiter accounts — switch the account mode first.
+    if (recruiterMode !== true) {
+      const ok = await enableRecruiterMode();
+      if (!ok) return;
+    }
+
     setIsAnalyzing(true);
     setCandidates([]);
     setCurrentAnalyzingIndex(0);
+
 
     try {
       const results: CandidateAnalysis[] = [];
@@ -351,7 +421,7 @@ const Recruiter = () => {
           console.error(`Error analyzing ${file.name}:`, error);
           toast({
             title: `Error analyzing ${file.name}`,
-            description: "This resume could not be processed.",
+            description: error instanceof Error ? error.message : "This resume could not be processed.",
             variant: "destructive",
           });
         }
@@ -1006,6 +1076,21 @@ const Recruiter = () => {
               Industry-standard evaluation using SHRM-aligned criteria for objective candidate assessment
             </p>
           </div>
+
+          {recruiterMode === false && (
+            <div className="mb-8 rounded-xl border border-border bg-muted/40 backdrop-blur-sm p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+              <div className="flex items-start gap-3">
+                <Building2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Your account is set to <span className="font-medium text-foreground">Job Seeker</span>. Candidate screening requires recruiter access.
+                </p>
+              </div>
+              <Button size="sm" onClick={enableRecruiterMode} className="shrink-0">
+                Enable Recruiter Mode
+              </Button>
+            </div>
+          )}
+
 
           {/* Stats Bar */}
           {candidates.length > 0 && (
