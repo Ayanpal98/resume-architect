@@ -1077,6 +1077,21 @@ const Recruiter = () => {
             </p>
           </div>
 
+          {recruiterMode === false && (
+            <div className="mb-8 rounded-xl border border-border bg-muted/40 backdrop-blur-sm p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+              <div className="flex items-start gap-3">
+                <Building2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                <p className="text-sm text-muted-foreground">
+                  Your account is set to <span className="font-medium text-foreground">Job Seeker</span>. Candidate screening requires recruiter access.
+                </p>
+              </div>
+              <Button size="sm" onClick={enableRecruiterMode} className="shrink-0">
+                Enable Recruiter Mode
+              </Button>
+            </div>
+          )}
+
+
           {/* Stats Bar */}
           {candidates.length > 0 && (
             <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
