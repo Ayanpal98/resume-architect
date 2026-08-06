@@ -190,7 +190,34 @@ const Recruiter = () => {
   const [activeTab, setActiveTab] = useState("overview");
   const [convertingFiles, setConvertingFiles] = useState<Set<number>>(new Set());
   const [convertedFiles, setConvertedFiles] = useState<Map<number, { url: string; fileName: string }>>(new Map());
+  const [recruiterMode, setRecruiterMode] = useState<boolean | null>(null);
   const { toast } = useToast();
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setRecruiterMode((user?.user_metadata as any)?.user_type === "institution");
+    })();
+  }, []);
+
+  // Screening requires an institution (recruiter) account. Users can be on this
+  // dashboard with a jobseeker account — let them switch without leaving.
+  const enableRecruiterMode = async (): Promise<boolean> => {
+    const { error } = await supabase.auth.updateUser({ data: { user_type: "institution" } });
+    if (error) {
+      toast({
+        title: "Could not enable recruiter mode",
+        description: "Please sign out and sign back in, then try again.",
+        variant: "destructive",
+      });
+      return false;
+    }
+    // Refresh the session so the JWT carries the updated user_type claim.
+    await supabase.auth.refreshSession();
+    localStorage.setItem("atsfy_user_type", "institution");
+    setRecruiterMode(true);
+    return true;
+  };
 
   const extractTextFromFile = async (file: File): Promise<string> => {
     const extension = file.name.split('.').pop()?.toLowerCase();
