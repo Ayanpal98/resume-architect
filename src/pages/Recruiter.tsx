@@ -386,9 +386,25 @@ const Recruiter = () => {
       return;
     }
 
+    if (jobDescription.trim().length < 50) {
+      toast({
+        title: "Job Description Too Short",
+        description: "Add at least 50 characters of job description for accurate screening.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Screening is gated to recruiter accounts — switch the account mode first.
+    if (recruiterMode !== true) {
+      const ok = await enableRecruiterMode();
+      if (!ok) return;
+    }
+
     setIsAnalyzing(true);
     setCandidates([]);
     setCurrentAnalyzingIndex(0);
+
 
     try {
       const results: CandidateAnalysis[] = [];
