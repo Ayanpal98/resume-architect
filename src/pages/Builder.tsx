@@ -28,7 +28,8 @@ import {
   FolderGit2,
   ShieldCheck,
   ScrollText,
-  TrendingUp
+  TrendingUp,
+  Palette
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
