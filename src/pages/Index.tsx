@@ -8,6 +8,7 @@ import { SampleReportsShowcase } from "@/components/SampleReportsShowcase";
 import { WaitlistSection } from "@/components/WaitlistSection";
 import { CareerIntelligenceSection } from "@/components/CareerIntelligenceSection";
 import { RecruiterIntelligenceSection, TwoSidedPlatformSection } from "@/components/RecruiterIntelligenceSection";
+import { TestimonialsSection } from "@/components/TestimonialsSection";
 
 import { useAuth } from "@/contexts/AuthContext";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
