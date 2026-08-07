@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 import Security from "./pages/Security";
 import Privacy from "./pages/Privacy";
 import DeepImprovement from "./pages/DeepImprovement";
+import PortfolioStudio from "./pages/PortfolioStudio";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
             <Route path="/recruiter" element={<ProtectedRoute><Recruiter /></ProtectedRoute>} />
             <Route path="/career-intelligence" element={<ProtectedRoute><CareerIntelligence /></ProtectedRoute>} />
             <Route path="/deep-improvement" element={<ProtectedRoute><DeepImprovement /></ProtectedRoute>} />
+            <Route path="/portfolio-studio" element={<ProtectedRoute><PortfolioStudio /></ProtectedRoute>} />
             <Route path="/security" element={<Security />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

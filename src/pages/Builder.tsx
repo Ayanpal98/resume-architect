@@ -28,7 +28,8 @@ import {
   FolderGit2,
   ShieldCheck,
   ScrollText,
-  TrendingUp
+  TrendingUp,
+  Palette
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
@@ -508,6 +509,20 @@ const Builder = () => {
                 </div>
               </DialogContent>
             </Dialog>
+
+            <Link to="/portfolio-studio" className="block">
+              <div className="rounded-lg border border-dashed border-primary/40 bg-card p-4 hover:bg-muted/40 transition-colors">
+                <div className="flex items-start gap-3">
+                  <Palette className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <div className="text-sm font-medium text-foreground">Portfolio Studio — for non-technical backgrounds</div>
+                    <div className="text-xs text-muted-foreground mt-0.5">
+                      Build a market-aligned portfolio with free no-code tools and see the job specifications hiring in your domain.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
 
             <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
               <Download className="w-4 h-4 sm:mr-2" />
