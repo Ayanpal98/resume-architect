@@ -12,6 +12,7 @@ ATSFy provides AI-powered resume optimization, ATS hiring readiness scoring, car
 - [ATS Analysis](/ats-analysis): Hiring readiness score, keyword coverage, and prioritized fixes.
 - [Career Intelligence](/career-intelligence): 5-module premium engine — roadmap, skills, role-fit, coaching, rejection decoder.
 - [Deep Improvement](/deep-improvement): Section-by-section AI improvements and optimization reports.
+- [Portfolio Studio](/portfolio-studio): No-code portfolio blueprint and domain job specifications for non-technical backgrounds.
 - [Recruiter](/recruiter): Bulk candidate screening dashboard for hiring teams.
 - [Security](/security): Data security, JWT-authenticated edge functions, and 24-hour deletion policy.
 - [Privacy](/privacy): Privacy policy and data handling practices.
