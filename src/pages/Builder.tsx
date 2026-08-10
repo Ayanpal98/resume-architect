@@ -333,18 +333,42 @@ const Builder = () => {
     }
   };
 
-  const sections = [
-    { id: "personal", label: "Personal Info", icon: User },
-    { id: "experience", label: "Experience", icon: Briefcase },
-    { id: "education", label: "Education", icon: GraduationCap },
-    { id: "skills", label: "Skills", icon: Wrench },
-    { id: "projects", label: "Projects", icon: FolderGit2 },
-    { id: "optimize", label: "AI Optimize", icon: Sparkles },
-    { id: "report", label: "Report", icon: BarChart3 },
-    { id: "jobmatch", label: "Job Match", icon: Target },
-    { id: "coverletter", label: "Cover Letter", icon: FileText },
-    { id: "roadmap", label: "Career Roadmap", icon: Compass },
+  const sectionDone: Record<string, boolean> = {
+    personal: Boolean(resumeData.personalInfo.fullName.trim() && resumeData.personalInfo.email.trim()),
+    experience: resumeData.experience.length > 0,
+    education: resumeData.education.length > 0,
+    skills: resumeData.skills.length > 0,
+    projects: (resumeData.projects || []).length > 0,
+  };
+
+  const sectionGroups = [
+    {
+      title: "Your resume",
+      items: [
+        { id: "personal", label: "Personal Info", icon: User },
+        { id: "experience", label: "Experience", icon: Briefcase },
+        { id: "education", label: "Education", icon: GraduationCap },
+        { id: "skills", label: "Skills", icon: Wrench },
+        { id: "projects", label: "Projects", icon: FolderGit2 },
+      ],
+    },
+    {
+      title: "Intelligence",
+      items: [
+        { id: "optimize", label: "AI Optimize", icon: Sparkles },
+        { id: "report", label: "Report", icon: BarChart3 },
+        { id: "jobmatch", label: "Job Match", icon: Target },
+        { id: "coverletter", label: "Cover Letter", icon: FileText },
+        { id: "roadmap", label: "Career Roadmap", icon: Compass },
+      ],
+    },
   ];
+
+  const sections = sectionGroups.flatMap((g) => g.items);
+  const completedCount = Object.values(sectionDone).filter(Boolean).length;
+  const completionPct = Math.round((completedCount / 5) * 100);
+  const activeMeta = sections.find((s) => s.id === activeSection);
+
 
   return (
     <div className="min-h-screen bg-background">
