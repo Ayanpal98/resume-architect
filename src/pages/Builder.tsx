@@ -367,7 +367,6 @@ const Builder = () => {
   const sections = sectionGroups.flatMap((g) => g.items);
   const completedCount = Object.values(sectionDone).filter(Boolean).length;
   const completionPct = Math.round((completedCount / 5) * 100);
-  const activeMeta = sections.find((s) => s.id === activeSection);
 
 
   return (
