@@ -422,15 +422,9 @@ const Builder = () => {
               </DialogContent>
             </Dialog>
 
-            {/* Comparison Dialog - only show if we have original data to compare */}
+            {/* Comparison Dialog - opened from the Tools menu */}
             {originalResumeData && (
               <Dialog open={showComparison} onOpenChange={setShowComparison}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="px-2 sm:px-3 hidden md:flex">
-                    <GitCompare className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden lg:inline">Compare</span>
-                  </Button>
-                </DialogTrigger>
                 <DialogContent className="w-[95vw] max-w-lg max-h-[85vh] overflow-y-auto mx-auto">
                   <ResumeComparison
                     originalData={originalResumeData}
@@ -441,25 +435,73 @@ const Builder = () => {
               </Dialog>
             )}
 
-            <Link to="/career-intelligence">
-              <Button variant="outline" size="sm" className="px-2 sm:px-3 border-accent/40 text-accent-foreground bg-accent/10 hover:bg-accent/20" title="Career Intelligence">
-                <Compass className="w-4 h-4 sm:mr-2" />
-                <span className="hidden lg:inline">Career Intelligence</span>
-              </Button>
-            </Link>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="px-2 sm:px-3 border-primary/40 text-primary bg-primary/5 hover:bg-primary/10"
-                  title="Deep Resume Improvement"
-                >
-                  <ShieldCheck className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden lg:inline">Deep Improvement</span>
+            {/* Consolidated tools menu keeps the header clean */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="px-2 sm:px-3">
+                  <Sparkles className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Tools</span>
+                  <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-60" />
                 </Button>
-              </DialogTrigger>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuLabel className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Career engine
+                </DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link to="/career-intelligence" className="flex items-start gap-3 cursor-pointer">
+                    <Compass className="w-4 h-4 text-primary mt-0.5" />
+                    <span>
+                      <span className="block text-sm font-medium">Career Intelligence</span>
+                      <span className="block text-xs text-muted-foreground">Role trajectory, market and skill signals</span>
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowDeepInfo(true)} className="flex items-start gap-3 cursor-pointer">
+                  <ShieldCheck className="w-4 h-4 text-primary mt-0.5" />
+                  <span>
+                    <span className="block text-sm font-medium">Deep Improvement</span>
+                    <span className="block text-xs text-muted-foreground">Evidence-linked rewrite to recruiter-grade</span>
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/portfolio-studio" className="flex items-start gap-3 cursor-pointer">
+                    <Palette className="w-4 h-4 text-primary mt-0.5" />
+                    <span>
+                      <span className="block text-sm font-medium">Portfolio Studio</span>
+                      <span className="block text-xs text-muted-foreground">For non-technical backgrounds</span>
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Document
+                </DropdownMenuLabel>
+                <DropdownMenuItem onSelect={() => setShowTemplates(true)} className="flex items-center gap-3 cursor-pointer sm:hidden">
+                  <Layout className="w-4 h-4" />
+                  <span className="text-sm">Change template</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setShowComparison(true)}
+                  disabled={!originalResumeData}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <GitCompare className="w-4 h-4" />
+                  <span className="text-sm">Compare before / after</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowImport(true)} className="flex items-center gap-3 cursor-pointer">
+                  <Upload className="w-4 h-4" />
+                  <span className="text-sm">Import a resume</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => signOut()} className="flex items-center gap-3 cursor-pointer text-destructive focus:text-destructive">
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={showDeepInfo} onOpenChange={setShowDeepInfo}>
               <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto mx-auto">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
@@ -497,7 +539,7 @@ const Builder = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => setShowImport(true)}
+                      onClick={() => { setShowDeepInfo(false); setShowImport(true); }}
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload my real resume
@@ -510,30 +552,14 @@ const Builder = () => {
               </DialogContent>
             </Dialog>
 
-            <Link to="/portfolio-studio" className="block">
-              <div className="rounded-lg border border-dashed border-primary/40 bg-card p-4 hover:bg-muted/40 transition-colors">
-                <div className="flex items-start gap-3">
-                  <Palette className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <div className="text-sm font-medium text-foreground">Portfolio Studio — for non-technical backgrounds</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      Build a market-aligned portfolio with free no-code tools and see the job specifications hiring in your domain.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-
             <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="px-2 sm:px-3" title="Sign Out">
-              <LogOut className="w-4 h-4" />
-            </Button>
           </div>
         </div>
       </header>
+
 
       {/* Main Content */}
       <main className="pt-24 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-6">
