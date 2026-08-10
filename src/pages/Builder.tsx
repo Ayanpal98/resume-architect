@@ -29,7 +29,8 @@ import {
   ShieldCheck,
   ScrollText,
   TrendingUp,
-  Palette
+  Palette,
+  ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
