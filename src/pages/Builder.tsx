@@ -135,6 +135,7 @@ const Builder = () => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showATSDetails, setShowATSDetails] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+  const [showDeepInfo, setShowDeepInfo] = useState(false);
   const [originalResumeData, setOriginalResumeData] = useState<ResumeData | null>(null);
 
   // Handle incoming state from ATS analysis page
