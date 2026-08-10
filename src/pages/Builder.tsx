@@ -29,7 +29,8 @@ import {
   ShieldCheck,
   ScrollText,
   TrendingUp,
-  Palette
+  Palette,
+  ChevronDown
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadPDF, ResumeData } from "@/lib/pdfGenerator";
@@ -56,6 +57,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Sheet,
   SheetContent,
@@ -126,6 +135,7 @@ const Builder = () => {
   const [showTemplates, setShowTemplates] = useState(false);
   const [showATSDetails, setShowATSDetails] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+  const [showDeepInfo, setShowDeepInfo] = useState(false);
   const [originalResumeData, setOriginalResumeData] = useState<ResumeData | null>(null);
 
   // Handle incoming state from ATS analysis page
@@ -323,18 +333,41 @@ const Builder = () => {
     }
   };
 
-  const sections = [
-    { id: "personal", label: "Personal Info", icon: User },
-    { id: "experience", label: "Experience", icon: Briefcase },
-    { id: "education", label: "Education", icon: GraduationCap },
-    { id: "skills", label: "Skills", icon: Wrench },
-    { id: "projects", label: "Projects", icon: FolderGit2 },
-    { id: "optimize", label: "AI Optimize", icon: Sparkles },
-    { id: "report", label: "Report", icon: BarChart3 },
-    { id: "jobmatch", label: "Job Match", icon: Target },
-    { id: "coverletter", label: "Cover Letter", icon: FileText },
-    { id: "roadmap", label: "Career Roadmap", icon: Compass },
+  const sectionDone: Record<string, boolean> = {
+    personal: Boolean(resumeData.personalInfo.fullName.trim() && resumeData.personalInfo.email.trim()),
+    experience: resumeData.experience.length > 0,
+    education: resumeData.education.length > 0,
+    skills: resumeData.skills.length > 0,
+    projects: (resumeData.projects || []).length > 0,
+  };
+
+  const sectionGroups = [
+    {
+      title: "Your resume",
+      items: [
+        { id: "personal", label: "Personal Info", icon: User },
+        { id: "experience", label: "Experience", icon: Briefcase },
+        { id: "education", label: "Education", icon: GraduationCap },
+        { id: "skills", label: "Skills", icon: Wrench },
+        { id: "projects", label: "Projects", icon: FolderGit2 },
+      ],
+    },
+    {
+      title: "Intelligence",
+      items: [
+        { id: "optimize", label: "AI Optimize", icon: Sparkles },
+        { id: "report", label: "Report", icon: BarChart3 },
+        { id: "jobmatch", label: "Job Match", icon: Target },
+        { id: "coverletter", label: "Cover Letter", icon: FileText },
+        { id: "roadmap", label: "Career Roadmap", icon: Compass },
+      ],
+    },
   ];
+
+  const sections = sectionGroups.flatMap((g) => g.items);
+  const completedCount = Object.values(sectionDone).filter(Boolean).length;
+  const completionPct = Math.round((completedCount / 5) * 100);
+
 
   return (
     <div className="min-h-screen bg-background">
@@ -422,15 +455,9 @@ const Builder = () => {
               </DialogContent>
             </Dialog>
 
-            {/* Comparison Dialog - only show if we have original data to compare */}
+            {/* Comparison Dialog - opened from the Tools menu */}
             {originalResumeData && (
               <Dialog open={showComparison} onOpenChange={setShowComparison}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" size="sm" className="px-2 sm:px-3 hidden md:flex">
-                    <GitCompare className="w-4 h-4 sm:mr-2" />
-                    <span className="hidden lg:inline">Compare</span>
-                  </Button>
-                </DialogTrigger>
                 <DialogContent className="w-[95vw] max-w-lg max-h-[85vh] overflow-y-auto mx-auto">
                   <ResumeComparison
                     originalData={originalResumeData}
@@ -441,25 +468,73 @@ const Builder = () => {
               </Dialog>
             )}
 
-            <Link to="/career-intelligence">
-              <Button variant="outline" size="sm" className="px-2 sm:px-3 border-accent/40 text-accent-foreground bg-accent/10 hover:bg-accent/20" title="Career Intelligence">
-                <Compass className="w-4 h-4 sm:mr-2" />
-                <span className="hidden lg:inline">Career Intelligence</span>
-              </Button>
-            </Link>
-
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="px-2 sm:px-3 border-primary/40 text-primary bg-primary/5 hover:bg-primary/10"
-                  title="Deep Resume Improvement"
-                >
-                  <ShieldCheck className="w-4 h-4 sm:mr-2" />
-                  <span className="hidden lg:inline">Deep Improvement</span>
+            {/* Consolidated tools menu keeps the header clean */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="px-2 sm:px-3">
+                  <Sparkles className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Tools</span>
+                  <ChevronDown className="w-3.5 h-3.5 ml-1 opacity-60" />
                 </Button>
-              </DialogTrigger>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-72">
+                <DropdownMenuLabel className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Career engine
+                </DropdownMenuLabel>
+                <DropdownMenuItem asChild>
+                  <Link to="/career-intelligence" className="flex items-start gap-3 cursor-pointer">
+                    <Compass className="w-4 h-4 text-primary mt-0.5" />
+                    <span>
+                      <span className="block text-sm font-medium">Career Intelligence</span>
+                      <span className="block text-xs text-muted-foreground">Role trajectory, market and skill signals</span>
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowDeepInfo(true)} className="flex items-start gap-3 cursor-pointer">
+                  <ShieldCheck className="w-4 h-4 text-primary mt-0.5" />
+                  <span>
+                    <span className="block text-sm font-medium">Deep Improvement</span>
+                    <span className="block text-xs text-muted-foreground">Evidence-linked rewrite to recruiter-grade</span>
+                  </span>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/portfolio-studio" className="flex items-start gap-3 cursor-pointer">
+                    <Palette className="w-4 h-4 text-primary mt-0.5" />
+                    <span>
+                      <span className="block text-sm font-medium">Portfolio Studio</span>
+                      <span className="block text-xs text-muted-foreground">For non-technical backgrounds</span>
+                    </span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-[11px] uppercase tracking-widest text-muted-foreground">
+                  Document
+                </DropdownMenuLabel>
+                <DropdownMenuItem onSelect={() => setShowTemplates(true)} className="flex items-center gap-3 cursor-pointer sm:hidden">
+                  <Layout className="w-4 h-4" />
+                  <span className="text-sm">Change template</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={() => setShowComparison(true)}
+                  disabled={!originalResumeData}
+                  className="flex items-center gap-3 cursor-pointer"
+                >
+                  <GitCompare className="w-4 h-4" />
+                  <span className="text-sm">Compare before / after</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setShowImport(true)} className="flex items-center gap-3 cursor-pointer">
+                  <Upload className="w-4 h-4" />
+                  <span className="text-sm">Import a resume</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => signOut()} className="flex items-center gap-3 cursor-pointer text-destructive focus:text-destructive">
+                  <LogOut className="w-4 h-4" />
+                  <span className="text-sm">Sign out</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={showDeepInfo} onOpenChange={setShowDeepInfo}>
               <DialogContent className="w-[95vw] max-w-2xl max-h-[85vh] overflow-y-auto mx-auto">
                 <DialogHeader>
                   <DialogTitle className="flex items-center gap-2">
@@ -497,7 +572,7 @@ const Builder = () => {
                     <Button
                       variant="outline"
                       className="flex-1"
-                      onClick={() => setShowImport(true)}
+                      onClick={() => { setShowDeepInfo(false); setShowImport(true); }}
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       Upload my real resume
@@ -510,30 +585,14 @@ const Builder = () => {
               </DialogContent>
             </Dialog>
 
-            <Link to="/portfolio-studio" className="block">
-              <div className="rounded-lg border border-dashed border-primary/40 bg-card p-4 hover:bg-muted/40 transition-colors">
-                <div className="flex items-start gap-3">
-                  <Palette className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                  <div>
-                    <div className="text-sm font-medium text-foreground">Portfolio Studio — for non-technical backgrounds</div>
-                    <div className="text-xs text-muted-foreground mt-0.5">
-                      Build a market-aligned portfolio with free no-code tools and see the job specifications hiring in your domain.
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Link>
-
             <Button variant="hero" size="sm" onClick={handleDownload} className="px-2 sm:px-3">
               <Download className="w-4 h-4 sm:mr-2" />
               <span className="hidden sm:inline">Download PDF</span>
             </Button>
-            <Button variant="ghost" size="sm" onClick={signOut} className="px-2 sm:px-3" title="Sign Out">
-              <LogOut className="w-4 h-4" />
-            </Button>
           </div>
         </div>
       </header>
+
 
       {/* Main Content */}
       <main className="pt-24 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-6">
@@ -610,25 +669,65 @@ const Builder = () => {
                   </DialogContent>
                 </Dialog>
 
+                {/* Resume completeness */}
+                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-5 shadow-sm">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-[11px] font-semibold tracking-widest uppercase text-muted-foreground">
+                      Resume completeness
+                    </span>
+                    <span className="text-sm font-semibold text-foreground tabular-nums">{completionPct}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-hero transition-all duration-500"
+                      style={{ width: `${completionPct}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {completedCount} of 5 core sections filled
+                  </p>
+                </div>
+
                 {/* Navigation - horizontal scrollable on mobile */}
-                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-2 sm:p-4 shadow-sm">
+                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-2 sm:p-3 shadow-sm">
                   <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 -mx-1 px-1">
-                    {sections.map((section) => (
-                      <button
-                        key={section.id}
-                        onClick={() => setActiveSection(section.id)}
-                        className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-left transition-all whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${
-                          activeSection === section.id
-                            ? "bg-primary text-primary-foreground"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        <section.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="font-medium text-sm sm:text-base">{section.label}</span>
-                      </button>
+                    {sectionGroups.map((group) => (
+                      <div key={group.title} className="contents lg:block lg:w-full">
+                        <div className="hidden lg:block px-3 pt-3 pb-1.5 text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/70">
+                          {group.title}
+                        </div>
+                        {group.items.map((section) => {
+                          const isActive = activeSection === section.id;
+                          const done = sectionDone[section.id];
+                          return (
+                            <button
+                              key={section.id}
+                              onClick={() => setActiveSection(section.id)}
+                              aria-current={isActive ? "page" : undefined}
+                              className={`group relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${
+                                isActive
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              <span
+                                className={`hidden lg:block absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full transition-all ${
+                                  isActive ? "bg-primary" : "bg-transparent"
+                                }`}
+                              />
+                              <section.icon className="w-4 h-4 shrink-0" />
+                              <span className="text-sm">{section.label}</span>
+                              {done && (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-accent ml-auto hidden lg:block" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
                     ))}
                   </nav>
                 </div>
+
 
                 {/* Tips - hidden on mobile */}
                 <div className="bg-primary/5 rounded-xl sm:rounded-2xl border border-primary/20 p-4 sm:p-6 hidden sm:block">
