@@ -670,25 +670,65 @@ const Builder = () => {
                   </DialogContent>
                 </Dialog>
 
+                {/* Resume completeness */}
+                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-4 sm:p-5 shadow-sm">
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-[11px] font-semibold tracking-widest uppercase text-muted-foreground">
+                      Resume completeness
+                    </span>
+                    <span className="text-sm font-semibold text-foreground tabular-nums">{completionPct}%</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-hero transition-all duration-500"
+                      style={{ width: `${completionPct}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {completedCount} of 5 core sections filled
+                  </p>
+                </div>
+
                 {/* Navigation - horizontal scrollable on mobile */}
-                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-2 sm:p-4 shadow-sm">
+                <div className="bg-card rounded-xl sm:rounded-2xl border border-border p-2 sm:p-3 shadow-sm">
                   <nav className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0 -mx-1 px-1">
-                    {sections.map((section) => (
-                      <button
-                        key={section.id}
-                        onClick={() => setActiveSection(section.id)}
-                        className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-lg sm:rounded-xl text-left transition-all whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${
-                          activeSection === section.id
-                            ? "bg-primary text-primary-foreground"
-                            : "hover:bg-muted text-muted-foreground hover:text-foreground"
-                        }`}
-                      >
-                        <section.icon className="w-4 h-4 sm:w-5 sm:h-5" />
-                        <span className="font-medium text-sm sm:text-base">{section.label}</span>
-                      </button>
+                    {sectionGroups.map((group) => (
+                      <div key={group.title} className="contents lg:block lg:w-full">
+                        <div className="hidden lg:block px-3 pt-3 pb-1.5 text-[10px] font-semibold tracking-widest uppercase text-muted-foreground/70">
+                          {group.title}
+                        </div>
+                        {group.items.map((section) => {
+                          const isActive = activeSection === section.id;
+                          const done = sectionDone[section.id];
+                          return (
+                            <button
+                              key={section.id}
+                              onClick={() => setActiveSection(section.id)}
+                              aria-current={isActive ? "page" : undefined}
+                              className={`group relative flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-left transition-all whitespace-nowrap flex-shrink-0 lg:flex-shrink lg:w-full ${
+                                isActive
+                                  ? "bg-primary/10 text-primary font-semibold"
+                                  : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                              }`}
+                            >
+                              <span
+                                className={`hidden lg:block absolute left-0 top-1.5 bottom-1.5 w-0.5 rounded-full transition-all ${
+                                  isActive ? "bg-primary" : "bg-transparent"
+                                }`}
+                              />
+                              <section.icon className="w-4 h-4 shrink-0" />
+                              <span className="text-sm">{section.label}</span>
+                              {done && (
+                                <CheckCircle2 className="w-3.5 h-3.5 text-accent ml-auto hidden lg:block" />
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
                     ))}
                   </nav>
                 </div>
+
 
                 {/* Tips - hidden on mobile */}
                 <div className="bg-primary/5 rounded-xl sm:rounded-2xl border border-primary/20 p-4 sm:p-6 hidden sm:block">
