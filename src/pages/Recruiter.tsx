@@ -193,7 +193,21 @@ const Recruiter = () => {
   const [convertingFiles, setConvertingFiles] = useState<Set<number>>(new Set());
   const [convertedFiles, setConvertedFiles] = useState<Map<number, { url: string; fileName: string }>>(new Map());
   const [recruiterMode, setRecruiterMode] = useState<boolean | null>(null);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
+  const [showCompare, setShowCompare] = useState(false);
   const { toast } = useToast();
+
+  const toggleCompare = (id: string) => {
+    setCompareIds((prev) => {
+      if (prev.includes(id)) return prev.filter((x) => x !== id);
+      if (prev.length >= 4) {
+        toast({ title: "Compare up to 4 candidates", description: "Deselect one to add another." });
+        return prev;
+      }
+      return [...prev, id];
+    });
+  };
+
 
   useEffect(() => {
     (async () => {
