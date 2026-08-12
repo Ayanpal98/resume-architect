@@ -186,7 +186,6 @@ const Builder = () => {
   // Calculate ATS score using the comprehensive checker
   const atsResult = checkATSCompatibility(resumeData);
   const atsScore = atsResult.overallScore;
-  const nextStep = getNextStep(atsResult, isEvaluated);
   
   // Check if resume has meaningful content to evaluate
   const hasContent = resumeData.personalInfo.fullName.trim() || 
