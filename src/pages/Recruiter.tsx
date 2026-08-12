@@ -1479,6 +1479,8 @@ interface CandidateCardProps {
   getRecommendationBadge: (rec: CandidateAnalysis["recommendation"]) => JSX.Element;
   activeTab: string;
   setActiveTab: (tab: string) => void;
+  isCompared: boolean;
+  onToggleCompare: () => void;
 }
 
 const CandidateCard = ({
@@ -1492,10 +1494,13 @@ const CandidateCard = ({
   getRecommendationBadge,
   activeTab,
   setActiveTab,
+  isCompared,
+  onToggleCompare,
 }: CandidateCardProps) => {
   return (
     <div className={`border rounded-xl overflow-hidden transition-all ${
-      
+      isCompared ? "ring-2 ring-primary/40 " : ""
+    }${
       candidate.status === "shortlisted" ? "border-accent bg-accent/5" :
       candidate.status === "rejected" ? "border-destructive/50 bg-destructive/5" :
       "border-border"
@@ -1507,10 +1512,18 @@ const CandidateCard = ({
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-4 flex-1">
+            <div className="pt-1" onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                checked={isCompared}
+                onCheckedChange={onToggleCompare}
+                aria-label="Select candidate for comparison"
+              />
+            </div>
             <div className={`w-14 h-14 rounded-xl flex flex-col items-center justify-center ${getScoreColor(candidate.overallScore)} bg-current/10`}>
               <span className="text-xl font-bold">{candidate.overallScore}</span>
               <span className="text-[10px] opacity-70">#{rank}</span>
             </div>
+
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <h4 className="font-semibold text-foreground truncate">
