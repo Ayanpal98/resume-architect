@@ -195,6 +195,7 @@ const Builder = () => {
                      resumeData.skills.length > 0 ||
                      resumeData.summary.trim();
   const isEvaluated = Boolean(hasContent);
+  const nextStep = getNextStep(atsResult, isEvaluated);
 
   const updatePersonalInfo = (field: string, value: string) => {
     setResumeData((prev) => ({
