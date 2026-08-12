@@ -48,7 +48,7 @@ import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { OptimizationReport } from "@/components/OptimizationReport";
 import { CareerRoadmap } from "@/components/CareerRoadmap";
-import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
+import { checkATSCompatibility, ATSCheckResult, getScoreBgColor, getScoreColor, getScoreLabel, getPassProbabilityLabel } from "@/lib/atsChecker";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog,
