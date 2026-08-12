@@ -36,6 +36,8 @@ import {
 } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { GhostScreeningPreview } from "@/components/GhostScreeningPreview";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CandidateCompare } from "@/components/CandidateCompare";
 
 interface EducationDetails {
   degree: string;
