@@ -48,7 +48,7 @@ import { ATSScorePreview } from "@/components/ATSScorePreview";
 import { ResumeImprovementPanel } from "@/components/ResumeImprovementPanel";
 import { OptimizationReport } from "@/components/OptimizationReport";
 import { CareerRoadmap } from "@/components/CareerRoadmap";
-import { checkATSCompatibility, ATSCheckResult, getScoreBgColor } from "@/lib/atsChecker";
+import { checkATSCompatibility, ATSCheckResult, getScoreBgColor, getScoreColor, getScoreLabel, getPassProbabilityLabel } from "@/lib/atsChecker";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   Dialog,
@@ -119,6 +119,41 @@ const initialResumeData: ResumeData = {
   projects: [],
 };
 
+// Derive the single most impactful next action for the job seeker from the ATS analysis.
+function getNextStep(
+  result: ATSCheckResult,
+  evaluated: boolean
+): { tip: string; tone: "fix" | "boost" | "ready" } {
+  if (!evaluated) {
+    return { tip: "Add your name and contact details to start scoring", tone: "fix" };
+  }
+  // Prioritise failing (must-fix) categories by weight.
+  const failing = result.categories
+    .filter((c) => !c.passed)
+    .sort((a, b) => b.weight - a.weight);
+  if (failing.length > 0 && failing[0].issues.length > 0) {
+    const issue = failing[0].issues[0];
+    return {
+      tip: issue.length > 64 ? issue.slice(0, 61) + "…" : issue,
+      tone: "fix",
+    };
+  }
+  if (result.overallScore >= 85) {
+    return { tip: "Interview-ready — run a job match to confirm fit", tone: "ready" };
+  }
+  // Otherwise point at the weakest category to boost.
+  const weakest = [...result.categories].sort(
+    (a, b) => a.score / a.maxScore - b.score / b.maxScore
+  )[0];
+  if (weakest) {
+    return {
+      tip: `Boost ${weakest.name.toLowerCase()} to push past ${result.overallScore}%`,
+      tone: "boost",
+    };
+  }
+  return { tip: "Keep adding experience and skills to raise your score", tone: "boost" };
+}
+
 const Builder = () => {
   const { signOut } = useAuth();
   const location = useLocation();
@@ -160,6 +195,7 @@ const Builder = () => {
                      resumeData.skills.length > 0 ||
                      resumeData.summary.trim();
   const isEvaluated = Boolean(hasContent);
+  const nextStep = getNextStep(atsResult, isEvaluated);
 
   const updatePersonalInfo = (field: string, value: string) => {
     setResumeData((prev) => ({
@@ -597,6 +633,89 @@ const Builder = () => {
       {/* Main Content */}
       <main className="pt-24 sm:pt-24 pb-8 sm:pb-12 px-3 sm:px-6">
         <div className="container mx-auto max-w-7xl">
+          {/* Hiring Readiness hero — always-visible score + one next step */}
+          <div className="mb-4 sm:mb-6">
+            <div className="glass-strong rounded-2xl border border-border p-4 sm:p-5 shadow-lg">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6">
+                {/* Score */}
+                <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+                  <div
+                    className={`w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center text-white font-bold text-xl sm:text-2xl ${
+                      isEvaluated ? getScoreBgColor(atsScore) : "bg-muted-foreground/20"
+                    }`}
+                  >
+                    {isEvaluated ? atsScore : "—"}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-display font-bold text-base sm:text-lg text-foreground">
+                        Hiring Readiness
+                      </span>
+                      {isEvaluated && (
+                        <span className={`text-xs font-semibold ${getScoreColor(atsScore)}`}>
+                          {getScoreLabel(atsScore)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-0.5 max-w-[16rem]">
+                      {isEvaluated
+                        ? getPassProbabilityLabel(atsScore)
+                        : "Start building to see how hireable your resume is"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Progress + next step */}
+                <div className="flex-1 min-w-0">
+                  <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+                    <div
+                      className={`h-full transition-all duration-700 ${
+                        isEvaluated ? getScoreBgColor(atsScore) : "bg-muted-foreground/20"
+                      }`}
+                      style={{ width: `${isEvaluated ? atsScore : 0}%` }}
+                    />
+                  </div>
+                  {isEvaluated && (
+                    <div className="flex items-center gap-1.5 mt-2.5">
+                      {(() => {
+                        const Icon =
+                          nextStep.tone === "fix"
+                            ? AlertCircle
+                            : nextStep.tone === "boost"
+                            ? TrendingUp
+                            : CheckCircle2;
+                        const toneCls =
+                          nextStep.tone === "fix"
+                            ? "text-amber-500"
+                            : nextStep.tone === "boost"
+                            ? "text-primary"
+                            : "text-accent";
+                        return (
+                          <>
+                            <Icon className={`w-3.5 h-3.5 shrink-0 ${toneCls}`} />
+                            <span className="text-xs sm:text-sm text-foreground/80 truncate">
+                              {nextStep.tip}
+                            </span>
+                          </>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </div>
+
+                {/* CTA */}
+                <button
+                  onClick={() => setShowATSDetails(true)}
+                  disabled={!isEvaluated}
+                  className="shrink-0 inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-primary hover:underline disabled:text-muted-foreground disabled:no-underline"
+                >
+                  View full analysis
+                  <ArrowLeft className="w-3.5 h-3.5 rotate-180" />
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
             {/* Sidebar - horizontal scroll on mobile */}
             <div className="lg:col-span-3 order-1">
