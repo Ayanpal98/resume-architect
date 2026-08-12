@@ -1423,6 +1423,8 @@ const Recruiter = () => {
                           getRecommendationBadge={getRecommendationBadge}
                           activeTab={activeTab}
                           setActiveTab={setActiveTab}
+                          isCompared={compareIds.includes(candidate.id)}
+                          onToggleCompare={() => toggleCompare(candidate.id)}
                         />
                       ))}
                     </div>
@@ -1432,10 +1434,39 @@ const Recruiter = () => {
             </div>
           </div>
         </div>
+
+        {/* Compare tray */}
+        {compareIds.length > 0 && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[min(92vw,44rem)]">
+            <div className="glass-strong rounded-2xl border border-border shadow-xl px-4 py-3 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-foreground">
+                  {compareIds.length} selected for comparison
+                </p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {candidates.filter((c) => compareIds.includes(c.id)).map((c) => c.name || c.fileName).join(" · ")}
+                </p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={() => setCompareIds([])}>Clear</Button>
+              <Button size="sm" disabled={compareIds.length < 2} onClick={() => setShowCompare(true)}>
+                <BarChart3 className="w-4 h-4 mr-2" />Compare
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <CandidateCompare
+          open={showCompare}
+          onOpenChange={setShowCompare}
+          candidates={candidates.filter((c) => compareIds.includes(c.id))}
+          jobTitle={jobTitle}
+          computeConfidence={(c) => computeHiringConfidence(c as CandidateAnalysis)}
+        />
       </main>
     </div>
   );
 };
+
 
 interface CandidateCardProps {
   candidate: CandidateAnalysis;
