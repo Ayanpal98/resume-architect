@@ -119,6 +119,41 @@ const initialResumeData: ResumeData = {
   projects: [],
 };
 
+// Derive the single most impactful next action for the job seeker from the ATS analysis.
+function getNextStep(
+  result: ATSCheckResult,
+  evaluated: boolean
+): { tip: string; tone: "fix" | "boost" | "ready" } {
+  if (!evaluated) {
+    return { tip: "Add your name and contact details to start scoring", tone: "fix" };
+  }
+  // Prioritise failing (must-fix) categories by weight.
+  const failing = result.categories
+    .filter((c) => !c.passed)
+    .sort((a, b) => b.weight - a.weight);
+  if (failing.length > 0 && failing[0].issues.length > 0) {
+    const issue = failing[0].issues[0];
+    return {
+      tip: issue.length > 64 ? issue.slice(0, 61) + "…" : issue,
+      tone: "fix",
+    };
+  }
+  if (result.overallScore >= 85) {
+    return { tip: "Interview-ready — run a job match to confirm fit", tone: "ready" };
+  }
+  // Otherwise point at the weakest category to boost.
+  const weakest = [...result.categories].sort(
+    (a, b) => a.score / a.maxScore - b.score / b.maxScore
+  )[0];
+  if (weakest) {
+    return {
+      tip: `Boost ${weakest.name.toLowerCase()} to push past ${result.overallScore}%`,
+      tone: "boost",
+    };
+  }
+  return { tip: "Keep adding experience and skills to raise your score", tone: "boost" };
+}
+
 const Builder = () => {
   const { signOut } = useAuth();
   const location = useLocation();
