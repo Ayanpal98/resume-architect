@@ -3,10 +3,10 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, ArrowDown, ListOrdered, Percent, GitCompare, MessageSquare, AlertTriangle, FileBarChart, CheckCircle2 } from "lucide-react";
 
 const KPIS = [
-  { value: "95%", label: "Match Accuracy" },
+  { value: "Alignment", label: "Candidate-Job Fit" },
   { value: "Bulk", label: "Resume Screening" },
   { value: "Ranked", label: "Candidate Ranking Engine" },
-  { value: "SHRM", label: "Aligned Evaluation" },
+  { value: "Evidence", label: "Based Evaluation" },
 ];
 
 const CARDS = [
@@ -24,13 +24,16 @@ export const RecruiterIntelligenceSection = () => (
   <section id="hiring-intelligence" className="py-16 sm:py-24 px-4 sm:px-6 bg-card border-t border-border/60">
     <div className="container mx-auto max-w-6xl">
       <div className="max-w-2xl mb-10 sm:mb-14">
-        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— Hiring Intelligence</div>
+        <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">— For Recruiters</div>
         <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground leading-tight tracking-tight mb-4">
-          Hire faster with <em className="italic font-normal text-primary">AI-powered candidate intelligence.</em>
+          Understand <em className="italic font-normal text-primary">candidate-job alignment.</em>
         </h2>
         <p className="text-base sm:text-lg text-muted-foreground leading-relaxed font-sans">
-          Upload a job description and multiple resumes. ATSFy evaluates, ranks, and explains every candidate using
-          recruiter-grade screening logic.
+          Move beyond surface-level resume screening with structured insights into how a candidate's profile relates
+          to the requirements of a role — skills, experience, strengths, gaps, and risk indicators.
+        </p>
+        <p className="text-xs text-muted-foreground/80 font-sans mt-3">
+          ATSFy supports hiring decisions with evidence and structure. It does not replace recruiters or make final hiring decisions.
         </p>
       </div>
 
@@ -75,7 +78,7 @@ export const RecruiterIntelligenceSection = () => (
             </div>
             <Link to="/recruiter" className="block mt-5">
               <Button variant="hero" size="lg" className="w-full">
-                Screen Candidates
+                I'm Hiring
                 <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
