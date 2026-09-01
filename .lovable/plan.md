@@ -1,53 +1,46 @@
+# ATSFy Landing Page — Market-Centric Refinement
 
-## Goal
-Add a polished, full-length PDF export for each of the 5 Career Intelligence outputs — Roadmap, Skill Analysis, Role Fit Score, AI Coaching, and Rejection Decoder — including every field from the AI response, styled as a premium, easy-to-read user report.
+Frontend-only repositioning of the landing page: copy, layout, and visual hierarchy. No changes to backend, DB, APIs, auth, routes, scoring, reports, or any dashboard functionality. All existing CTAs keep their current routes (`/welcome`, `/auth`, `/recruiter`).
 
-## Approach
-Client-side generation using `jsPDF` + `jspdf-autotable` (already used elsewhere for report exports). No edge function changes, no new server calls. Each report is generated from the existing `results[mode]` state so the full JSON payload is rendered — no data omitted.
+## Scope: files touched
 
-## What gets added
+- `src/pages/Index.tsx` — full section reorder + copy rewrite (largest change)
+- `src/components/PricingSection.tsx` — copy polish only (transparency line, "Premium reports are paid"); keep ₹199/₹499/₹1499 and recruiter tiers exactly as-is
+- `src/components/RecruiterIntelligenceSection.tsx` — headline/copy reframed as candidate-job alignment decision support (layout kept)
+- `src/components/CareerIntelligenceSection.tsx` — light copy alignment to "Insight" layer of the report journey
+- `src/components/TestimonialsSection.tsx` — verify personas are clearly fictional/illustrative; remove or soften any success-rate claims
+- `src/components/LiveStatsCounter.tsx` — keep component, but label counters as platform activity (no fake success metrics); hero metric cards labeled "Illustrative example"
+- Not touched: routes, auth, builder, recruiter dashboard, edge functions, pricing amounts, brand tokens
 
-**1. New util: `src/lib/careerIntelligencePdf.ts`**
-A single module exporting one function per mode:
-- `exportRoadmapPdf(data, profile)`
-- `exportSkillAnalysisPdf(data, profile)`
-- `exportRoleFitPdf(data, profile)`
-- `exportCoachingPdf(data, profile)`
-- `exportRejectionDecoderPdf(data, profile)`
+## New landing page structure (top → bottom)
 
-Each function shares a common premium layout:
-- Cover header: ATSFy gradient bar, report title, candidate current → target role, industry, timeline, generation date
-- Executive summary / verdict block
-- Section-per-field rendering with auto page-breaks
-- Tables for structured arrays (phases, dimensions, skills, questions, reasons, actions)
-- Bullet lists for string arrays
-- Readiness/score visual bars where numeric scores exist
-- Footer on every page: page X of Y, ATSFy Technologies™ trademark, UUID, timestamp, 24h data deletion notice, AI disclaimer (matches project compliance rules)
-- Consistent typography: sans-serif, heading weights, muted section labels, accent color for scores
+1. **Nav** — unchanged; links updated to new anchors (Problem, How it Works, Reports, Pricing)
+2. **Hero** — Headline: "Know Where You Stand Before You Apply." Sub: ATS readiness, job match, skill gaps, improvement areas before applying. Primary CTA "Analyze My Profile" → `/welcome`; secondary "I'm Hiring" → `/recruiter`. Support line: "AI-powered • Explainable • Merit-first". Right-side visual reworked from resume skeleton to the CANDIDATE → JOB → ANALYSIS → INSIGHT flow; metric cards labeled "Illustrative example".
+3. **Problem** — "A better resume doesn't always mean a better job match." Four cards: Resume Readiness / Role Alignment / Skill Gaps / Career Direction, ending with "ATSfy connects these signals instead of treating your resume as the whole story."
+4. **Differentiator ladder** — "ATS Readiness is only one part of the picture." Visual vertical flow: ATS Readiness → Job Match → Career Insight, each with its one-line question. Any numbers marked "Illustrative example".
+5. **Report journey** — "One profile. Multiple layers of intelligence." Numbered 01–04 (ATS Readiness, Resume Optimization, Job Match Analysis, Career Insights) with the visual READINESS → OPTIMIZATION → MATCH → INSIGHT chain. Reuses existing report descriptions; links into existing SampleReportsShowcase.
+6. **Honest optimization** — "Optimize your profile. Don't fabricate it." Three principles: Evidence / Alignment / Transparency. (Absorbs the current Deep Resume Improvement band's message.)
+7. **For Job Seekers** — "Make Better Applications, Not Just Better Resumes." Check → Improve → Match → Plan chips mapped to existing reports. CTA "Analyze My Profile".
+8. **For Recruiters** — reuse RecruiterIntelligenceSection with reframed headline "Understand Candidate-Job Alignment", decision-support disclaimer, CTA "I'm Hiring" → `/recruiter`. Keep TwoSidedPlatformSection.
+9. **Explainable AI** — "Don't just show a score. Show what it means." Flow: Score → Evidence → Gap → Recommendation.
+10. **How ATSFy Works** — replace current 3-step pipeline with the 5-step flow: Profile → Resume → Target Job → Analysis → Insight.
+11. **Who it's for** — compact 5-chip grid: Students & Freshers, Job Seekers, Career Switchers, Experienced Professionals, Recruiters.
+12. **Trust** — "Merit over presentation." Evidence/alignment/transparency copy; no bias-free or guaranteed-outcome claims. Keep Security/Privacy/Grievance footer links.
+13. **Pricing** — existing section + added line "Premium reports are paid. No subscriptions for job seekers, no hidden tiers."
+14. **Sample reports showcase** — kept, moved after pricing as proof of output.
+15. **Waitlist + Testimonials** — kept; testimonials checked for unsupported claims.
+16. **Final CTA** — "Before your next application, know where you stand." with "Start Your Analysis" / "I'm Hiring".
+17. **Footer** — unchanged.
 
-Field coverage per mode (all fields from the edge function schemas):
-- **Roadmap**: executive_summary, readiness_score, target_score, phases[] (phase, title, objective, actions, deliverables, expected_score_after), quick_wins, certifications[] (name, provider, priority, cost, time), networking (target_companies, communities, events)
-- **Skill Analysis**: summary, strong_skills[], missing_critical_skills[], skills_to_deprioritize[], emerging_skills_to_watch[], recommended_skill_stack
-- **Role Fit**: overall_fit_score, verdict, dimensions[] (name, score, weight, observations) as a table, positioning_strategy, risks, opportunities
-- **AI Coaching**: coaching_summary, likely_interview_questions[] (question, how_to_answer, red_flags_to_avoid), talking_points, weakness_mitigation[], elevator_pitch, outreach_template, confidence_builders
-- **Rejection Decoder**: decoded_summary, likely_reasons[] with severity color coding, what_recruiters_actually_meant[], recovery_actions[], portfolio_fixes[], next_attempt_strategy
+## Removed/toned down
 
-**2. `src/pages/CareerIntelligence.tsx` edits**
-- Import the export functions.
-- Add a "Download PDF Report" button (with Download icon) to the top-right of each of the 5 result views (`RoadmapView`, `SkillAnalysisView`, `RoleFitView`, `CoachingView`, `RejectionDecoderView`), passing the current `data` and `profile`.
-- Button disabled when data is null; toast on success/failure.
+- Excessive glassmorphism and blur orbs reduced to subtle accents (tokens unchanged, fewer usages)
+- Hero metric cards and any stats framed as illustrative, not performance claims
+- "We guarantee you become visible…" replaced with defensible wording
+- LiveStatsCounter retained but framed as platform activity, not success rates
 
-## Not changing
-- Edge functions
-- AI prompts / schemas
-- Pricing, auth, layout of the input sidebar
+## Verification
 
-## Technical notes
-- jsPDF + jspdf-autotable are already in `package.json` (used by `pdfGenerator.ts` / `reportGenerator.ts`), so no new deps.
-- Long text fields use `splitTextToSize` for proper wrapping.
-- Every section calls a `checkPageBreak(y, needed)` helper so nothing gets cut off — "full length" is guaranteed.
-- Filenames: `ATSFy_<Mode>_<TargetRole>_<YYYY-MM-DD>.pdf`.
-
-## Files touched
-- Create: `src/lib/careerIntelligencePdf.ts`
-- Edit: `src/pages/CareerIntelligence.tsx` (5 buttons + imports)
+- Typecheck passes; preview loads on desktop + mobile viewport
+- Click through every CTA: `/welcome`, `/auth`, `/recruiter`, `/security`, `/privacy` still work
+- Acceptance checklist: positioning clear in hero, audiences separated, report journey connected, pricing ₹199/₹499/₹1499 visible, no fabricated stats, no functionality touched
