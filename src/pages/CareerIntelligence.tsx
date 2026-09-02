@@ -180,16 +180,17 @@ const CareerIntelligence = () => {
         </div>
       )}
 
-      <div className="container mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[360px_1fr] gap-6">
+      <div className="container mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[340px_1fr] gap-6">
         {/* Profile Builder Sidebar */}
-        <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pb-4">
+        <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pb-4 order-2 lg:order-1">
           <div>
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-accent font-semibold mb-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Profile Builder
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Your Details
             </div>
-            <h2 className="text-xl font-display font-bold text-foreground">Tell us about yourself</h2>
-            <p className="text-xs text-muted-foreground mt-1">The more we know, the more precise your roadmap.</p>
+            <h2 className="text-lg font-display font-bold text-foreground">Where you are, where you're going</h2>
+            <p className="text-xs text-muted-foreground mt-1">The more you share, the sharper your intelligence.</p>
           </div>
+
 
           {/* Candidate */}
           <Card className="border-border/60">
@@ -321,19 +322,39 @@ const CareerIntelligence = () => {
         </aside>
 
         {/* Main panel */}
-        <main className="min-w-0">
+        <main className="min-w-0 order-1 lg:order-2 space-y-8">
+          {/* 1 + 2 + 3 + 4 — Command center */}
+          <CommandCenter
+            profile={profile}
+            results={results}
+            loadingMode={loadingMode}
+            onGenerate={generate}
+            onOpen={(m) => setActiveTab(m)}
+            onNavigate={(to) => navigate(to)}
+          />
+
+          {/* 5 — Your Target Jobs */}
+          <TargetJobsSection
+            profile={profile}
+            results={results}
+            loading={loadingMode === "role_fit"}
+            onAnalyze={() => generate("role_fit")}
+            onOpen={() => setActiveTab("role_fit")}
+          />
+
+          {/* 6 — Your Progress */}
+          <ProgressSection results={results} />
+
+          {/* 7 — Your Intelligence library + reports */}
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as Mode)}>
-            {(() => {
-              const readyCount = (Object.values(results) as any[]).filter(Boolean).length;
-              if (readyCount === 0) return null;
-              return (
-                <div className="mb-3 flex items-center justify-between gap-3 flex-wrap rounded-lg border border-accent/30 bg-gradient-card p-3">
-                  <div className="min-w-0">
-                    <div className="text-sm font-semibold text-foreground">Export All Reports</div>
-                    <div className="text-xs text-muted-foreground">
-                      {readyCount} of 5 sections ready — combine into one full-length PDF.
-                    </div>
-                  </div>
+            <SectionLead
+              eyebrow="Your Intelligence"
+              title="Career Intelligence Library"
+              desc="Every report you generate stays here — ready to read, re-run or download."
+              action={(() => {
+                const readyCount = (Object.values(results) as any[]).filter(Boolean).length;
+                if (readyCount === 0) return null;
+                return (
                   <Button
                     size="sm"
                     variant="hero"
@@ -347,74 +368,79 @@ const CareerIntelligence = () => {
                       }
                     }}
                   >
-                    <Download className="w-4 h-4" /> Export All Reports
+                    <Download className="w-4 h-4" /> Download all ({readyCount})
                   </Button>
-                </div>
-              );
-            })()}
-            <TabsList className="w-full justify-start overflow-x-auto bg-card border border-border h-auto p-1">
-              <TabsTrigger value="roadmap" className="gap-1.5"><TrendingUp className="w-4 h-4" /> Roadmap</TabsTrigger>
-              <TabsTrigger value="skill_analysis" className="gap-1.5"><Brain className="w-4 h-4" /> Skill Analysis</TabsTrigger>
-              <TabsTrigger value="role_fit" className="gap-1.5"><Target className="w-4 h-4" /> Role Fit Score</TabsTrigger>
-              <TabsTrigger value="ai_coaching" className="gap-1.5"><MessageCircle className="w-4 h-4" /> AI Coaching</TabsTrigger>
-              <TabsTrigger value="rejection_decoder" className="gap-1.5"><ShieldCheck className="w-4 h-4" /> Rejection Decoder</TabsTrigger>
-            </TabsList>
+                );
+              })()}
+            />
+
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 mb-6">
+              {REPORT_LIBRARY.map((r) => (
+                <LibraryCard
+                  key={r.mode}
+                  meta={r}
+                  ready={Boolean(results[r.mode])}
+                  active={activeTab === r.mode}
+                  loading={loadingMode === r.mode}
+                  onOpen={() => setActiveTab(r.mode)}
+                  onGenerate={() => generate(r.mode)}
+                />
+              ))}
+            </div>
 
             {/* Roadmap */}
-            <TabsContent value="roadmap" className="mt-5">
+            <TabsContent value="roadmap" className="mt-0">
               {results.roadmap ? (
                 <RoadmapView data={results.roadmap} profile={profile} />
               ) : (
-                <EmptyState
+                <ActionEmpty
+                  title="No roadmap yet"
+                  desc="Add your target role, then build a step-by-step path from where you are to where you want to be."
+                  loading={loadingMode === "roadmap"}
+                  onRun={() => generate("roadmap")}
+                  cta="Build my roadmap"
                   icon={<Globe className="w-7 h-7 text-primary" />}
-                  title="Build your career roadmap"
-                  desc="Fill in your profile and click Generate to receive a personalised, step-by-step pathway crafted by AI."
-                  cards={[
-                    { icon: <BookOpen className="w-4 h-4" />, label: "Skill Analysis" },
-                    { icon: <Award className="w-4 h-4" />, label: "Certifications" },
-                    { icon: <Zap className="w-4 h-4" />, label: "AI Coaching" },
-                  ]}
                 />
               )}
             </TabsContent>
 
             {/* Skill Analysis */}
-            <TabsContent value="skill_analysis" className="mt-5">
+            <TabsContent value="skill_analysis" className="mt-0">
               {results.skill_analysis ? (
                 <SkillAnalysisView data={results.skill_analysis} profile={profile} />
               ) : (
                 <ActionEmpty
-                  title="Skill Intelligence Report"
-                  desc="See which of your skills are market-strong, what's missing, and the exact resources to close the gap."
+                  title="No skill review yet"
+                  desc="See which of your skills carry weight in the market, what's missing, and how to close the gap."
                   loading={loadingMode === "skill_analysis"}
                   onRun={() => generate("skill_analysis")}
-                  cta="Run Skill Analysis"
+                  cta="Review my skills"
                   icon={<Brain className="w-7 h-7 text-primary" />}
                 />
               )}
             </TabsContent>
 
             {/* Role Fit */}
-            <TabsContent value="role_fit" className="mt-5">
+            <TabsContent value="role_fit" className="mt-0">
               {results.role_fit ? (
                 <RoleFitView data={results.role_fit} profile={profile} />
               ) : (
                 <ActionEmpty
-                  title="Role Fit Score"
-                  desc="A multi-dimensional assessment of your readiness for the target role."
+                  title="No job analysis yet"
+                  desc="Your next opportunity starts here. Analyse a real job and see how you align before you apply."
                   loading={loadingMode === "role_fit"}
                   onRun={() => generate("role_fit")}
-                  cta="Calculate Fit Score"
+                  cta="Analyse a job"
                   icon={<Target className="w-7 h-7 text-primary" />}
                 />
               )}
             </TabsContent>
 
             {/* AI Coaching */}
-            <TabsContent value="ai_coaching" className="mt-5">
+            <TabsContent value="ai_coaching" className="mt-0">
               <Card className="border-border/60 mb-4">
                 <CardContent className="p-4 space-y-2">
-                  <label className="text-xs font-medium text-foreground">Coaching focus (optional)</label>
+                  <label className="text-xs font-medium text-foreground">What do you want coaching on? (optional)</label>
                   <Input
                     placeholder="e.g. interview prep for product analytics role"
                     value={profile.coachingTopic}
@@ -426,21 +452,21 @@ const CareerIntelligence = () => {
                 <CoachingView data={results.ai_coaching} profile={profile} />
               ) : (
                 <ActionEmpty
-                  title="AI Coaching Session"
-                  desc="Get likely interview questions, talking points, weakness mitigation, and an outreach template."
+                  title="No coaching session yet"
+                  desc="Get the questions you'll likely face, how to answer them, and how to talk about your gaps."
                   loading={loadingMode === "ai_coaching"}
                   onRun={() => generate("ai_coaching")}
-                  cta="Start Coaching"
+                  cta="Prepare me"
                   icon={<MessageCircle className="w-7 h-7 text-primary" />}
                 />
               )}
             </TabsContent>
 
             {/* Rejection Decoder */}
-            <TabsContent value="rejection_decoder" className="mt-5">
+            <TabsContent value="rejection_decoder" className="mt-0">
               <Card className="border-border/60 mb-4">
                 <CardContent className="p-4 space-y-2">
-                  <label className="text-xs font-medium text-foreground">Paste rejection feedback (optional)</label>
+                  <label className="text-xs font-medium text-foreground">Paste the rejection you received (optional)</label>
                   <Textarea
                     placeholder="Paste the recruiter's rejection email, or describe what happened..."
                     value={profile.rejectionFeedback}
@@ -453,11 +479,11 @@ const CareerIntelligence = () => {
                 <RejectionView data={results.rejection_decoder} profile={profile} />
               ) : (
                 <ActionEmpty
-                  title="Rejection Decoder"
-                  desc="Decode why applications were rejected and convert it into a targeted recovery plan."
+                  title="Nothing to decode yet"
+                  desc="Turn a rejection into a plan. Find out what likely went wrong and what to fix first."
                   loading={loadingMode === "rejection_decoder"}
                   onRun={() => generate("rejection_decoder")}
-                  cta="Decode Rejection"
+                  cta="Decode a rejection"
                   icon={<ShieldCheck className="w-7 h-7 text-primary" />}
                 />
               )}
@@ -465,6 +491,7 @@ const CareerIntelligence = () => {
           </Tabs>
         </main>
       </div>
+
 
       <ComplianceFooter />
     </div>
