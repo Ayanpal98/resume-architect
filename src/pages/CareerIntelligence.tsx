@@ -180,16 +180,17 @@ const CareerIntelligence = () => {
         </div>
       )}
 
-      <div className="container mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[360px_1fr] gap-6">
+      <div className="container mx-auto px-4 sm:px-6 py-6 grid lg:grid-cols-[340px_1fr] gap-6">
         {/* Profile Builder Sidebar */}
-        <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pb-4">
+        <aside className="space-y-5 lg:sticky lg:top-20 lg:self-start lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto pb-4 order-2 lg:order-1">
           <div>
             <div className="flex items-center gap-2 text-xs uppercase tracking-wider text-accent font-semibold mb-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Profile Builder
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Your Details
             </div>
-            <h2 className="text-xl font-display font-bold text-foreground">Tell us about yourself</h2>
-            <p className="text-xs text-muted-foreground mt-1">The more we know, the more precise your roadmap.</p>
+            <h2 className="text-lg font-display font-bold text-foreground">Where you are, where you're going</h2>
+            <p className="text-xs text-muted-foreground mt-1">The more you share, the sharper your intelligence.</p>
           </div>
+
 
           {/* Candidate */}
           <Card className="border-border/60">
