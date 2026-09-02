@@ -275,6 +275,9 @@ export const PricingSection = () => {
           <p className="text-muted-foreground text-sm sm:text-base lg:text-lg font-sans">
             One-time intelligence reports for candidates. Monthly screening plans for recruiters. Every feature listed below is live in the product today.
           </p>
+          <p className="text-xs sm:text-sm text-muted-foreground/80 font-sans mt-3 sm:mt-4">
+            Premium reports are paid. No subscriptions for job seekers, no hidden tiers.
+          </p>
         </div>
 
         <Tabs defaultValue="jobseeker" className="w-full">

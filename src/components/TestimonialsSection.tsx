@@ -9,17 +9,17 @@ const testimonials = [
     name: "Arjun Mehta",
     title: "Senior Product Manager",
     company: "Placed at a SaaS scale-up",
-    metric: "3x interview callbacks",
+    metric: "More interview callbacks",
   },
   {
     id: "recruiter",
     role: "Recruiter",
     quote:
-      "We were drowning in resumes for every open role. ATSFy gave us a structured way to rank candidates by signal, not just tenure. It cut our first-round filtering time by more than half and made the hiring conversation more objective.",
+      "We were drowning in resumes for every open role. ATSFy gave us a structured way to rank candidates by signal, not just tenure. It cut our first-round filtering time noticeably and made the hiring conversation more objective.",
     name: "Priya Desai",
     title: "Head of Talent Acquisition",
     company: "Mid-size technology firm",
-    metric: "50% faster shortlisting",
+    metric: "Faster shortlisting",
   },
 ];
 
@@ -28,12 +28,18 @@ export const TestimonialsSection = () => {
     <section className="py-16 sm:py-24 px-4 sm:px-6 border-t border-border/60 bg-gradient-to-b from-background to-primary/[0.03]">
       <div className="container mx-auto max-w-6xl">
         <div className="max-w-2xl mb-10 sm:mb-14">
-          <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
-            — Proof of Value
+          <div className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4 flex items-center gap-3">
+            <span>— Proof of Value</span>
+            <span className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2 py-0.5 text-[10px] tracking-[0.12em] text-muted-foreground/80">
+              Illustrative
+            </span>
           </div>
           <h2 className="font-display text-3xl sm:text-4xl md:text-5xl font-medium text-foreground leading-tight tracking-tight">
             Trusted by job seekers. <em className="italic font-normal text-primary">Built for recruiters.</em>
           </h2>
+          <p className="text-xs sm:text-sm text-muted-foreground/70 font-sans mt-4">
+            Personas are illustrative and composite — not endorsements by real, named individuals.
+          </p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6">
@@ -63,7 +69,7 @@ export const TestimonialsSection = () => {
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-display text-2xl font-medium text-accent tracking-tight">
+                  <div className="font-display text-lg sm:text-xl font-medium text-accent tracking-tight">
                     {t.metric}
                   </div>
                 </div>
