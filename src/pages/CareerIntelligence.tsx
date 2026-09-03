@@ -72,6 +72,21 @@ const initialProfile: Profile = {
 
 type Mode = "roadmap" | "skill_analysis" | "role_fit" | "ai_coaching" | "rejection_decoder";
 
+interface ReportMeta {
+  mode: Mode;
+  label: string;
+  tagline: string;
+  icon: React.ReactNode;
+}
+
+const REPORT_LIBRARY: ReportMeta[] = [
+  { mode: "roadmap", label: "Career Roadmap", tagline: "Your step-by-step path to the target role", icon: <Globe className="w-4 h-4" /> },
+  { mode: "skill_analysis", label: "Skill Intelligence", tagline: "What's strong, what's missing, what's next", icon: <Brain className="w-4 h-4" /> },
+  { mode: "role_fit", label: "Role Fit", tagline: "How you align with a real job posting", icon: <Target className="w-4 h-4" /> },
+  { mode: "ai_coaching", label: "Interview Coaching", tagline: "Questions, answers and your pitch", icon: <MessageCircle className="w-4 h-4" /> },
+  { mode: "rejection_decoder", label: "Rejection Decoder", tagline: "Turn a 'no' into your next move", icon: <ShieldCheck className="w-4 h-4" /> },
+];
+
 const CareerIntelligence = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>(initialProfile);
