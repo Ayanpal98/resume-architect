@@ -72,6 +72,21 @@ const initialProfile: Profile = {
 
 type Mode = "roadmap" | "skill_analysis" | "role_fit" | "ai_coaching" | "rejection_decoder";
 
+interface ReportMeta {
+  mode: Mode;
+  label: string;
+  tagline: string;
+  icon: React.ReactNode;
+}
+
+const REPORT_LIBRARY: ReportMeta[] = [
+  { mode: "roadmap", label: "Career Roadmap", tagline: "Your step-by-step path to the target role", icon: <Globe className="w-4 h-4" /> },
+  { mode: "skill_analysis", label: "Skill Intelligence", tagline: "What's strong, what's missing, what's next", icon: <Brain className="w-4 h-4" /> },
+  { mode: "role_fit", label: "Role Fit", tagline: "How you align with a real job posting", icon: <Target className="w-4 h-4" /> },
+  { mode: "ai_coaching", label: "Interview Coaching", tagline: "Questions, answers and your pitch", icon: <MessageCircle className="w-4 h-4" /> },
+  { mode: "rejection_decoder", label: "Rejection Decoder", tagline: "Turn a 'no' into your next move", icon: <ShieldCheck className="w-4 h-4" /> },
+];
+
 const CareerIntelligence = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>(initialProfile);
@@ -943,25 +958,292 @@ const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
   </div>
 );
 
-/* ---------- Empty States ---------- */
+/* ---------- Command Center & Layout Primitives ---------- */
 
-const EmptyState = ({ icon, title, desc, cards }: { icon: React.ReactNode; title: string; desc: string; cards: { icon: React.ReactNode; label: string }[] }) => (
-  <div className="flex flex-col items-center justify-center py-20 text-center">
-    <div className="w-16 h-16 rounded-2xl bg-card border border-border flex items-center justify-center shadow-sm mb-5">
-      {icon}
+const SectionLead = ({ eyebrow, title, desc, action }: { eyebrow: string; title: string; desc?: string; action?: React.ReactNode }) => (
+  <div className="flex items-end justify-between gap-4 flex-wrap mb-4">
+    <div className="min-w-0">
+      <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-accent font-semibold mb-1">
+        <span className="w-1.5 h-1.5 rounded-full bg-accent" /> {eyebrow}
+      </div>
+      <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground leading-tight">{title}</h2>
+      {desc && <p className="text-sm text-muted-foreground mt-1 max-w-2xl">{desc}</p>}
     </div>
-    <h3 className="text-2xl font-display font-bold text-foreground mb-2">{title}</h3>
-    <p className="text-sm text-muted-foreground max-w-md mb-6">{desc}</p>
-    <div className="grid grid-cols-3 gap-3 w-full max-w-sm">
-      {cards.map((c, i) => (
-        <div key={i} className="rounded-xl border border-border bg-card p-3 text-center">
-          <div className="w-8 h-8 mx-auto rounded-lg bg-muted flex items-center justify-center text-foreground mb-1.5">{c.icon}</div>
-          <div className="text-xs text-muted-foreground">{c.label}</div>
-        </div>
-      ))}
-    </div>
+    {action}
   </div>
 );
+
+const LibraryCard = ({
+  meta, ready, active, loading, onOpen, onGenerate,
+}: {
+  meta: ReportMeta; ready: boolean; active: boolean; loading: boolean;
+  onOpen: () => void; onGenerate: () => void;
+}) => (
+  <button
+    type="button"
+    onClick={ready ? onOpen : onGenerate}
+    disabled={loading}
+    className={`text-left rounded-xl border p-4 transition-all group ${
+      active ? "border-accent/70 bg-accent/5 shadow-sm" : "border-border/70 bg-card hover:border-accent/40"
+    }`}
+  >
+    <div className="flex items-start justify-between gap-2">
+      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${ready ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground"}`}>
+        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : meta.icon}
+      </div>
+      <Badge variant="outline" className="text-[10px] shrink-0">
+        {loading ? "Working" : ready ? "Ready" : "Not run"}
+      </Badge>
+    </div>
+    <div className="mt-3 font-display font-semibold text-sm text-foreground">{meta.label}</div>
+    <p className="text-xs text-muted-foreground mt-0.5">{meta.tagline}</p>
+    <div className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
+      {ready ? "Open report" : "Generate"} <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+    </div>
+  </button>
+);
+
+const StatTile = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
+  <div className="rounded-xl border border-border/70 bg-card p-4">
+    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
+    <div className="text-base font-display font-bold text-foreground mt-1 truncate">{value}</div>
+    {hint && <div className="text-xs text-muted-foreground mt-0.5 truncate">{hint}</div>}
+  </div>
+);
+
+const CommandCenter = ({
+  profile, results, loadingMode, onGenerate, onOpen, onNavigate,
+}: {
+  profile: Profile;
+  results: Record<Mode, any | null>;
+  loadingMode: Mode | null;
+  onGenerate: (m: Mode) => void;
+  onOpen: (m: Mode) => void;
+  onNavigate: (to: string) => void;
+}) => {
+  const roadmap = results.roadmap;
+  const readiness: number | null = typeof roadmap?.readiness_score === "number" ? roadmap.readiness_score : null;
+  const target: number | null = typeof roadmap?.target_score === "number" ? roadmap.target_score : null;
+
+  const gaps: string[] = (results.skill_analysis?.missing_critical_skills || [])
+    .map((s: any) => s?.skill).filter(Boolean).slice(0, 4);
+
+  const nextActions: string[] = (
+    roadmap?.quick_wins?.length
+      ? roadmap.quick_wins
+      : roadmap?.phases?.[0]?.actions || []
+  ).slice(0, 3);
+
+  return (
+    <section className="rounded-2xl border border-border/70 bg-gradient-card overflow-hidden">
+      <div className="p-5 sm:p-6 border-b border-border/60">
+        <div className="flex items-start justify-between gap-5 flex-wrap">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-accent font-semibold mb-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Command Center
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground leading-tight">
+              {profile.targetRole
+                ? <>Your path to <span className="text-gradient">{profile.targetRole}</span></>
+                : "Where you are, and what's next"}
+            </h2>
+            <p className="text-sm text-muted-foreground mt-1.5 max-w-xl">
+              {readiness !== null
+                ? "Here's your current readiness, the gaps holding you back, and the next moves that matter."
+                : "Fill in your details on the left, then generate your roadmap to see readiness, gaps and next steps."}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="text-center">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Readiness</div>
+              <div className="text-4xl font-bold text-primary leading-none mt-1">{readiness !== null ? `${readiness}%` : "—"}</div>
+            </div>
+            <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            <div className="text-center">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Target</div>
+              <div className="text-4xl font-bold text-accent leading-none mt-1">{target !== null ? `${target}%` : "—"}</div>
+            </div>
+          </div>
+        </div>
+
+        {readiness !== null && (
+          <div className="mt-5">
+            <Progress value={readiness} className="h-2" />
+          </div>
+        )}
+      </div>
+
+      <div className="p-5 sm:p-6 grid gap-4 md:grid-cols-3">
+        <StatTile label="Today" value={profile.currentRole || "Add your current role"} hint={profile.yearsOfExperience || "Experience not set"} />
+        <StatTile label="Destination" value={profile.targetRole || "Add a target role"} hint={profile.industry || "Industry not set"} />
+        <StatTile label="Timeline" value={profile.timeline} hint={`${profile.focusAreas.length} focus area${profile.focusAreas.length === 1 ? "" : "s"}`} />
+      </div>
+
+      <div className="px-5 sm:px-6 pb-5 sm:pb-6 grid gap-4 lg:grid-cols-2">
+        {/* Gaps */}
+        <div className="rounded-xl border border-border/70 bg-card p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertTriangle className="w-4 h-4 text-warning" />
+            <h3 className="font-display font-semibold text-sm text-foreground">What's holding you back</h3>
+          </div>
+          {gaps.length > 0 ? (
+            <ul className="space-y-1.5">
+              {gaps.map((g, i) => (
+                <li key={i} className="text-sm text-foreground flex gap-2">
+                  <span className="text-warning">•</span> {g}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">Run a skill review to see the exact gaps between you and the role.</p>
+              <Button size="sm" variant="outline" disabled={loadingMode !== null} onClick={() => onGenerate("skill_analysis")}>
+                {loadingMode === "skill_analysis" ? <><Loader2 className="w-4 h-4 animate-spin" /> Reviewing...</> : <>Review my skills</>}
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Next actions */}
+        <div className="rounded-xl border border-border/70 bg-card p-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Rocket className="w-4 h-4 text-accent" />
+            <h3 className="font-display font-semibold text-sm text-foreground">Do this next</h3>
+          </div>
+          {nextActions.length > 0 ? (
+            <ul className="space-y-1.5">
+              {nextActions.map((a, i) => (
+                <li key={i} className="text-sm text-foreground flex gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" /> {a}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-muted-foreground">Your roadmap will tell you exactly what to do first.</p>
+              <Button size="sm" variant="hero" disabled={loadingMode !== null} onClick={() => onGenerate("roadmap")}>
+                {loadingMode === "roadmap" ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate roadmap</>}
+              </Button>
+            </div>
+          )}
+          <div className="flex flex-wrap gap-2 mt-4">
+            {roadmap && (
+              <Button size="sm" variant="outline" onClick={() => onOpen("roadmap")}>Open roadmap</Button>
+            )}
+            <Button size="sm" variant="ghost" className="gap-1" onClick={() => onNavigate("/builder")}>
+              Update my resume <ChevronRight className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const TargetJobsSection = ({
+  profile, results, loading, onAnalyze, onOpen,
+}: {
+  profile: Profile;
+  results: Record<Mode, any | null>;
+  loading: boolean;
+  onAnalyze: () => void;
+  onOpen: () => void;
+}) => {
+  const fit = results.role_fit;
+  const hasJd = profile.jobDescription.trim().length > 0;
+
+  return (
+    <section>
+      <SectionLead
+        eyebrow="Your Target Jobs"
+        title="How you align with the roles you want"
+        desc="Paste a job description in the panel on the left, then see where you match and where you fall short — before you apply."
+        action={
+          <Button size="sm" variant={fit ? "outline" : "hero"} disabled={loading} onClick={fit ? onOpen : onAnalyze}>
+            {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Analysing...</> : fit ? "Open analysis" : "Analyse this job"}
+          </Button>
+        }
+      />
+      <div className="rounded-2xl border border-border/70 bg-card p-5">
+        {fit ? (
+          <div className="grid gap-4 sm:grid-cols-[auto_1fr] items-center">
+            <div className="text-center sm:text-left">
+              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Overall fit</div>
+              <div className="text-4xl font-bold text-primary">{fit.overall_fit_score}%</div>
+              {fit.verdict && <Badge variant="outline" className="mt-1 text-[10px]">{fit.verdict}</Badge>}
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm text-foreground">{fit.positioning_strategy}</p>
+              <div className="flex flex-wrap gap-1.5 mt-3">
+                {(fit.dimensions || []).slice(0, 4).map((d: any, i: number) => (
+                  <Badge key={i} variant="secondary" className="text-[10px]">{d.name}: {d.score}%</Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center shrink-0">
+                <Target className="w-5 h-5 text-muted-foreground" />
+              </div>
+              <div>
+                <div className="font-display font-semibold text-foreground">Your next opportunity starts here</div>
+                <p className="text-sm text-muted-foreground mt-0.5">
+                  {hasJd ? "Job description added — run the analysis to see your alignment." : "Add a job description to unlock a precise fit score."}
+                </p>
+              </div>
+            </div>
+            <Button variant="hero" disabled={loading} onClick={onAnalyze}>
+              {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Analysing...</> : <><Sparkles className="w-4 h-4" /> Analyse alignment</>}
+            </Button>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+const ProgressSection = ({ results }: { results: Record<Mode, any | null> }) => {
+  const done = REPORT_LIBRARY.filter((r) => Boolean(results[r.mode]));
+  const pct = Math.round((done.length / REPORT_LIBRARY.length) * 100);
+
+  return (
+    <section>
+      <SectionLead
+        eyebrow="Your Progress"
+        title="How complete your career picture is"
+        desc="Each report adds another layer of clarity. Complete all five for the full view."
+      />
+      <div className="rounded-2xl border border-border/70 bg-card p-5">
+        <div className="flex items-center justify-between text-sm mb-2">
+          <span className="font-medium text-foreground">{done.length} of {REPORT_LIBRARY.length} reports generated</span>
+          <span className="text-muted-foreground">{pct}%</span>
+        </div>
+        <Progress value={pct} className="h-2" />
+        <div className="flex flex-wrap gap-1.5 mt-4">
+          {REPORT_LIBRARY.map((r) => {
+            const ready = Boolean(results[r.mode]);
+            return (
+              <Badge
+                key={r.mode}
+                variant="outline"
+                className={`text-[10px] gap-1 ${ready ? "border-accent/50 text-accent" : "text-muted-foreground"}`}
+              >
+                {ready ? <CheckCircle2 className="w-3 h-3" /> : <span className="w-3 h-3 rounded-full border border-current inline-block" />}
+                {r.label}
+              </Badge>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ---------- Empty States ---------- */
+
 
 const ActionEmpty = ({ title, desc, loading, onRun, cta, icon }: { title: string; desc: string; loading: boolean; onRun: () => void; cta: string; icon: React.ReactNode }) => (
   <div className="flex flex-col items-center justify-center py-16 text-center">
