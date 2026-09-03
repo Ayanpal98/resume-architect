@@ -159,9 +159,9 @@ const CareerIntelligence = () => {
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Link to="/builder" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+            <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
               <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm hidden sm:inline">Back to Builder</span>
+              <span className="text-sm hidden sm:inline">Home</span>
             </Link>
             <div className="h-5 w-px bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
@@ -178,6 +178,24 @@ const CareerIntelligence = () => {
           <Badge variant="outline" className="hidden md:inline-flex gap-1.5 border-accent/40 text-accent-foreground bg-accent/10">
             <Sparkles className="w-3 h-3" /> Job Seekers Only
           </Badge>
+        </div>
+        <div className="border-t border-border/60 bg-background/60">
+          <div className="container mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto no-scrollbar py-1.5">
+            {[
+              { to: "/builder", label: "My Resume" },
+              { to: "/ats-analysis", label: "ATS Readiness & Job Match" },
+              { to: "/deep-improvement", label: "Resume Optimization" },
+              { to: "/portfolio-studio", label: "Portfolio Studio" },
+            ].map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="whitespace-nowrap text-xs sm:text-sm px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
 

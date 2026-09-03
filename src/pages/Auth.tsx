@@ -20,8 +20,8 @@ const PORTALS: Record<Portal, { label: string; tag: string; blurb: string; home:
   jobseeker: {
     label: "Job Seeker",
     tag: "Career Intelligence",
-    blurb: "Resume builder, ATS analysis, deep improvement and career roadmap.",
-    home: "/builder",
+    blurb: "Career intelligence workspace — readiness, job match, roadmap and resume builder.",
+    home: "/career-intelligence",
     icon: User,
   },
   institution: {
