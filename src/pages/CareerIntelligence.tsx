@@ -159,9 +159,9 @@ const CareerIntelligence = () => {
       <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <Link to="/builder" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+            <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
               <ArrowLeft className="w-4 h-4" />
-              <span className="text-sm hidden sm:inline">Back to Builder</span>
+              <span className="text-sm hidden sm:inline">Home</span>
             </Link>
             <div className="h-5 w-px bg-border hidden sm:block" />
             <div className="flex items-center gap-2">
