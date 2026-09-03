@@ -179,6 +179,24 @@ const CareerIntelligence = () => {
             <Sparkles className="w-3 h-3" /> Job Seekers Only
           </Badge>
         </div>
+        <div className="border-t border-border/60 bg-background/60">
+          <div className="container mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto no-scrollbar py-1.5">
+            {[
+              { to: "/builder", label: "My Resume" },
+              { to: "/ats-analysis", label: "ATS Readiness & Job Match" },
+              { to: "/deep-improvement", label: "Resume Optimization" },
+              { to: "/portfolio-studio", label: "Portfolio Studio" },
+            ].map((l) => (
+              <Link
+                key={l.to}
+                to={l.to}
+                className="whitespace-nowrap text-xs sm:text-sm px-3 py-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </nav>
 
       {recruiterAccount && (
