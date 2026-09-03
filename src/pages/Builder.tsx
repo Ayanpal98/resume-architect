@@ -413,10 +413,10 @@ const Builder = () => {
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="container mx-auto px-2 sm:px-6 py-2 sm:py-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
           <div className="flex items-center gap-1.5 sm:gap-4 min-w-0 shrink-0">
-            <Link to="/">
+            <Link to="/career-intelligence">
               <Button variant="ghost" size="sm" className="px-2 sm:px-3 h-9">
                 <ArrowLeft className="w-4 h-4 sm:mr-2" />
-                <span className="hidden sm:inline">Back</span>
+                <span className="hidden sm:inline">Career Intelligence</span>
               </Button>
             </Link>
             <div className="flex items-center gap-2 min-w-0">
