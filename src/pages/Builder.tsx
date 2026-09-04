@@ -172,6 +172,7 @@ const Builder = () => {
   const [showComparison, setShowComparison] = useState(false);
   const [showDeepInfo, setShowDeepInfo] = useState(false);
   const [originalResumeData, setOriginalResumeData] = useState<ResumeData | null>(null);
+  const { resume: activeResume, loading: activeResumeLoading, refresh: refreshActiveResume } = useActiveResume();
 
   // Handle incoming state from ATS analysis page
   useEffect(() => {
@@ -182,6 +183,17 @@ const Builder = () => {
       setShowATSDetails(true);
     }
   }, []);
+
+  // Fall back to the candidate's saved Active Resume when arriving with no state
+  useEffect(() => {
+    if (incomingState?.resumeData) return;
+    if (activeResumeLoading || !activeResume?.resume_data) return;
+    setResumeData((prev) => {
+      const empty = !prev.personalInfo.fullName.trim() && !prev.personalInfo.email.trim() &&
+        prev.experience.length === 0 && prev.education.length === 0 && prev.skills.length === 0;
+      return empty ? normalizeResumeData(activeResume.resume_data) : prev;
+    });
+  }, [activeResume, activeResumeLoading]);
 
   // Calculate ATS score using the comprehensive checker
   const atsResult = checkATSCompatibility(resumeData);
