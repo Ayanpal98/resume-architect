@@ -14,6 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
+      active_resumes: {
+        Row: {
+          analyzed_at: string | null
+          ats_score: number | null
+          created_at: string
+          file_name: string
+          resume_data: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          analyzed_at?: string | null
+          ats_score?: number | null
+          created_at?: string
+          file_name?: string
+          resume_data: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          analyzed_at?: string | null
+          ats_score?: number | null
+          created_at?: string
+          file_name?: string
+          resume_data?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       platform_stats: {
         Row: {
           candidate_screenings: number
