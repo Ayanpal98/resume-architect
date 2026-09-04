@@ -50,6 +50,7 @@ import { OptimizationReport } from "@/components/OptimizationReport";
 import { CareerRoadmap } from "@/components/CareerRoadmap";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor, getScoreColor, getScoreLabel, getPassProbabilityLabel } from "@/lib/atsChecker";
 import { useAuth } from "@/contexts/AuthContext";
+import { useActiveResume, saveActiveResume } from "@/hooks/useActiveResume";
 import {
   Dialog,
   DialogContent,
@@ -342,6 +343,12 @@ const Builder = () => {
   const handleDownload = () => {
     try {
       downloadPDF(resumeData, selectedTemplate);
+      // Keep the saved Active Resume in sync with builder edits
+      void saveActiveResume({
+        resumeData,
+        fileName: activeResume?.file_name || `${resumeData.personalInfo.fullName || "My"} Resume`,
+        atsScore: atsResult.overallScore,
+      }).then((ok) => { if (ok) refreshActiveResume(); });
       toast.success("Resume downloaded successfully!");
       supabase.functions.invoke("bump-stat", { body: { stat_name: "resumes_optimized" } });
     } catch (error) {
@@ -363,6 +370,7 @@ const Builder = () => {
       personalInfo: { ...prev.personalInfo, ...normalized.personalInfo },
     }));
     setShowImport(false);
+    void refreshActiveResume();
 
     if (importAtsResult) {
       setShowATSDetails(true);
