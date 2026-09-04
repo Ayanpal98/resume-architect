@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { ATSCheckResult, checkATSCompatibility, getScoreColor, getScoreBgColor, getScoreLabel } from "@/lib/atsChecker";
 import { ResumeData } from "@/lib/pdfGenerator";
+import { useActiveResume } from "@/hooks/useActiveResume";
+import { normalizeResumeData } from "@/lib/resumeNormalizer";
 import {
   Collapsible,
   CollapsibleContent,
