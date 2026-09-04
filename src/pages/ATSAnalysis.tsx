@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import { ATSCheckResult, checkATSCompatibility, getScoreColor, getScoreBgColor, getScoreLabel } from "@/lib/atsChecker";
 import { ResumeData } from "@/lib/pdfGenerator";
+import { useActiveResume } from "@/hooks/useActiveResume";
+import { normalizeResumeData } from "@/lib/resumeNormalizer";
 import {
   Collapsible,
   CollapsibleContent,
@@ -48,12 +50,20 @@ const ATSAnalysis = () => {
   const [jobTitle, setJobTitle] = useState("");
   const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
   const [showAllRecommendations, setShowAllRecommendations] = useState(false);
+  const { resume: activeResume, loading: activeResumeLoading } = useActiveResume();
 
+  // Fall back to the candidate's saved Active Resume instead of bouncing away
   useEffect(() => {
-    if (!resumeData || !atsResult) {
-      navigate("/builder");
+    if (resumeData && atsResult) return;
+    if (activeResumeLoading) return;
+    if (activeResume?.resume_data) {
+      const normalized = normalizeResumeData(activeResume.resume_data);
+      setResumeData(normalized);
+      setAtsResult(checkATSCompatibility(normalized));
+      return;
     }
-  }, [resumeData, atsResult, navigate]);
+    navigate("/builder?upload=true");
+  }, [resumeData, atsResult, activeResume, activeResumeLoading, navigate]);
 
   const toggleCategory = (name: string) => {
     setExpandedCategories((prev) =>

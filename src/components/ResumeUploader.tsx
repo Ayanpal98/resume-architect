@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import { saveActiveResume } from "@/hooks/useActiveResume";
 import { useNavigate } from "react-router-dom";
 import {
   Upload,
@@ -279,6 +280,13 @@ export const ResumeUploader = ({ onComplete, navigateToAnalysis = true }: Resume
       setStep("complete");
 
       toast.success(`Resume analyzed! ATS Score: ${atsCheckResult.overallScore}/100`);
+
+      // Persist as the signed-in candidate's Active Resume
+      void saveActiveResume({
+        resumeData: importedData,
+        fileName: fileName || "Resume",
+        atsScore: atsCheckResult.overallScore,
+      });
 
       // Navigate or callback
       if (navigateToAnalysis) {

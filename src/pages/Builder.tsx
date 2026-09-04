@@ -50,6 +50,7 @@ import { OptimizationReport } from "@/components/OptimizationReport";
 import { CareerRoadmap } from "@/components/CareerRoadmap";
 import { checkATSCompatibility, ATSCheckResult, getScoreBgColor, getScoreColor, getScoreLabel, getPassProbabilityLabel } from "@/lib/atsChecker";
 import { useAuth } from "@/contexts/AuthContext";
+import { useActiveResume, saveActiveResume } from "@/hooks/useActiveResume";
 import {
   Dialog,
   DialogContent,
@@ -172,6 +173,7 @@ const Builder = () => {
   const [showComparison, setShowComparison] = useState(false);
   const [showDeepInfo, setShowDeepInfo] = useState(false);
   const [originalResumeData, setOriginalResumeData] = useState<ResumeData | null>(null);
+  const { resume: activeResume, loading: activeResumeLoading, refresh: refreshActiveResume } = useActiveResume();
 
   // Handle incoming state from ATS analysis page
   useEffect(() => {
@@ -182,6 +184,17 @@ const Builder = () => {
       setShowATSDetails(true);
     }
   }, []);
+
+  // Fall back to the candidate's saved Active Resume when arriving with no state
+  useEffect(() => {
+    if (incomingState?.resumeData) return;
+    if (activeResumeLoading || !activeResume?.resume_data) return;
+    setResumeData((prev) => {
+      const empty = !prev.personalInfo.fullName.trim() && !prev.personalInfo.email.trim() &&
+        prev.experience.length === 0 && prev.education.length === 0 && prev.skills.length === 0;
+      return empty ? normalizeResumeData(activeResume.resume_data) : prev;
+    });
+  }, [activeResume, activeResumeLoading]);
 
   // Calculate ATS score using the comprehensive checker
   const atsResult = checkATSCompatibility(resumeData);
@@ -330,6 +343,12 @@ const Builder = () => {
   const handleDownload = () => {
     try {
       downloadPDF(resumeData, selectedTemplate);
+      // Keep the saved Active Resume in sync with builder edits
+      void saveActiveResume({
+        resumeData,
+        fileName: activeResume?.file_name || `${resumeData.personalInfo.fullName || "My"} Resume`,
+        atsScore: atsResult.overallScore,
+      }).then((ok) => { if (ok) refreshActiveResume(); });
       toast.success("Resume downloaded successfully!");
       supabase.functions.invoke("bump-stat", { body: { stat_name: "resumes_optimized" } });
     } catch (error) {
@@ -351,6 +370,7 @@ const Builder = () => {
       personalInfo: { ...prev.personalInfo, ...normalized.personalInfo },
     }));
     setShowImport(false);
+    void refreshActiveResume();
 
     if (importAtsResult) {
       setShowATSDetails(true);

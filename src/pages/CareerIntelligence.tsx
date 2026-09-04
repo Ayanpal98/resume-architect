@@ -18,6 +18,7 @@ import {
   TrendingUp, ArrowLeft, Loader2, Target, AlertTriangle, CheckCircle2, Rocket,
   Zap, Users, GraduationCap, Brain, Lightbulb, Star, ChevronRight, Download,
 } from "lucide-react";
+import { ActiveResumeCard } from "@/components/ActiveResumeCard";
 import { ComplianceFooter } from "@/components/ComplianceFooter";
 import {
   exportRoadmapPdf,
@@ -356,6 +357,9 @@ const CareerIntelligence = () => {
 
         {/* Main panel */}
         <main className="min-w-0 order-1 lg:order-2 space-y-8">
+          {/* Active resume — persistent across every feature */}
+          <ActiveResumeCard />
+
           {/* 1 + 2 + 3 + 4 — Command center */}
           <CommandCenter
             profile={profile}
