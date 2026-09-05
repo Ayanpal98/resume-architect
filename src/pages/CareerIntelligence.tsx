@@ -157,7 +157,7 @@ const CareerIntelligence = () => {
       <Seo title={"Career Intelligence — ATSFy"} description={"Premium 5-module career engine: roadmap, skill analysis, role fit, AI coaching, and rejection decoder."} path={"/career-intelligence"} />
       <h1 className="sr-only">ATSFy Career Intelligence</h1>
       {/* Header */}
-      <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
+      <nav className="glass-nav sticky top-0 z-30">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -180,7 +180,7 @@ const CareerIntelligence = () => {
             <Sparkles className="w-3 h-3" /> Job Seekers Only
           </Badge>
         </div>
-        <div className="border-t border-border/60 bg-background/60">
+        <div className="border-t border-border/50 bg-background/40 backdrop-blur-md">
           <div className="container mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto no-scrollbar py-1.5">
             {[
               { to: "/builder", label: "My Resume" },
@@ -227,7 +227,7 @@ const CareerIntelligence = () => {
 
 
           {/* Candidate */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Candidate Profile</div>
               <div>
@@ -261,7 +261,7 @@ const CareerIntelligence = () => {
           </Card>
 
           {/* Skills Snapshot */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Skills Snapshot</div>
               <div>
@@ -286,7 +286,7 @@ const CareerIntelligence = () => {
           </Card>
 
           {/* Goals */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Goals & Priorities</div>
               <div>
@@ -328,7 +328,7 @@ const CareerIntelligence = () => {
           </Card>
 
           {/* Optional JD */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-2">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Job Description (Optional)</div>
               <Textarea
@@ -1005,31 +1005,33 @@ const LibraryCard = ({
     type="button"
     onClick={ready ? onOpen : onGenerate}
     disabled={loading}
-    className={`text-left rounded-xl border p-4 transition-all group ${
-      active ? "border-accent/70 bg-accent/5 shadow-sm" : "border-border/70 bg-card hover:border-accent/40"
+    className={`text-left rounded-2xl border p-5 transition-all duration-300 group hover:-translate-y-1 hover:shadow-lg ${
+      active ? "border-accent/70 bg-accent/5 shadow-md" : "border-border/60 bg-card hover:border-accent/40"
     }`}
   >
     <div className="flex items-start justify-between gap-2">
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${ready ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground"}`}>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 ${ready ? "bg-gradient-accent text-accent-foreground shadow-sm" : "bg-muted text-muted-foreground"}`}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : meta.icon}
       </div>
-      <Badge variant="outline" className="text-[10px] shrink-0">
+      <Badge variant="outline" className="text-[10px] shrink-0 rounded-full">
         {loading ? "Working" : ready ? "Ready" : "Not run"}
       </Badge>
     </div>
-    <div className="mt-3 font-display font-semibold text-sm text-foreground">{meta.label}</div>
-    <p className="text-xs text-muted-foreground mt-0.5">{meta.tagline}</p>
-    <div className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
-      {ready ? "Open report" : "Generate"} <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+    <div className="mt-4 font-display font-semibold text-sm text-foreground">{meta.label}</div>
+    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{meta.tagline}</p>
+    <div className="mt-4 text-xs font-medium text-primary inline-flex items-center gap-1">
+      {ready ? "Open report" : "Generate"} <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
     </div>
   </button>
 );
 
-const StatTile = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
-  <div className="rounded-xl border border-border/70 bg-card p-4">
-    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
-    <div className="text-base font-display font-bold text-foreground mt-1 truncate">{value}</div>
-    {hint && <div className="text-xs text-muted-foreground mt-0.5 truncate">{hint}</div>}
+const StatTile = ({ label, value, hint, dark }: { label: string; value: string; hint?: string; dark?: boolean }) => (
+  <div className={dark
+    ? "rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-4"
+    : "rounded-xl border border-border/70 bg-card p-4"}>
+    <div className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${dark ? "text-white/50" : "text-muted-foreground"}`}>{label}</div>
+    <div className={`text-base font-display font-bold mt-1.5 truncate ${dark ? "text-white" : "text-foreground"}`}>{value}</div>
+    {hint && <div className={`text-xs mt-0.5 truncate ${dark ? "text-white/55" : "text-muted-foreground"}`}>{hint}</div>}
   </div>
 );
 
@@ -1057,70 +1059,74 @@ const CommandCenter = ({
   ).slice(0, 3);
 
   return (
-    <section className="rounded-2xl border border-border/70 bg-gradient-card overflow-hidden">
-      <div className="p-5 sm:p-6 border-b border-border/60">
-        <div className="flex items-start justify-between gap-5 flex-wrap">
+    <section className="relative rounded-3xl overflow-hidden bg-gradient-command shadow-executive">
+      {/* ambient blooms */}
+      <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-accent/25 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-20 w-80 h-80 rounded-full bg-primary/40 blur-3xl" />
+
+      <div className="relative p-6 sm:p-8 border-b border-white/10">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-accent font-semibold mb-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Command Center
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-accent font-semibold mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Command Center
             </div>
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white leading-tight tracking-tight">
               {profile.targetRole
-                ? <>Your path to <span className="text-gradient">{profile.targetRole}</span></>
+                ? <>Your path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">{profile.targetRole}</span></>
                 : "Where you are, and what's next"}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1.5 max-w-xl">
+            <p className="text-sm text-white/60 mt-2 max-w-xl">
               {readiness !== null
                 ? "Here's your current readiness, the gaps holding you back, and the next moves that matter."
                 : "Fill in your details on the left, then generate your roadmap to see readiness, gaps and next steps."}
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Readiness</div>
-              <div className="text-4xl font-bold text-primary leading-none mt-1">{readiness !== null ? `${readiness}%` : "—"}</div>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 text-center min-w-[92px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">Readiness</div>
+              <div className="text-3xl font-bold text-white leading-none mt-1.5">{readiness !== null ? `${readiness}%` : "—"}</div>
             </div>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            <div className="text-center">
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Target</div>
-              <div className="text-4xl font-bold text-accent leading-none mt-1">{target !== null ? `${target}%` : "—"}</div>
+            <ChevronRight className="w-5 h-5 text-white/40 shrink-0" />
+            <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 text-center min-w-[92px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">Target</div>
+              <div className="text-3xl font-bold text-emerald-300 leading-none mt-1.5">{target !== null ? `${target}%` : "—"}</div>
             </div>
           </div>
         </div>
 
         {readiness !== null && (
-          <div className="mt-5">
-            <Progress value={readiness} className="h-2" />
+          <div className="mt-6">
+            <Progress value={readiness} className="h-2 bg-white/15" />
           </div>
         )}
       </div>
 
-      <div className="p-5 sm:p-6 grid gap-4 md:grid-cols-3">
-        <StatTile label="Today" value={profile.currentRole || "Add your current role"} hint={profile.yearsOfExperience || "Experience not set"} />
-        <StatTile label="Destination" value={profile.targetRole || "Add a target role"} hint={profile.industry || "Industry not set"} />
-        <StatTile label="Timeline" value={profile.timeline} hint={`${profile.focusAreas.length} focus area${profile.focusAreas.length === 1 ? "" : "s"}`} />
+      <div className="relative p-6 sm:p-8 grid gap-4 md:grid-cols-3">
+        <StatTile label="Today" value={profile.currentRole || "Add your current role"} hint={profile.yearsOfExperience || "Experience not set"} dark />
+        <StatTile label="Destination" value={profile.targetRole || "Add a target role"} hint={profile.industry || "Industry not set"} dark />
+        <StatTile label="Timeline" value={profile.timeline} hint={`${profile.focusAreas.length} focus area${profile.focusAreas.length === 1 ? "" : "s"}`} dark />
       </div>
 
-      <div className="px-5 sm:px-6 pb-5 sm:pb-6 grid gap-4 lg:grid-cols-2">
+      <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 grid gap-4 lg:grid-cols-2">
         {/* Gaps */}
-        <div className="rounded-xl border border-border/70 bg-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="w-4 h-4 text-warning" />
-            <h3 className="font-display font-semibold text-sm text-foreground">What's holding you back</h3>
+        <div className="rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-4 h-4 text-amber-300" />
+            <h3 className="font-display font-semibold text-sm text-white">What's holding you back</h3>
           </div>
           {gaps.length > 0 ? (
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {gaps.map((g, i) => (
-                <li key={i} className="text-sm text-foreground flex gap-2">
-                  <span className="text-warning">•</span> {g}
+                <li key={i} className="text-sm text-white/85 flex gap-2">
+                  <span className="text-amber-300">•</span> {g}
                 </li>
               ))}
             </ul>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Run a skill review to see the exact gaps between you and the role.</p>
-              <Button size="sm" variant="outline" disabled={loadingMode !== null} onClick={() => onGenerate("skill_analysis")}>
+              <p className="text-sm text-white/55">Run a skill review to see the exact gaps between you and the role.</p>
+              <Button size="sm" variant="outline" className="rounded-full border-white/25 bg-white/5 text-white hover:bg-white/15 hover:text-white" disabled={loadingMode !== null} onClick={() => onGenerate("skill_analysis")}>
                 {loadingMode === "skill_analysis" ? <><Loader2 className="w-4 h-4 animate-spin" /> Reviewing...</> : <>Review my skills</>}
               </Button>
             </div>
@@ -1128,32 +1134,32 @@ const CommandCenter = ({
         </div>
 
         {/* Next actions */}
-        <div className="rounded-xl border border-border/70 bg-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Rocket className="w-4 h-4 text-accent" />
-            <h3 className="font-display font-semibold text-sm text-foreground">Do this next</h3>
+        <div className="rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Rocket className="w-4 h-4 text-emerald-300" />
+            <h3 className="font-display font-semibold text-sm text-white">Do this next</h3>
           </div>
           {nextActions.length > 0 ? (
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {nextActions.map((a, i) => (
-                <li key={i} className="text-sm text-foreground flex gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" /> {a}
+                <li key={i} className="text-sm text-white/85 flex gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" /> {a}
                 </li>
               ))}
             </ul>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Your roadmap will tell you exactly what to do first.</p>
-              <Button size="sm" variant="hero" disabled={loadingMode !== null} onClick={() => onGenerate("roadmap")}>
+              <p className="text-sm text-white/55">Your roadmap will tell you exactly what to do first.</p>
+              <Button size="sm" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={loadingMode !== null} onClick={() => onGenerate("roadmap")}>
                 {loadingMode === "roadmap" ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate roadmap</>}
               </Button>
             </div>
           )}
           <div className="flex flex-wrap gap-2 mt-4">
             {roadmap && (
-              <Button size="sm" variant="outline" onClick={() => onOpen("roadmap")}>Open roadmap</Button>
+              <Button size="sm" variant="outline" className="rounded-full border-white/25 bg-white/5 text-white hover:bg-white/15 hover:text-white" onClick={() => onOpen("roadmap")}>Open roadmap</Button>
             )}
-            <Button size="sm" variant="ghost" className="gap-1" onClick={() => onNavigate("/builder")}>
+            <Button size="sm" variant="ghost" className="rounded-full gap-1 text-white/70 hover:text-white hover:bg-white/10" onClick={() => onNavigate("/builder")}>
               Update my resume <ChevronRight className="w-3.5 h-3.5" />
             </Button>
           </div>
@@ -1187,7 +1193,7 @@ const TargetJobsSection = ({
           </Button>
         }
       />
-      <div className="rounded-2xl border border-border/70 bg-card p-5">
+      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
         {fit ? (
           <div className="grid gap-4 sm:grid-cols-[auto_1fr] items-center">
             <div className="text-center sm:text-left">
@@ -1238,7 +1244,7 @@ const ProgressSection = ({ results }: { results: Record<Mode, any | null> }) => 
         title="How complete your career picture is"
         desc="Each report adds another layer of clarity. Complete all five for the full view."
       />
-      <div className="rounded-2xl border border-border/70 bg-card p-5">
+      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="font-medium text-foreground">{done.length} of {REPORT_LIBRARY.length} reports generated</span>
           <span className="text-muted-foreground">{pct}%</span>
