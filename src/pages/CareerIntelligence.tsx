@@ -227,7 +227,7 @@ const CareerIntelligence = () => {
 
 
           {/* Candidate */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Candidate Profile</div>
               <div>
@@ -1244,7 +1244,7 @@ const ProgressSection = ({ results }: { results: Record<Mode, any | null> }) => 
         title="How complete your career picture is"
         desc="Each report adds another layer of clarity. Complete all five for the full view."
       />
-      <div className="rounded-2xl border border-border/70 bg-card p-5">
+      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="font-medium text-foreground">{done.length} of {REPORT_LIBRARY.length} reports generated</span>
           <span className="text-muted-foreground">{pct}%</span>
