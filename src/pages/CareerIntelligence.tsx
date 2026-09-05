@@ -1025,11 +1025,13 @@ const LibraryCard = ({
   </button>
 );
 
-const StatTile = ({ label, value, hint }: { label: string; value: string; hint?: string }) => (
-  <div className="rounded-xl border border-border/70 bg-card p-4">
-    <div className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
-    <div className="text-base font-display font-bold text-foreground mt-1 truncate">{value}</div>
-    {hint && <div className="text-xs text-muted-foreground mt-0.5 truncate">{hint}</div>}
+const StatTile = ({ label, value, hint, dark }: { label: string; value: string; hint?: string; dark?: boolean }) => (
+  <div className={dark
+    ? "rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-4"
+    : "rounded-xl border border-border/70 bg-card p-4"}>
+    <div className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${dark ? "text-white/50" : "text-muted-foreground"}`}>{label}</div>
+    <div className={`text-base font-display font-bold mt-1.5 truncate ${dark ? "text-white" : "text-foreground"}`}>{value}</div>
+    {hint && <div className={`text-xs mt-0.5 truncate ${dark ? "text-white/55" : "text-muted-foreground"}`}>{hint}</div>}
   </div>
 );
 
@@ -1109,22 +1111,22 @@ const CommandCenter = ({
       <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 grid gap-4 lg:grid-cols-2">
         {/* Gaps */}
         <div className="rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-5">
-          <div className="flex items-center gap-2 mb-2">
-            <AlertTriangle className="w-4 h-4 text-warning" />
-            <h3 className="font-display font-semibold text-sm text-foreground">What's holding you back</h3>
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-4 h-4 text-amber-300" />
+            <h3 className="font-display font-semibold text-sm text-white">What's holding you back</h3>
           </div>
           {gaps.length > 0 ? (
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {gaps.map((g, i) => (
-                <li key={i} className="text-sm text-foreground flex gap-2">
-                  <span className="text-warning">•</span> {g}
+                <li key={i} className="text-sm text-white/85 flex gap-2">
+                  <span className="text-amber-300">•</span> {g}
                 </li>
               ))}
             </ul>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Run a skill review to see the exact gaps between you and the role.</p>
-              <Button size="sm" variant="outline" disabled={loadingMode !== null} onClick={() => onGenerate("skill_analysis")}>
+              <p className="text-sm text-white/55">Run a skill review to see the exact gaps between you and the role.</p>
+              <Button size="sm" variant="outline" className="rounded-full border-white/25 bg-white/5 text-white hover:bg-white/15 hover:text-white" disabled={loadingMode !== null} onClick={() => onGenerate("skill_analysis")}>
                 {loadingMode === "skill_analysis" ? <><Loader2 className="w-4 h-4 animate-spin" /> Reviewing...</> : <>Review my skills</>}
               </Button>
             </div>
@@ -1132,32 +1134,32 @@ const CommandCenter = ({
         </div>
 
         {/* Next actions */}
-        <div className="rounded-xl border border-border/70 bg-card p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Rocket className="w-4 h-4 text-accent" />
-            <h3 className="font-display font-semibold text-sm text-foreground">Do this next</h3>
+        <div className="rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Rocket className="w-4 h-4 text-emerald-300" />
+            <h3 className="font-display font-semibold text-sm text-white">Do this next</h3>
           </div>
           {nextActions.length > 0 ? (
-            <ul className="space-y-1.5">
+            <ul className="space-y-2">
               {nextActions.map((a, i) => (
-                <li key={i} className="text-sm text-foreground flex gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-accent shrink-0 mt-0.5" /> {a}
+                <li key={i} className="text-sm text-white/85 flex gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-300 shrink-0 mt-0.5" /> {a}
                 </li>
               ))}
             </ul>
           ) : (
             <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">Your roadmap will tell you exactly what to do first.</p>
-              <Button size="sm" variant="hero" disabled={loadingMode !== null} onClick={() => onGenerate("roadmap")}>
+              <p className="text-sm text-white/55">Your roadmap will tell you exactly what to do first.</p>
+              <Button size="sm" className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={loadingMode !== null} onClick={() => onGenerate("roadmap")}>
                 {loadingMode === "roadmap" ? <><Loader2 className="w-4 h-4 animate-spin" /> Generating...</> : <><Sparkles className="w-4 h-4" /> Generate roadmap</>}
               </Button>
             </div>
           )}
           <div className="flex flex-wrap gap-2 mt-4">
             {roadmap && (
-              <Button size="sm" variant="outline" onClick={() => onOpen("roadmap")}>Open roadmap</Button>
+              <Button size="sm" variant="outline" className="rounded-full border-white/25 bg-white/5 text-white hover:bg-white/15 hover:text-white" onClick={() => onOpen("roadmap")}>Open roadmap</Button>
             )}
-            <Button size="sm" variant="ghost" className="gap-1" onClick={() => onNavigate("/builder")}>
+            <Button size="sm" variant="ghost" className="rounded-full gap-1 text-white/70 hover:text-white hover:bg-white/10" onClick={() => onNavigate("/builder")}>
               Update my resume <ChevronRight className="w-3.5 h-3.5" />
             </Button>
           </div>
