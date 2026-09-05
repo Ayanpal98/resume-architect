@@ -19,7 +19,7 @@ export const ActiveResumeCard = () => {
   const { resume, loading } = useActiveResume();
 
   return (
-    <Card className="border-border/70">
+    <Card className="rounded-2xl border-border/60 shadow-sm">
       <CardContent className="p-4 sm:p-5">
         {loading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
