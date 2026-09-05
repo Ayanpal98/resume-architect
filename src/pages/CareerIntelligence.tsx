@@ -1005,22 +1005,22 @@ const LibraryCard = ({
     type="button"
     onClick={ready ? onOpen : onGenerate}
     disabled={loading}
-    className={`text-left rounded-xl border p-4 transition-all group ${
-      active ? "border-accent/70 bg-accent/5 shadow-sm" : "border-border/70 bg-card hover:border-accent/40"
+    className={`text-left rounded-2xl border p-5 transition-all duration-300 group hover:-translate-y-1 hover:shadow-lg ${
+      active ? "border-accent/70 bg-accent/5 shadow-md" : "border-border/60 bg-card hover:border-accent/40"
     }`}
   >
     <div className="flex items-start justify-between gap-2">
-      <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${ready ? "bg-accent/15 text-accent" : "bg-muted text-muted-foreground"}`}>
+      <div className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-300 group-hover:scale-110 ${ready ? "bg-gradient-accent text-accent-foreground shadow-sm" : "bg-muted text-muted-foreground"}`}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : meta.icon}
       </div>
-      <Badge variant="outline" className="text-[10px] shrink-0">
+      <Badge variant="outline" className="text-[10px] shrink-0 rounded-full">
         {loading ? "Working" : ready ? "Ready" : "Not run"}
       </Badge>
     </div>
-    <div className="mt-3 font-display font-semibold text-sm text-foreground">{meta.label}</div>
-    <p className="text-xs text-muted-foreground mt-0.5">{meta.tagline}</p>
-    <div className="mt-3 text-xs font-medium text-primary inline-flex items-center gap-1">
-      {ready ? "Open report" : "Generate"} <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
+    <div className="mt-4 font-display font-semibold text-sm text-foreground">{meta.label}</div>
+    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">{meta.tagline}</p>
+    <div className="mt-4 text-xs font-medium text-primary inline-flex items-center gap-1">
+      {ready ? "Open report" : "Generate"} <ChevronRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-1" />
     </div>
   </button>
 );
@@ -1193,7 +1193,7 @@ const TargetJobsSection = ({
           </Button>
         }
       />
-      <div className="rounded-2xl border border-border/70 bg-card p-5">
+      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
         {fit ? (
           <div className="grid gap-4 sm:grid-cols-[auto_1fr] items-center">
             <div className="text-center sm:text-left">
