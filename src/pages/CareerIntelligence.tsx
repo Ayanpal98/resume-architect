@@ -261,7 +261,7 @@ const CareerIntelligence = () => {
           </Card>
 
           {/* Skills Snapshot */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Skills Snapshot</div>
               <div>
@@ -286,7 +286,7 @@ const CareerIntelligence = () => {
           </Card>
 
           {/* Goals */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-3">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Goals & Priorities</div>
               <div>
@@ -328,7 +328,7 @@ const CareerIntelligence = () => {
           </Card>
 
           {/* Optional JD */}
-          <Card className="border-border/60">
+          <Card className="border-border/60 rounded-2xl shadow-sm">
             <CardContent className="p-4 space-y-2">
               <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">Job Description (Optional)</div>
               <Textarea
