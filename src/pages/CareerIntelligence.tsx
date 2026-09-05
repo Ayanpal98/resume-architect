@@ -157,7 +157,7 @@ const CareerIntelligence = () => {
       <Seo title={"Career Intelligence — ATSFy"} description={"Premium 5-module career engine: roadmap, skill analysis, role fit, AI coaching, and rejection decoder."} path={"/career-intelligence"} />
       <h1 className="sr-only">ATSFy Career Intelligence</h1>
       {/* Header */}
-      <nav className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-30">
+      <nav className="glass-nav sticky top-0 z-30">
         <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
@@ -180,7 +180,7 @@ const CareerIntelligence = () => {
             <Sparkles className="w-3 h-3" /> Job Seekers Only
           </Badge>
         </div>
-        <div className="border-t border-border/60 bg-background/60">
+        <div className="border-t border-border/50 bg-background/40 backdrop-blur-md">
           <div className="container mx-auto px-4 sm:px-6 flex items-center gap-1 overflow-x-auto no-scrollbar py-1.5">
             {[
               { to: "/builder", label: "My Resume" },
@@ -1057,54 +1057,58 @@ const CommandCenter = ({
   ).slice(0, 3);
 
   return (
-    <section className="rounded-2xl border border-border/70 bg-gradient-card overflow-hidden">
-      <div className="p-5 sm:p-6 border-b border-border/60">
-        <div className="flex items-start justify-between gap-5 flex-wrap">
+    <section className="relative rounded-3xl overflow-hidden bg-gradient-command shadow-executive">
+      {/* ambient blooms */}
+      <div aria-hidden className="pointer-events-none absolute -top-24 -right-24 w-72 h-72 rounded-full bg-accent/25 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-20 w-80 h-80 rounded-full bg-primary/40 blur-3xl" />
+
+      <div className="relative p-6 sm:p-8 border-b border-white/10">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
           <div className="min-w-0">
-            <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-accent font-semibold mb-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent" /> Command Center
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.2em] text-accent font-semibold mb-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" /> Command Center
             </div>
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-foreground leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-display font-bold text-white leading-tight tracking-tight">
               {profile.targetRole
-                ? <>Your path to <span className="text-gradient">{profile.targetRole}</span></>
+                ? <>Your path to <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">{profile.targetRole}</span></>
                 : "Where you are, and what's next"}
             </h2>
-            <p className="text-sm text-muted-foreground mt-1.5 max-w-xl">
+            <p className="text-sm text-white/60 mt-2 max-w-xl">
               {readiness !== null
                 ? "Here's your current readiness, the gaps holding you back, and the next moves that matter."
                 : "Fill in your details on the left, then generate your roadmap to see readiness, gaps and next steps."}
             </p>
           </div>
 
-          <div className="flex items-center gap-4">
-            <div className="text-center">
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Readiness</div>
-              <div className="text-4xl font-bold text-primary leading-none mt-1">{readiness !== null ? `${readiness}%` : "—"}</div>
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 text-center min-w-[92px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">Readiness</div>
+              <div className="text-3xl font-bold text-white leading-none mt-1.5">{readiness !== null ? `${readiness}%` : "—"}</div>
             </div>
-            <ChevronRight className="w-5 h-5 text-muted-foreground" />
-            <div className="text-center">
-              <div className="text-[10px] uppercase tracking-wider text-muted-foreground">Target</div>
-              <div className="text-4xl font-bold text-accent leading-none mt-1">{target !== null ? `${target}%` : "—"}</div>
+            <ChevronRight className="w-5 h-5 text-white/40 shrink-0" />
+            <div className="rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 px-4 py-3 text-center min-w-[92px]">
+              <div className="text-[10px] uppercase tracking-[0.18em] text-white/50 font-semibold">Target</div>
+              <div className="text-3xl font-bold text-emerald-300 leading-none mt-1.5">{target !== null ? `${target}%` : "—"}</div>
             </div>
           </div>
         </div>
 
         {readiness !== null && (
-          <div className="mt-5">
-            <Progress value={readiness} className="h-2" />
+          <div className="mt-6">
+            <Progress value={readiness} className="h-2 bg-white/15" />
           </div>
         )}
       </div>
 
-      <div className="p-5 sm:p-6 grid gap-4 md:grid-cols-3">
-        <StatTile label="Today" value={profile.currentRole || "Add your current role"} hint={profile.yearsOfExperience || "Experience not set"} />
-        <StatTile label="Destination" value={profile.targetRole || "Add a target role"} hint={profile.industry || "Industry not set"} />
-        <StatTile label="Timeline" value={profile.timeline} hint={`${profile.focusAreas.length} focus area${profile.focusAreas.length === 1 ? "" : "s"}`} />
+      <div className="relative p-6 sm:p-8 grid gap-4 md:grid-cols-3">
+        <StatTile label="Today" value={profile.currentRole || "Add your current role"} hint={profile.yearsOfExperience || "Experience not set"} dark />
+        <StatTile label="Destination" value={profile.targetRole || "Add a target role"} hint={profile.industry || "Industry not set"} dark />
+        <StatTile label="Timeline" value={profile.timeline} hint={`${profile.focusAreas.length} focus area${profile.focusAreas.length === 1 ? "" : "s"}`} dark />
       </div>
 
-      <div className="px-5 sm:px-6 pb-5 sm:pb-6 grid gap-4 lg:grid-cols-2">
+      <div className="relative px-6 sm:px-8 pb-6 sm:pb-8 grid gap-4 lg:grid-cols-2">
         {/* Gaps */}
-        <div className="rounded-xl border border-border/70 bg-card p-4">
+        <div className="rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-5">
           <div className="flex items-center gap-2 mb-2">
             <AlertTriangle className="w-4 h-4 text-warning" />
             <h3 className="font-display font-semibold text-sm text-foreground">What's holding you back</h3>
