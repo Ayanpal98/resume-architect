@@ -112,7 +112,7 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
         size="sm"
         asChild
       >
-        <Link to="/welcome">
+        <Link to={`/checkout?plan=${plan.id}`}>
           {plan.cta}
           <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
         </Link>
@@ -138,8 +138,13 @@ export const PricingSection = () => {
             One-time intelligence reports for candidates. Monthly screening plans for recruiters. Every feature listed below is live in the product today.
           </p>
           <p className="text-xs sm:text-sm text-muted-foreground/80 font-sans mt-3 sm:mt-4">
-            Premium reports are paid. No subscriptions for job seekers, no hidden tiers.
+            {TRANSPARENCY_LINE}
           </p>
+          <Link to="/pricing" className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:underline mt-3">
+            See full pricing details
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+
         </div>
 
         <Tabs defaultValue="jobseeker" className="w-full">
