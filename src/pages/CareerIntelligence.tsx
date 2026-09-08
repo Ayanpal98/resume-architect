@@ -202,7 +202,7 @@ const CareerIntelligence = () => {
 
       {recruiterAccount && (
         <div className="container mx-auto px-4 sm:px-6 pt-4">
-          <div className="glass rounded-xl border border-border/60 p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div className="glass rounded-2xl border border-border/60 p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
             <p className="text-sm text-muted-foreground">
               Your account is set to Recruiter / HR. Career Intelligence is built for job seekers.
             </p>
@@ -475,7 +475,7 @@ const CareerIntelligence = () => {
 
             {/* AI Coaching */}
             <TabsContent value="ai_coaching" className="mt-0">
-              <Card className="border-border/60 mb-4">
+              <Card className="border-border/60 rounded-2xl shadow-sm mb-4">
                 <CardContent className="p-4 space-y-2">
                   <label className="text-xs font-medium text-foreground">What do you want coaching on? (optional)</label>
                   <Input
@@ -501,7 +501,7 @@ const CareerIntelligence = () => {
 
             {/* Rejection Decoder */}
             <TabsContent value="rejection_decoder" className="mt-0">
-              <Card className="border-border/60 mb-4">
+              <Card className="border-border/60 rounded-2xl shadow-sm mb-4">
                 <CardContent className="p-4 space-y-2">
                   <label className="text-xs font-medium text-foreground">Paste the rejection you received (optional)</label>
                   <Textarea
@@ -571,7 +571,7 @@ const ExportBar = ({ label, onExport }: { label: string; onExport: () => void })
 const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
     <ExportBar label="Career Roadmap" onExport={() => exportRoadmapPdf(data, profile)} />
-    <Card className="bg-gradient-card border-accent/30">
+    <Card className="bg-gradient-card border-accent/30 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -587,7 +587,7 @@ const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
     </Card>
 
     {Array.isArray(data.quick_wins) && data.quick_wins.length > 0 && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Zap className="w-5 h-5" />} title="Quick Wins" sub="Move the needle in under an hour" />
           <ul className="space-y-2">
@@ -602,7 +602,7 @@ const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
     )}
 
     {Array.isArray(data.phases) && data.phases.map((p: any, i: number) => (
-      <Card key={i} className="border-l-4 border-l-primary">
+      <Card key={i} className="border-l-4 border-l-primary border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
             <div>
@@ -636,12 +636,12 @@ const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
     ))}
 
     {Array.isArray(data.certifications) && data.certifications.length > 0 && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Award className="w-5 h-5" />} title="Certifications" />
           <div className="grid sm:grid-cols-2 gap-3">
             {data.certifications.map((c: any, i: number) => (
-              <div key={i} className="border border-border rounded-lg p-3">
+              <div key={i} className="rounded-xl border border-border/60 bg-muted/30 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-medium text-sm text-foreground">{c.name}</div>
@@ -661,7 +661,7 @@ const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
     )}
 
     {data.networking && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Users className="w-5 h-5" />} title="Networking Intelligence" />
           <div className="grid sm:grid-cols-3 gap-4 text-sm">
@@ -694,7 +694,7 @@ const ScoreBlock = ({ label, value, accent }: { label: string; value: number; ac
 const SkillAnalysisView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
     <ExportBar label="Skill Intelligence" onExport={() => exportSkillAnalysisPdf(data, profile)} />
-    <Card className="bg-gradient-card">
+    <Card className="bg-gradient-card border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <p className="text-sm text-foreground">{data.summary}</p>
       </CardContent>
@@ -729,7 +729,7 @@ const SkillAnalysisView = ({ data, profile }: { data: any; profile: Profile }) =
       />
     )}
     {Array.isArray(data.recommended_skill_stack) && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Lightbulb className="w-5 h-5" />} title="Recommended Skill Stack" sub="The skills to lead with on your resume" />
           <div className="flex flex-wrap gap-1.5">
@@ -747,7 +747,7 @@ const SkillBlock = ({ icon, title, items, tone }: { icon: React.ReactNode; title
   const border = tone === "warning" ? "border-l-warning" : tone === "accent" ? "border-l-accent" : "border-l-primary";
   if (!items.length) return null;
   return (
-    <Card className={`border-l-4 ${border}`}>
+    <Card className={`border-l-4 rounded-2xl shadow-sm ${border}`}>
       
       <CardContent className="p-5">
         <SectionHeader icon={icon} title={title} />
@@ -770,7 +770,7 @@ const SkillBlock = ({ icon, title, items, tone }: { icon: React.ReactNode; title
 const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
     <ExportBar label="Role Fit Score" onExport={() => exportRoleFitPdf(data, profile)} />
-    <Card className="bg-gradient-hero text-primary-foreground">
+    <Card className="bg-gradient-hero text-primary-foreground border-transparent rounded-2xl shadow-sm">
       <CardContent className="p-6 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <div className="text-xs uppercase tracking-wider opacity-80">Overall Fit</div>
@@ -781,7 +781,7 @@ const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
       </CardContent>
     </Card>
 
-    <Card>
+    <Card className="border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<Target className="w-5 h-5" />} title="Dimension Breakdown" />
         <div className="space-y-3">
@@ -800,7 +800,7 @@ const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
     </Card>
 
     <div className="grid sm:grid-cols-2 gap-4">
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<AlertTriangle className="w-5 h-5" />} title="Risks" />
           <ul className="space-y-1.5 text-sm">
@@ -810,7 +810,7 @@ const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
           </ul>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Rocket className="w-5 h-5" />} title="Opportunities" />
           <ul className="space-y-1.5 text-sm">
@@ -827,18 +827,18 @@ const RoleFitView = ({ data, profile }: { data: any; profile: Profile }) => (
 const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
     <ExportBar label="AI Coaching Session" onExport={() => exportCoachingPdf(data, profile)} />
-    <Card className="bg-gradient-card">
+    <Card className="bg-gradient-card border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <p className="text-sm text-foreground">{data.coaching_summary}</p>
       </CardContent>
     </Card>
 
-    <Card>
+    <Card className="border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<MessageCircle className="w-5 h-5" />} title="Likely Interview Questions" />
         <div className="space-y-3">
           {(data.likely_interview_questions || []).map((q: any, i: number) => (
-            <div key={i} className="border border-border rounded-lg p-3">
+            <div key={i} className="rounded-xl border border-border/60 bg-muted/30 p-3">
               <div className="text-sm font-medium text-foreground">Q{i + 1}. {q.question}</div>
               <div className="text-xs text-muted-foreground mt-1.5"><span className="font-semibold text-accent">How to answer: </span>{q.how_to_answer}</div>
               {q.red_flags_to_avoid && (
@@ -851,7 +851,7 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
     </Card>
 
     <div className="grid md:grid-cols-2 gap-4">
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Star className="w-5 h-5" />} title="Talking Points" />
           <ul className="text-sm space-y-1.5">
@@ -859,7 +859,7 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
           </ul>
         </CardContent>
       </Card>
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<ShieldCheck className="w-5 h-5" />} title="Weakness Mitigation" />
           <ul className="text-sm space-y-2">
@@ -874,14 +874,14 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
       </Card>
     </div>
 
-    <Card>
+    <Card className="border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<Sparkles className="w-5 h-5" />} title="Elevator Pitch" />
         <p className="text-sm text-foreground italic border-l-2 border-accent pl-3">{data.elevator_pitch}</p>
       </CardContent>
     </Card>
 
-    <Card>
+    <Card className="border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<Users className="w-5 h-5" />} title="Outreach Template" />
         <pre className="text-sm text-foreground whitespace-pre-wrap font-sans bg-muted/40 rounded p-3">{data.outreach_template}</pre>
@@ -889,7 +889,7 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
     </Card>
 
     {Array.isArray(data.confidence_builders) && data.confidence_builders.length > 0 && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<GraduationCap className="w-5 h-5" />} title="Confidence Builders" />
           <ul className="text-sm space-y-1.5">
@@ -904,14 +904,14 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
 const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
     <ExportBar label="Rejection Decoder" onExport={() => exportRejectionDecoderPdf(data, profile)} />
-    <Card className="border-l-4 border-l-warning bg-warning/5">
+    <Card className="border-l-4 border-l-warning bg-warning/5 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<ShieldCheck className="w-5 h-5" />} title="Decoded Summary" />
         <p className="text-sm text-foreground">{data.decoded_summary}</p>
       </CardContent>
     </Card>
 
-    <Card>
+    <Card className="border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<AlertTriangle className="w-5 h-5" />} title="Likely Reasons" />
         <ul className="space-y-2">
@@ -929,12 +929,12 @@ const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
     </Card>
 
     {Array.isArray(data.what_recruiters_actually_meant) && data.what_recruiters_actually_meant.length > 0 && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Lightbulb className="w-5 h-5" />} title="What Recruiters Actually Meant" />
           <div className="space-y-2">
             {data.what_recruiters_actually_meant.map((r: any, i: number) => (
-              <div key={i} className="text-sm border border-border rounded-md p-3">
+              <div key={i} className="text-sm rounded-xl border border-border/60 bg-muted/30 p-3">
                 <div className="text-foreground italic">"{r.phrase}"</div>
                 <div className="text-xs text-muted-foreground mt-1">→ {r.real_meaning}</div>
               </div>
@@ -944,7 +944,7 @@ const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
       </Card>
     )}
 
-    <Card>
+    <Card className="border-border/60 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <SectionHeader icon={<Rocket className="w-5 h-5" />} title="Recovery Plan" />
         <ul className="space-y-2">
@@ -959,7 +959,7 @@ const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
     </Card>
 
     {Array.isArray(data.portfolio_fixes) && data.portfolio_fixes.length > 0 && (
-      <Card>
+      <Card className="border-border/60 rounded-2xl shadow-sm">
         <CardContent className="p-5">
           <SectionHeader icon={<Target className="w-5 h-5" />} title="Portfolio Fixes" />
           <ul className="space-y-1.5 text-sm">
@@ -971,7 +971,7 @@ const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
       </Card>
     )}
 
-    <Card className="bg-gradient-card border-accent/30">
+    <Card className="bg-gradient-card border-accent/30 rounded-2xl shadow-sm">
       <CardContent className="p-5">
         <div className="text-xs uppercase tracking-wider text-accent font-semibold mb-1">Next Attempt Strategy</div>
         <p className="text-sm text-foreground">{data.next_attempt_strategy}</p>
@@ -1028,7 +1028,7 @@ const LibraryCard = ({
 const StatTile = ({ label, value, hint, dark }: { label: string; value: string; hint?: string; dark?: boolean }) => (
   <div className={dark
     ? "rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-4"
-    : "rounded-xl border border-border/70 bg-card p-4"}>
+    : "rounded-2xl border border-border/60 bg-card p-4 shadow-sm"}>
     <div className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${dark ? "text-white/50" : "text-muted-foreground"}`}>{label}</div>
     <div className={`text-base font-display font-bold mt-1.5 truncate ${dark ? "text-white" : "text-foreground"}`}>{value}</div>
     {hint && <div className={`text-xs mt-0.5 truncate ${dark ? "text-white/55" : "text-muted-foreground"}`}>{hint}</div>}
@@ -1193,7 +1193,7 @@ const TargetJobsSection = ({
           </Button>
         }
       />
-      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
         {fit ? (
           <div className="grid gap-4 sm:grid-cols-[auto_1fr] items-center">
             <div className="text-center sm:text-left">
@@ -1244,7 +1244,7 @@ const ProgressSection = ({ results }: { results: Record<Mode, any | null> }) => 
         title="How complete your career picture is"
         desc="Each report adds another layer of clarity. Complete all five for the full view."
       />
-      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="font-medium text-foreground">{done.length} of {REPORT_LIBRARY.length} reports generated</span>
           <span className="text-muted-foreground">{pct}%</span>
