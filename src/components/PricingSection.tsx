@@ -3,155 +3,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Link } from "react-router-dom";
+import { jobSeekerPlans, recruiterPlans, TRANSPARENCY_LINE, type Plan } from "@/lib/plans";
 
-/* ─── Types ─── */
-type Plan = {
-  name: string;
-  price: string;
-  period: string;
-  badge?: string;
-  icon: React.ReactNode;
-  gains: { label: string; detail: string }[];
-  features: string[];
-  cta: string;
-  variant: "standard" | "highlight" | "dark";
+const ICONS: Record<Plan["iconName"], React.ReactNode> = {
+  zap: <Zap className="w-5 h-5" />,
+  star: <Star className="w-5 h-5" />,
+  crown: <Crown className="w-5 h-5" />,
+  users: <Users className="w-5 h-5" />,
+  building: <Building2 className="w-5 h-5" />,
+  trending: <TrendingUp className="w-5 h-5" />,
 };
 
-/* ─── Job Seeker Premium Tiers ─── */
-const jobSeekerPlans: Plan[] = [
-  {
-    name: "Premium Starter",
-    price: "₹999",
-    period: "/ report",
-    badge: "Start Strong",
-    icon: <Zap className="w-5 h-5" />,
-    gains: [
-      { label: "ATS Readiness scan", detail: "Full Hiring Readiness score with issue breakdown" },
-      { label: "Section-by-section rewrite", detail: "AI rewrite for summary, experience and skills" },
-      { label: "ATS-safe PDF export", detail: "Clean single-column PDF built to parse cleanly" },
-    ],
-    features: [
-      "Full ATS Readiness scan + Hiring Readiness score",
-      "Section-by-section AI rewrite",
-      "Skills grouped into 3 blocks (capped at 15)",
-      "Clean single-column ATS-safe PDF export",
-      "Access to the full template library (6 templates)",
-    ],
-    cta: "Get Premium Starter",
-    variant: "standard",
-  },
-  {
-    name: "Premium Professional",
-    price: "₹1,499",
-    period: "/ report",
-    badge: "Most Popular ⭐",
-    icon: <Star className="w-5 h-5" />,
-    gains: [
-      { label: "Job Match analysis", detail: "Before vs After match % against a target JD" },
-      { label: "AI cover letter", detail: "Cover letter aligned to the job description" },
-      { label: "Keyword & verb tuning", detail: "Gap analysis plus action-verb enhancer" },
-    ],
-    features: [
-      "Everything in Premium Starter",
-      "Job Description match analysis (Before vs After %)",
-      "AI cover letter generator aligned to the JD",
-      "Keyword gap analysis + Quick Wins",
-      "Resume comparison view (before/after diff)",
-      "Action verb enhancer",
-    ],
-    cta: "Go Premium Professional",
-    variant: "highlight",
-  },
-  {
-    name: "Premium Elite",
-    price: "₹2,599",
-    period: "/ report",
-    badge: "Full Power",
-    icon: <Crown className="w-5 h-5" />,
-    gains: [
-      { label: "90-day Career Roadmap", detail: "30-60-90 day plan to close every profile gap" },
-      { label: "Deep Resume Improvement", detail: "Evidence-linked rewrite with fabrication guards" },
-      { label: "Career Intelligence export", detail: "Full intelligence report + ATS score deltas" },
-    ],
-    features: [
-      "Everything in Premium Professional",
-      "30-60-90 day Career Roadmap report",
-      "Deep Resume Improvement (evidence-linked rewrite)",
-      "Career Intelligence report export",
-      "ATS Readiness PDF report with score deltas",
-    ],
-    cta: "Unlock Premium Elite",
-    variant: "dark",
-  },
-];
-
-/* ─── Recruiter Monthly Subscription Tiers ─── */
-const recruiterPlans: Plan[] = [
-  {
-    name: "Recruiter Lite",
-    price: "₹4,499",
-    period: "/ month",
-    badge: "Start Hiring",
-    icon: <Users className="w-5 h-5" />,
-    gains: [
-      { label: "25 AI screenings", detail: "Candidate-readiness analysis for every upload" },
-      { label: "1 job requisition", detail: "Define one target role and benchmark against it" },
-      { label: "Scorecards + CSV", detail: "IRS, CSA, SAX scores exportable to CSV" },
-    ],
-    features: [
-      "25 candidate screenings / month",
-      "1 active job requisition",
-      "IRS, CSA, SAX scorecards",
-      "Bulk resume upload + parsing",
-      "Ghost screening preview",
-      "CSV export of screening results",
-    ],
-    cta: "Get Started",
-    variant: "standard",
-  },
-  {
-    name: "Recruiter Growth",
-    price: "₹6,999",
-    period: "/ month",
-    badge: "Most Popular ⭐",
-    icon: <Building2 className="w-5 h-5" />,
-    gains: [
-      { label: "100 AI screenings", detail: "Enough volume for consistent active hiring" },
-      { label: "5 job requisitions", detail: "Run parallel roles without swapping configs" },
-      { label: "Ranked shortlists", detail: "JD-to-resume match scoring with ranked output" },
-    ],
-    features: [
-      "100 candidate screenings / month",
-      "5 active job requisitions",
-      "JD-to-resume match scoring with ranked shortlists",
-      "PDF screening reports per candidate",
-      "Bulk CSV export with score breakdown",
-    ],
-    cta: "Get Started",
-    variant: "highlight",
-  },
-  {
-    name: "Recruiter Scale",
-    price: "₹11,999",
-    period: "/ month",
-    badge: "High Volume",
-    icon: <TrendingUp className="w-5 h-5" />,
-    gains: [
-      { label: "250 AI screenings", detail: "High-volume hiring with headroom to scale" },
-      { label: "Unlimited requisitions", detail: "Open as many roles as your business needs" },
-      { label: "Custom scoring weights", detail: "Tune IRS / CSA / SAX weights per role" },
-    ],
-    features: [
-      "250 candidate screenings / month",
-      "Unlimited job requisitions",
-      "Custom scoring weights (IRS / CSA / SAX)",
-      "PDF screening reports per candidate",
-      "Full CSV + PDF export bundle",
-    ],
-    cta: "Get Started",
-    variant: "dark",
-  },
-];
 
 /* ─── Card Component ─── */
 const PlanCard = ({ plan }: { plan: Plan }) => {
