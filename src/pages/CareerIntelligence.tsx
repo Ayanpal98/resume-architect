@@ -202,7 +202,7 @@ const CareerIntelligence = () => {
 
       {recruiterAccount && (
         <div className="container mx-auto px-4 sm:px-6 pt-4">
-          <div className="glass rounded-xl border border-border/60 p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+          <div className="glass rounded-2xl border border-border/60 p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
             <p className="text-sm text-muted-foreground">
               Your account is set to Recruiter / HR. Career Intelligence is built for job seekers.
             </p>
@@ -475,7 +475,7 @@ const CareerIntelligence = () => {
 
             {/* AI Coaching */}
             <TabsContent value="ai_coaching" className="mt-0">
-              <Card className="border-border/60 mb-4">
+              <Card className="border-border/60 rounded-2xl shadow-sm mb-4">
                 <CardContent className="p-4 space-y-2">
                   <label className="text-xs font-medium text-foreground">What do you want coaching on? (optional)</label>
                   <Input
@@ -501,7 +501,7 @@ const CareerIntelligence = () => {
 
             {/* Rejection Decoder */}
             <TabsContent value="rejection_decoder" className="mt-0">
-              <Card className="border-border/60 mb-4">
+              <Card className="border-border/60 rounded-2xl shadow-sm mb-4">
                 <CardContent className="p-4 space-y-2">
                   <label className="text-xs font-medium text-foreground">Paste the rejection you received (optional)</label>
                   <Textarea
@@ -641,7 +641,7 @@ const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
           <SectionHeader icon={<Award className="w-5 h-5" />} title="Certifications" />
           <div className="grid sm:grid-cols-2 gap-3">
             {data.certifications.map((c: any, i: number) => (
-              <div key={i} className="border border-border rounded-lg p-3">
+              <div key={i} className="rounded-xl border border-border/60 bg-muted/30 p-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <div className="font-medium text-sm text-foreground">{c.name}</div>
@@ -838,7 +838,7 @@ const CoachingView = ({ data, profile }: { data: any; profile: Profile }) => (
         <SectionHeader icon={<MessageCircle className="w-5 h-5" />} title="Likely Interview Questions" />
         <div className="space-y-3">
           {(data.likely_interview_questions || []).map((q: any, i: number) => (
-            <div key={i} className="border border-border rounded-lg p-3">
+            <div key={i} className="rounded-xl border border-border/60 bg-muted/30 p-3">
               <div className="text-sm font-medium text-foreground">Q{i + 1}. {q.question}</div>
               <div className="text-xs text-muted-foreground mt-1.5"><span className="font-semibold text-accent">How to answer: </span>{q.how_to_answer}</div>
               {q.red_flags_to_avoid && (
@@ -934,7 +934,7 @@ const RejectionView = ({ data, profile }: { data: any; profile: Profile }) => (
           <SectionHeader icon={<Lightbulb className="w-5 h-5" />} title="What Recruiters Actually Meant" />
           <div className="space-y-2">
             {data.what_recruiters_actually_meant.map((r: any, i: number) => (
-              <div key={i} className="text-sm border border-border rounded-md p-3">
+              <div key={i} className="text-sm rounded-xl border border-border/60 bg-muted/30 p-3">
                 <div className="text-foreground italic">"{r.phrase}"</div>
                 <div className="text-xs text-muted-foreground mt-1">→ {r.real_meaning}</div>
               </div>
@@ -1028,7 +1028,7 @@ const LibraryCard = ({
 const StatTile = ({ label, value, hint, dark }: { label: string; value: string; hint?: string; dark?: boolean }) => (
   <div className={dark
     ? "rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-4"
-    : "rounded-xl border border-border/70 bg-card p-4"}>
+    : "rounded-2xl border border-border/60 bg-card p-4 shadow-sm"}>
     <div className={`text-[10px] uppercase tracking-[0.18em] font-semibold ${dark ? "text-white/50" : "text-muted-foreground"}`}>{label}</div>
     <div className={`text-base font-display font-bold mt-1.5 truncate ${dark ? "text-white" : "text-foreground"}`}>{value}</div>
     {hint && <div className={`text-xs mt-0.5 truncate ${dark ? "text-white/55" : "text-muted-foreground"}`}>{hint}</div>}
@@ -1193,7 +1193,7 @@ const TargetJobsSection = ({
           </Button>
         }
       />
-      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
         {fit ? (
           <div className="grid gap-4 sm:grid-cols-[auto_1fr] items-center">
             <div className="text-center sm:text-left">
@@ -1244,7 +1244,7 @@ const ProgressSection = ({ results }: { results: Record<Mode, any | null> }) => 
         title="How complete your career picture is"
         desc="Each report adds another layer of clarity. Complete all five for the full view."
       />
-      <div className="rounded-3xl border border-border/60 bg-card p-6 shadow-sm">
+      <div className="rounded-2xl border border-border/60 bg-card p-6 shadow-sm">
         <div className="flex items-center justify-between text-sm mb-2">
           <span className="font-medium text-foreground">{done.length} of {REPORT_LIBRARY.length} reports generated</span>
           <span className="text-muted-foreground">{pct}%</span>
