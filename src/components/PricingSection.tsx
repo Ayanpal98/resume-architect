@@ -58,7 +58,7 @@ const PlanCard = ({ plan }: { plan: Plan }) => {
       {/* Header */}
       <div className="mb-3 sm:mb-5">
         <div className="flex items-center gap-1.5 sm:gap-2 mb-1 sm:mb-2">
-          <span className={isDark ? "text-background/80" : "text-primary"}>{plan.icon}</span>
+          <span className={isDark ? "text-background/80" : "text-primary"}>{ICONS[plan.iconName]}</span>
           <h3 className={`font-display text-xl sm:text-2xl font-medium tracking-tight ${heading}`}>
             {plan.name}
           </h3>
