@@ -17,6 +17,8 @@ import Security from "./pages/Security";
 import Privacy from "./pages/Privacy";
 import DeepImprovement from "./pages/DeepImprovement";
 import PortfolioStudio from "./pages/PortfolioStudio";
+import Pricing from "./pages/Pricing";
+import Checkout from "./pages/Checkout";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const App = () => (
             <Route path="/career-intelligence" element={<ProtectedRoute><CareerIntelligence /></ProtectedRoute>} />
             <Route path="/deep-improvement" element={<ProtectedRoute><DeepImprovement /></ProtectedRoute>} />
             <Route path="/portfolio-studio" element={<ProtectedRoute><PortfolioStudio /></ProtectedRoute>} />
+            <Route path="/pricing" element={<Pricing />} />
+            <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
             <Route path="/security" element={<Security />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
