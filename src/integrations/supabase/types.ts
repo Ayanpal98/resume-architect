@@ -44,6 +44,63 @@ export type Database = {
         }
         Relationships: []
       }
+      orders: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          email: string
+          full_name: string
+          id: string
+          order_number: string
+          paid_at: string | null
+          payment_method: string
+          payment_status: string
+          phone: string | null
+          plan_id: string
+          plan_name: string
+          updated_at: string
+          user_id: string
+          utr_number: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          email: string
+          full_name: string
+          id?: string
+          order_number: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_status?: string
+          phone?: string | null
+          plan_id: string
+          plan_name: string
+          updated_at?: string
+          user_id: string
+          utr_number?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          email?: string
+          full_name?: string
+          id?: string
+          order_number?: string
+          paid_at?: string | null
+          payment_method?: string
+          payment_status?: string
+          phone?: string | null
+          plan_id?: string
+          plan_name?: string
+          updated_at?: string
+          user_id?: string
+          utr_number?: string | null
+        }
+        Relationships: []
+      }
       platform_stats: {
         Row: {
           candidate_screenings: number
