@@ -151,6 +151,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_plan_tier: { Args: never; Returns: Json }
       increment_stat: { Args: { stat_name: string }; Returns: undefined }
     }
     Enums: {
