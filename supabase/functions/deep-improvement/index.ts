@@ -99,6 +99,11 @@ serve(async (req) => {
       auditAuth(req, "auth_invalid_token", { error: claimsError?.message || "no_claims" });
       return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    // Plan entitlement: requires a verified paid order at this tier.
+    const { data: _tier } = await supabaseClient.rpc("get_plan_tier");
+    if (((_tier as any)?.jobseeker ?? 0) < 3) {
+      return new Response(JSON.stringify({ error: "upgrade_required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const userMeta = (claimsData.claims as any).user_metadata || {};
     const sub = (claimsData.claims as any).sub;
     if (userMeta.user_type === "institution") {
