@@ -75,6 +75,11 @@ serve(async (req) => {
       auditAuth(req, "auth_invalid_token", { error: claimsError?.message || "no_claims" });
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
+    // Plan entitlement: requires a verified paid order at this tier.
+    const { data: _tier } = await supabaseClient.rpc("get_plan_tier");
+    if (((_tier as any)?.jobseeker ?? 0) < 2) {
+      return new Response(JSON.stringify({ error: "upgrade_required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
 
     // RBAC: enforce role from auth user_metadata. Soft-allow users with no
     // role set yet (transitional); reject any explicit mismatched role.

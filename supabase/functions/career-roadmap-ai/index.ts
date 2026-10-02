@@ -77,6 +77,11 @@ serve(async (req) => {
         status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    // Plan entitlement: requires a verified paid order at this tier.
+    const { data: _tier } = await supabaseClient.rpc("get_plan_tier");
+    if (((_tier as any)?.jobseeker ?? 0) < 3) {
+      return new Response(JSON.stringify({ error: "upgrade_required" }), { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
     const userMetadata = (claimsData.claims as any).user_metadata || {};
     const _sub = (claimsData.claims as any).sub;
     if (userMetadata.user_type === "institution") {
