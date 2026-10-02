@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import PlanGate from "@/components/PlanGate";
 import Index from "./pages/Index";
 import Welcome from "./pages/Welcome";
 import Builder from "./pages/Builder";
@@ -38,9 +39,9 @@ const App = () => (
             <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
             <Route path="/builder" element={<ProtectedRoute><Builder /></ProtectedRoute>} />
             <Route path="/ats-analysis" element={<ProtectedRoute><ATSAnalysis /></ProtectedRoute>} />
-            <Route path="/recruiter" element={<ProtectedRoute><Recruiter /></ProtectedRoute>} />
+            <Route path="/recruiter" element={<ProtectedRoute><PlanGate audience="recruiter" minTier={1} feature="Recruiter hiring portal" fullPage><Recruiter /></PlanGate></ProtectedRoute>} />
             <Route path="/career-intelligence" element={<ProtectedRoute><CareerIntelligence /></ProtectedRoute>} />
-            <Route path="/deep-improvement" element={<ProtectedRoute><DeepImprovement /></ProtectedRoute>} />
+            <Route path="/deep-improvement" element={<ProtectedRoute><PlanGate audience="jobseeker" minTier={3} feature="Deep Resume Improvement" fullPage><DeepImprovement /></PlanGate></ProtectedRoute>} />
             <Route path="/portfolio-studio" element={<ProtectedRoute><PortfolioStudio /></ProtectedRoute>} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />

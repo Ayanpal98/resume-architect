@@ -515,11 +515,13 @@ const Builder = () => {
             {originalResumeData && (
               <Dialog open={showComparison} onOpenChange={setShowComparison}>
                 <DialogContent className="w-[95vw] max-w-lg max-h-[85vh] overflow-y-auto mx-auto">
-                  <ResumeComparison
-                    originalData={originalResumeData}
-                    currentData={resumeData}
-                    onClose={() => setShowComparison(false)}
-                  />
+                  <PlanGate audience="jobseeker" minTier={2} feature="Resume comparison view">
+                    <ResumeComparison
+                      originalData={originalResumeData}
+                      currentData={resumeData}
+                      onClose={() => setShowComparison(false)}
+                    />
+                  </PlanGate>
                 </DialogContent>
               </Dialog>
             )}
@@ -977,26 +979,32 @@ const Builder = () => {
                     />
                   )}
                   {activeSection === "jobmatch" && (
-                    <JobMatchPanel
-                      resumeData={resumeData}
-                      originalResumeData={originalResumeData || undefined}
-                      jobDescription={jobDescription}
-                      onJobDescriptionChange={setJobDescription}
-                    />
+                    <PlanGate audience="jobseeker" minTier={2} feature="Job Match analysis">
+                      <JobMatchPanel
+                        resumeData={resumeData}
+                        originalResumeData={originalResumeData || undefined}
+                        jobDescription={jobDescription}
+                        onJobDescriptionChange={setJobDescription}
+                      />
+                    </PlanGate>
                   )}
                   {activeSection === "coverletter" && (
-                    <CoverLetterGenerator
-                      resumeData={resumeData}
-                      jobDescription={jobDescription}
-                      onJobDescriptionChange={setJobDescription}
-                    />
+                    <PlanGate audience="jobseeker" minTier={2} feature="AI cover letter">
+                      <CoverLetterGenerator
+                        resumeData={resumeData}
+                        jobDescription={jobDescription}
+                        onJobDescriptionChange={setJobDescription}
+                      />
+                    </PlanGate>
                   )}
                   {activeSection === "roadmap" && (
-                    <CareerRoadmap
-                      resumeData={resumeData}
-                      jobDescription={jobDescription}
-                      onJobDescriptionChange={setJobDescription}
-                    />
+                    <PlanGate audience="jobseeker" minTier={3} feature="30-60-90 day Career Roadmap">
+                      <CareerRoadmap
+                        resumeData={resumeData}
+                        jobDescription={jobDescription}
+                        onJobDescriptionChange={setJobDescription}
+                      />
+                    </PlanGate>
                   )}
                 </div>
 
