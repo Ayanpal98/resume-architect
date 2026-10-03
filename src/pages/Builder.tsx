@@ -1,3 +1,4 @@
+import PlanGate from "@/components/PlanGate";
 import { useState, useEffect } from "react";
 import { Seo } from "@/components/Seo";
 import { Link, useLocation, useSearchParams } from "react-router-dom";

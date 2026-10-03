@@ -92,6 +92,16 @@ serve(async (req) => {
     }
     auditAuth(req, "auth_success", { user_id: _sub, role: _userMetadata.user_type || "unset" });
 
+    // Monthly screening limit per recruiter tier (Lite 25, Growth 100, Scale 250).
+    const _limit = ([0, 25, 100, 250] as const)[Math.min(3, (_tier as any)?.recruiter ?? 0)];
+    const _admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const _since = new Date(Date.now() - 31 * 24 * 3600 * 1000).toISOString();
+    const { count: _used } = await _admin.from("screening_usage").select("id", { count: "exact", head: true }).eq("user_id", _sub).gte("created_at", _since);
+    if ((_used ?? 0) >= _limit) {
+      return new Response(JSON.stringify({ error: `Monthly screening limit reached (${_limit}). Upgrade your plan for more.` }), { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    await _admin.from("screening_usage").insert({ user_id: _sub });
+
     const body = await req.json();
 
     // Validate request body
