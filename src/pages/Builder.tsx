@@ -1,7 +1,8 @@
 import PlanGate from "@/components/PlanGate";
+import { usePlan } from "@/hooks/usePlan";
 import { useState, useEffect } from "react";
 import { Seo } from "@/components/Seo";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -158,6 +159,8 @@ function getNextStep(
 
 const Builder = () => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const { tier: planTier } = usePlan();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const incomingState = location.state as { resumeData?: ResumeData; atsResult?: ATSCheckResult } | null;
@@ -342,6 +345,11 @@ const Builder = () => {
   };
 
   const handleDownload = () => {
+    if (planTier.jobseeker < 1) {
+      toast.error("PDF export is included with Premium Starter and above.");
+      navigate("/checkout?plan=premium-starter");
+      return;
+    }
     try {
       downloadPDF(resumeData, selectedTemplate);
       // Keep the saved Active Resume in sync with builder edits
@@ -500,6 +508,7 @@ const Builder = () => {
                   </div>
                   
                   {/* All Templates */}
+                  <PlanGate audience="jobseeker" minTier={1} feature="Full template library">
                   <TemplateSelector
                     selectedTemplate={selectedTemplate}
                     onSelect={(id) => {
@@ -508,6 +517,7 @@ const Builder = () => {
                       toast.success(`${id.charAt(0).toUpperCase() + id.slice(1)} template selected`);
                     }}
                   />
+                  </PlanGate>
                 </div>
               </DialogContent>
             </Dialog>
@@ -802,12 +812,14 @@ const Builder = () => {
                     </button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto p-0">
+                    <PlanGate audience="jobseeker" minTier={1} feature="Full ATS Readiness scan">
                     <ATSScorePanel 
                       result={atsResult} 
                       originalResult={originalResumeData ? checkATSCompatibility(originalResumeData) : undefined}
                       resumeData={resumeData}
                       onDismiss={() => setShowATSDetails(false)} 
                     />
+                    </PlanGate>
                   </DialogContent>
                 </Dialog>
 
@@ -956,6 +968,7 @@ const Builder = () => {
                     />
                   )}
                   {activeSection === "optimize" && (
+                    <PlanGate audience="jobseeker" minTier={1} feature="Section-by-section AI rewrite">
                     <ResumeImprovementPanel
                       resumeData={resumeData}
                       jobDescription={jobDescription}
@@ -971,13 +984,16 @@ const Builder = () => {
                       }}
                       onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
                     />
+                    </PlanGate>
                   )}
                   {activeSection === "report" && (
+                    <PlanGate audience="jobseeker" minTier={3} feature="ATS Readiness report with score deltas">
                     <OptimizationReport
                       resumeData={resumeData}
                       jobDescription={jobDescription}
                       onJobDescriptionChange={setJobDescription}
                     />
+                    </PlanGate>
                   )}
                   {activeSection === "jobmatch" && (
                     <PlanGate audience="jobseeker" minTier={2} feature="Job Match analysis">

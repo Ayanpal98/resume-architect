@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import PlanGate from "@/components/PlanGate";
+import { usePlan } from "@/hooks/usePlan";
 import { ResumeData } from "@/lib/pdfGenerator";
 
 interface CareerGuidance {
@@ -329,7 +331,8 @@ export const ResumeImprovementPanel = ({
           {analysis.keywords && (
             <div className="border border-border rounded-xl overflow-hidden">
               <SectionHeader id="keywords" title="Keyword Gap Analysis" icon={AlertTriangle} count={analysis.keywords.missing_critical?.length} />
-              {expandedSections.keywords && (
+              {expandedSections.keywords && planTier.jobseeker < 2 && (<PlanGate audience="jobseeker" minTier={2} feature="Keyword gap analysis">{null}</PlanGate>)}
+              {expandedSections.keywords && planTier.jobseeker >= 2 && (
                 <div className="p-4 space-y-3">
                   {analysis.keywords.found_in_resume?.length > 0 && (
                     <div>

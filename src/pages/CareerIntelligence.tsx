@@ -19,6 +19,7 @@ import {
   Zap, Users, GraduationCap, Brain, Lightbulb, Star, ChevronRight, Download,
 } from "lucide-react";
 import { ActiveResumeCard } from "@/components/ActiveResumeCard";
+import { usePlan } from "@/hooks/usePlan";
 import { ComplianceFooter } from "@/components/ComplianceFooter";
 import {
   exportRoadmapPdf,
@@ -89,6 +90,7 @@ const REPORT_LIBRARY: ReportMeta[] = [
 ];
 
 const CareerIntelligence = () => {
+  const { tier: planTier } = usePlan();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>(initialProfile);
   const [activeTab, setActiveTab] = useState<Mode>("roadmap");
@@ -397,6 +399,11 @@ const CareerIntelligence = () => {
                     variant="hero"
                     className="gap-1.5"
                     onClick={() => {
+                      if (planTier.jobseeker < 3) {
+                        toast.error("Career Intelligence report export is included with Premium Elite.");
+                        window.location.href = "/checkout?plan=premium-elite";
+                        return;
+                      }
                       try {
                         exportCombinedPdf(results, profile);
                         toast.success("Combined PDF downloaded.");
@@ -547,13 +554,21 @@ const SectionHeader = ({ icon, title, sub }: { icon: React.ReactNode; title: str
   </div>
 );
 
-const ExportBar = ({ label, onExport }: { label: string; onExport: () => void }) => (
+const ExportBar = ({ label, onExport }: { label: string; onExport: () => void }) => {
+  const { tier } = usePlan();
+  const locked = tier.jobseeker < 3;
+  return (
   <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
     <div className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">{label}</div>
     <Button
       size="sm"
       variant="outline"
       onClick={() => {
+        if (locked) {
+          toast.error("Career Intelligence report export is included with Premium Elite.");
+          window.location.href = "/checkout?plan=premium-elite";
+          return;
+        }
         try {
           onExport();
           toast.success("PDF report downloaded.");
@@ -563,10 +578,11 @@ const ExportBar = ({ label, onExport }: { label: string; onExport: () => void })
       }}
       className="gap-1.5"
     >
-      <Download className="w-4 h-4" /> Download Full PDF Report
+      <Download className="w-4 h-4" /> {locked ? "Unlock PDF Report (Elite)" : "Download Full PDF Report"}
     </Button>
   </div>
-);
+  );
+};
 
 const RoadmapView = ({ data, profile }: { data: any; profile: Profile }) => (
   <div className="space-y-5 animate-fade-up">
