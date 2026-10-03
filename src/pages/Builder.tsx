@@ -2,7 +2,7 @@ import PlanGate from "@/components/PlanGate";
 import { usePlan } from "@/hooks/usePlan";
 import { useState, useEffect } from "react";
 import { Seo } from "@/components/Seo";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useSearchParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -159,6 +159,8 @@ function getNextStep(
 
 const Builder = () => {
   const { signOut } = useAuth();
+  const navigate = useNavigate();
+  const { tier: planTier } = usePlan();
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const incomingState = location.state as { resumeData?: ResumeData; atsResult?: ATSCheckResult } | null;
