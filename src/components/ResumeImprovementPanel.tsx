@@ -70,6 +70,7 @@ export const ResumeImprovementPanel = ({
   onApplySkills,
 }: ResumeImprovementPanelProps) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { tier: planTier } = usePlan();
   const [analysis, setAnalysis] = useState<ImprovementAnalysis | null>(null);
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     summary: true, experience: true, skills: true, keywords: true, career_guidance: true, tips: true,
