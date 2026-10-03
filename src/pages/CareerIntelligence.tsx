@@ -90,6 +90,7 @@ const REPORT_LIBRARY: ReportMeta[] = [
 ];
 
 const CareerIntelligence = () => {
+  const { tier: planTier } = usePlan();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<Profile>(initialProfile);
   const [activeTab, setActiveTab] = useState<Mode>("roadmap");
@@ -398,6 +399,11 @@ const CareerIntelligence = () => {
                     variant="hero"
                     className="gap-1.5"
                     onClick={() => {
+                      if (planTier.jobseeker < 3) {
+                        toast.error("Career Intelligence report export is included with Premium Elite.");
+                        window.location.href = "/checkout?plan=premium-elite";
+                        return;
+                      }
                       try {
                         exportCombinedPdf(results, profile);
                         toast.success("Combined PDF downloaded.");
