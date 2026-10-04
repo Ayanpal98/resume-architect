@@ -20,6 +20,7 @@ import DeepImprovement from "./pages/DeepImprovement";
 import PortfolioStudio from "./pages/PortfolioStudio";
 import Pricing from "./pages/Pricing";
 import Checkout from "./pages/Checkout";
+import AdminOrders from "./pages/AdminOrders";
 import { InstallPrompt } from "@/components/InstallPrompt";
 
 const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => (
             <Route path="/portfolio-studio" element={<ProtectedRoute><PortfolioStudio /></ProtectedRoute>} />
             <Route path="/pricing" element={<Pricing />} />
             <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+            <Route path="/admin/orders" element={<ProtectedRoute><AdminOrders /></ProtectedRoute>} />
             <Route path="/security" element={<Security />} />
             <Route path="/privacy" element={<Privacy />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
