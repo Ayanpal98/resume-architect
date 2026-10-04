@@ -1,4 +1,5 @@
 import PlanGate from "@/components/PlanGate";
+import ActionVerbEnhancer from "@/components/ActionVerbEnhancer";
 import { usePlan } from "@/hooks/usePlan";
 import { useState, useEffect } from "react";
 import { Seo } from "@/components/Seo";
@@ -985,6 +986,21 @@ const Builder = () => {
                       onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
                     />
                     </PlanGate>
+                    <div className="mt-6">
+                      <PlanGate audience="jobseeker" minTier={2} feature="Action Verb Enhancer">
+                        <ActionVerbEnhancer
+                          experience={resumeData.experience}
+                          onApplyExperience={(index, description) => {
+                            setResumeData(prev => ({
+                              ...prev,
+                              experience: prev.experience.map((exp, i) =>
+                                i === index ? { ...exp, description } : exp
+                              ),
+                            }));
+                          }}
+                        />
+                      </PlanGate>
+                    </div>
                   )}
                   {activeSection === "report" && (
                     <PlanGate audience="jobseeker" minTier={3} feature="ATS Readiness report with score deltas">
