@@ -182,8 +182,9 @@ const Builder = () => {
 
   // Apply an AI rewrite and save it to the candidate's Active Resume right away
   const applyRewrite = (update: (prev: ResumeData) => ResumeData) => {
-    setResumeData((prev) => {
-      const next = update(prev);
+    const next = update(resumeData);
+    setResumeData(next);
+    {
       void saveActiveResume({
         resumeData: next,
         fileName: activeResume?.file_name || `${next.personalInfo.fullName || "My"} Resume`,
@@ -192,8 +193,7 @@ const Builder = () => {
         if (ok) toast.success("Rewrite saved to your resume");
         else toast.error("Rewrite applied, but we couldn't save it. Please try again.");
       });
-      return next;
-    });
+    }
   };
 
   // Handle incoming state from ATS analysis page
