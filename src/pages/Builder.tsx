@@ -180,6 +180,22 @@ const Builder = () => {
   const [originalResumeData, setOriginalResumeData] = useState<ResumeData | null>(null);
   const { resume: activeResume, loading: activeResumeLoading, refresh: refreshActiveResume } = useActiveResume();
 
+  // Apply an AI rewrite and save it to the candidate's Active Resume right away
+  const applyRewrite = (update: (prev: ResumeData) => ResumeData) => {
+    setResumeData((prev) => {
+      const next = update(prev);
+      void saveActiveResume({
+        resumeData: next,
+        fileName: activeResume?.file_name || `${next.personalInfo.fullName || "My"} Resume`,
+        atsScore: checkATSCompatibility(next).overallScore,
+      }).then((ok) => {
+        if (ok) toast.success("Rewrite saved to your resume");
+        else toast.error("Rewrite applied, but we couldn't save it. Please try again.");
+      });
+      return next;
+    });
+  };
+
   // Handle incoming state from ATS analysis page
   useEffect(() => {
     if (incomingState?.resumeData) {
@@ -975,16 +991,16 @@ const Builder = () => {
                       resumeData={resumeData}
                       jobDescription={jobDescription}
                       onJobDescriptionChange={setJobDescription}
-                      onApplySummary={(summary) => setResumeData(prev => ({ ...prev, summary }))}
+                      onApplySummary={(summary) => applyRewrite(prev => ({ ...prev, summary }))}
                       onApplyExperience={(index, description) => {
-                        setResumeData(prev => ({
+                        applyRewrite(prev => ({
                           ...prev,
                           experience: prev.experience.map((exp, i) =>
                             i === index ? { ...exp, description } : exp
                           ),
                         }));
                       }}
-                      onApplySkills={(skills) => setResumeData(prev => ({ ...prev, skills }))}
+                      onApplySkills={(skills) => applyRewrite(prev => ({ ...prev, skills }))}
                     />
                     </PlanGate>
                     <div className="mt-6">
@@ -992,7 +1008,7 @@ const Builder = () => {
                         <ActionVerbEnhancer
                           experience={resumeData.experience}
                           onApplyExperience={(index, description) => {
-                            setResumeData(prev => ({
+                            applyRewrite(prev => ({
                               ...prev,
                               experience: prev.experience.map((exp, i) =>
                                 i === index ? { ...exp, description } : exp
