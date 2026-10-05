@@ -969,6 +969,7 @@ const Builder = () => {
                     />
                   )}
                   {activeSection === "optimize" && (
+                    <>
                     <PlanGate audience="jobseeker" minTier={1} feature="Section-by-section AI rewrite">
                     <ResumeImprovementPanel
                       resumeData={resumeData}
@@ -1001,6 +1002,7 @@ const Builder = () => {
                         />
                       </PlanGate>
                     </div>
+                    </>
                   )}
                   {activeSection === "report" && (
                     <PlanGate audience="jobseeker" minTier={3} feature="ATS Readiness report with score deltas">
