@@ -38,6 +38,7 @@ import { Separator } from "@/components/ui/separator";
 import { GhostScreeningPreview } from "@/components/GhostScreeningPreview";
 import { Checkbox } from "@/components/ui/checkbox";
 import { CandidateCompare } from "@/components/CandidateCompare";
+import { JobOpeningsPanel } from "@/components/JobOpeningsPanel";
 
 interface EducationDetails {
   degree: string;
@@ -1092,6 +1093,16 @@ const Recruiter = () => {
               Industry-standard evaluation using SHRM-aligned criteria for objective candidate assessment
             </p>
           </div>
+
+          <JobOpeningsPanel
+            selectedTitle={jobTitle}
+            onSelect={(o) => {
+              setJobTitle(o.title);
+              setJobDescription(o.description);
+              toast({ title: "Opening loaded", description: "Upload resumes below to screen candidates for this role." });
+            }}
+          />
+
 
           {recruiterMode === false && (
             <div className="mb-8 rounded-xl border border-border bg-muted/40 backdrop-blur-sm p-4 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
