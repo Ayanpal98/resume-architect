@@ -202,6 +202,22 @@ const Auth = () => {
                     <Label htmlFor="signin-password">Password</Label>
                     <Input id="signin-password" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} required />
                   </div>
+                  <div className="flex justify-end -mt-2">
+                    <button
+                      type="button"
+                      className="text-xs text-primary hover:underline"
+                      onClick={async () => {
+                        if (!email) { toast.error("Enter your email above first"); return; }
+                        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+                          redirectTo: `${window.location.origin}/reset-password`,
+                        });
+                        if (error) toast.error("Couldn't send reset email. Please try again.");
+                        else toast.success("Check your inbox for a password reset link.");
+                      }}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                   <Button type="submit" className="w-full" disabled={isSubmitting}>
                     {isSubmitting ? "Signing in..." : `Sign in as ${cfg.label}`}
                   </Button>
