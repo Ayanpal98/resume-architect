@@ -13,6 +13,7 @@ import ATSAnalysis from "./pages/ATSAnalysis";
 import Recruiter from "./pages/Recruiter";
 import CareerIntelligence from "./pages/CareerIntelligence";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 import Security from "./pages/Security";
 import Privacy from "./pages/Privacy";
@@ -36,6 +37,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
             <Route path="/welcome" element={<ProtectedRoute><Welcome /></ProtectedRoute>} />
             <Route path="/builder" element={<ProtectedRoute><Builder /></ProtectedRoute>} />
