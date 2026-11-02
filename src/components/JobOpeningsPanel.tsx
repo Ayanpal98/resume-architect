@@ -62,11 +62,11 @@ export const JobOpeningsPanel = ({ onSelect, selectedTitle }: { onSelect: (o: Op
   };
 
   return (
-    <div className="mb-8 rounded-2xl border border-border/60 bg-card p-5 shadow-sm space-y-4">
+    <div className="mb-8 rounded-2xl border border-border/60 bg-card p-4 sm:p-5 shadow-sm space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Briefcase className="w-5 h-5 text-primary" />
-          <h2 className="font-semibold text-foreground">Job openings</h2>
+          <h2 className="font-semibold text-foreground whitespace-nowrap">Job openings</h2>
           <Badge variant="secondary">{open.length} / {limit === null ? "Unlimited" : limit} open</Badge>
           <Badge variant="outline">{used} / {SCREEN_LIMIT[rTier]} screenings this month</Badge>
         </div>

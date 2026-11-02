@@ -1060,7 +1060,7 @@ const Recruiter = () => {
       <Seo title={"Recruiter Screening Dashboard — ATSFy"} description={"Bulk candidate screening for hiring teams — parse resumes, score fit, and export ranked reports in minutes."} path={"/recruiter"} />
       {/* Header */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <Link to="/welcome" className="flex items-center gap-2">
             <div className="w-10 h-10 bg-gradient-hero rounded-xl flex items-center justify-center">
               <FileText className="w-5 h-5 text-primary-foreground" />
@@ -1082,11 +1082,11 @@ const Recruiter = () => {
         </div>
       </nav>
 
-      <main className="pt-24 pb-12 px-6">
+      <main className="pt-20 sm:pt-24 pb-12 px-3 sm:px-6">
         <div className="container mx-auto max-w-7xl">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
               AI-Powered Candidate Screening
             </h1>
             <p className="text-muted-foreground">
