@@ -1086,7 +1086,7 @@ const Recruiter = () => {
         <div className="container mx-auto max-w-7xl">
           {/* Page Header */}
           <div className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
               AI-Powered Candidate Screening
             </h1>
             <p className="text-muted-foreground">
