@@ -189,14 +189,14 @@ export const SampleReportsShowcase = () => {
 
         <div className="grid lg:grid-cols-[280px_1fr] gap-px bg-border/60 border border-border/60 rounded-2xl overflow-hidden">
           {/* Tabs */}
-          <div className="bg-card flex lg:flex-col overflow-x-auto lg:overflow-visible">
+          <div className="bg-card grid grid-cols-2 lg:flex lg:flex-col">
             {REPORTS.map((r) => {
               const isActive = r.key === active;
               return (
                 <button
                   key={r.key}
                   onClick={() => setActive(r.key)}
-                  className={`flex-shrink-0 lg:flex-shrink text-left p-4 sm:p-5 border-b border-border/60 transition-colors min-w-[180px] lg:min-w-0 ${
+                  className={`text-left p-4 sm:p-5 border-b border-border/60 transition-colors min-w-0 ${
                     isActive ? "bg-background" : "hover:bg-background/50"
                   }`}
                 >
