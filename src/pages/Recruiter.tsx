@@ -1409,9 +1409,9 @@ const Recruiter = () => {
                   ) : isAnalyzing && candidates.length === 0 ? (
                     <div className="text-center py-16">
                       <Sparkles className="w-16 h-16 text-primary animate-pulse mx-auto mb-4" />
-                      <h3 className="text-lg font-medium text-foreground mb-2">
+                      <h2 className="text-lg font-medium text-foreground mb-2">
                         Analyzing Candidates...
-                      </h3>
+                      </h2>
                       <p className="text-sm text-muted-foreground">
                         Processing resume {currentAnalyzingIndex} of {uploadedFiles.length}
                       </p>
@@ -1537,9 +1537,9 @@ const CandidateCard = ({
 
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <h4 className="font-semibold text-foreground truncate">
+                <h3 className="font-semibold text-foreground truncate">
                   {candidate.name || candidate.fileName}
-                </h4>
+                </h3>
                 {getRecommendationBadge(candidate.recommendation)}
                 {candidate.status === "shortlisted" && (
                   <Badge className="bg-accent/20 text-accent border-accent/30">

@@ -78,9 +78,9 @@ const Welcome = () => {
                   </div>
                   <div className="flex-1 w-full">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg sm:text-xl font-display font-semibold text-foreground">
+                      <h2 className="text-lg sm:text-xl font-display font-semibold text-foreground">
                         Job Seeker
-                      </h3>
+                      </h2>
                       {selectedType === "jobseeker" && (
                         <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                       )}
@@ -126,9 +126,9 @@ const Welcome = () => {
                   </div>
                   <div className="flex-1 w-full">
                     <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-lg sm:text-xl font-display font-semibold text-foreground">
+                      <h2 className="text-lg sm:text-xl font-display font-semibold text-foreground">
                         Recruiter / HR
-                      </h3>
+                      </h2>
                       {selectedType === "institution" && (
                         <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                       )}

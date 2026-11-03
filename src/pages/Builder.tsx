@@ -460,7 +460,7 @@ const Builder = () => {
         <div className="container mx-auto px-2 sm:px-6 py-2 sm:py-4 flex items-center justify-between gap-2 flex-wrap sm:flex-nowrap">
           <div className="flex items-center gap-1.5 sm:gap-4 min-w-0 shrink-0">
             <Link to="/career-intelligence">
-              <Button variant="ghost" size="sm" className="px-2 sm:px-3 h-9">
+              <Button variant="ghost" size="sm" className="px-2 sm:px-3 h-9" aria-label="Back to Career Intelligence">
                 <ArrowLeft className="w-4 h-4 sm:mr-2" />
                 <span className="hidden sm:inline">Career Intelligence</span>
               </Button>
@@ -1095,6 +1095,7 @@ const Builder = () => {
           <Button
             variant="hero"
             size="lg"
+            aria-label="Open live preview"
             className="lg:hidden fixed bottom-6 right-6 z-50 rounded-full w-14 h-14 shadow-xl"
           >
             <Eye className="w-6 h-6" />
@@ -1282,7 +1283,7 @@ const ExperienceForm = ({ experiences, onAdd, onUpdate, onRemove, jobDescription
           <div key={exp.id} className="p-6 bg-muted/30 rounded-xl border border-border">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-muted-foreground">Position {index + 1}</span>
-              <Button variant="ghost" size="sm" onClick={() => onRemove(exp.id)} className="text-destructive hover:text-destructive">
+              <Button variant="ghost" size="sm" onClick={() => onRemove(exp.id)} className="text-destructive hover:text-destructive" aria-label="Remove position">
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
@@ -1387,7 +1388,7 @@ const EducationForm = ({ education, onAdd, onUpdate, onRemove }: EducationFormPr
           <div key={edu.id} className="p-6 bg-muted/30 rounded-xl border border-border">
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-muted-foreground">Education {index + 1}</span>
-              <Button variant="ghost" size="sm" onClick={() => onRemove(edu.id)} className="text-destructive hover:text-destructive">
+              <Button variant="ghost" size="sm" onClick={() => onRemove(edu.id)} className="text-destructive hover:text-destructive" aria-label="Remove education">
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
@@ -1514,6 +1515,7 @@ const SkillsForm = ({ skills, skillCategoryMap, newSkill, newSkillCategory, onNe
                       {skill}
                       <button
                         onClick={() => onRemove(skill)}
+                        aria-label={`Remove skill ${skill}`}
                         className="w-4 h-4 rounded-full bg-primary/20 hover:bg-destructive hover:text-destructive-foreground flex items-center justify-center transition-colors"
                       >
                         <Trash2 className="w-3 h-3" />
@@ -1601,7 +1603,7 @@ const ProjectsForm = ({ projects, onAdd, onUpdate, onRemove }: ProjectsFormProps
             </div>
             <div className="flex items-center justify-between mb-4">
               <span className="text-xs font-semibold uppercase tracking-wider text-primary">Project Entry</span>
-              <Button variant="ghost" size="sm" onClick={() => onRemove(proj.id)} className="text-destructive hover:text-destructive">
+              <Button variant="ghost" size="sm" onClick={() => onRemove(proj.id)} className="text-destructive hover:text-destructive" aria-label="Remove project">
                 <Trash2 className="w-4 h-4" />
               </Button>
             </div>
