@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { ActiveResumeCard } from "@/components/ActiveResumeCard";
 import { usePlan } from "@/hooks/usePlan";
+import ServicesHub from "@/components/ServicesHub";
 import { ComplianceFooter } from "@/components/ComplianceFooter";
 import {
   exportRoadmapPdf,
@@ -361,6 +362,9 @@ const CareerIntelligence = () => {
         <main className="min-w-0 order-1 lg:order-2 space-y-8">
           {/* Active resume — persistent across every feature */}
           <ActiveResumeCard />
+
+          {/* Every service at a glance, unlocked per paid plan */}
+          <ServicesHub />
 
           {/* 1 + 2 + 3 + 4 — Command center */}
           <CommandCenter
